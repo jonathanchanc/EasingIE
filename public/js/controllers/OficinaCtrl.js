@@ -19,6 +19,7 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*
 		$scope.controllerInstance = 'oficinas';
 
 		$scope.searchData = {};
+		$scope.formData = {estado:'Activo'};
 		
 		$scope.loading = true;
 		$scope.oficinas = [];
@@ -36,7 +37,7 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*
 		$scope.inicio = function(){
 			Oficinas.get()
 				.success(function(data) {
-					$scope.oficinas = angular.copy(data);
+					//$scope.oficinas = angular.copy(data);
 					$scope.loading = false;
 					//console.log(data);
 				})
@@ -70,7 +71,6 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*
 					.success(function(data) {
 						$scope._id = $routeParams.oficinaId;
 						$scope.formData = angular.copy(data);
-						$scope.formData.fecha_nacimiento = new Date($scope.formData.fecha_nacimiento);
 						//console.log(data);
 					})
 					.error(function(data, status) {
@@ -90,7 +90,7 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
-			$scope.formData.estado = "Activo";
+			//$scope.formData.estado = "Activo";
 
 			// Valida formData, si el #Instancia y el Nombre estan asiganaods, crea el registro
 			if (isValid) {
@@ -108,6 +108,7 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*
 						.error(function(data, status) {
 							$scope.messageShow = true;
 							$scope.messageClass = "alert-danger";
+							$scope.messageText = "Error al actualizar";
 					        $scope.message = data || "Request failed";
 							console.log("Datos invalidos: "+status+" - "+$scope.message);
 			            })
@@ -124,6 +125,7 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*
 						.error(function(data, status) {
 							$scope.messageShow = true;
 							$scope.messageClass = "alert-danger";
+							$scope.messageText = "Error al crear";
 					        $scope.message = data || "Request failed";
 							console.log("Datos invalidos: "+status+" - "+$scope.message);
 			            })
@@ -135,7 +137,6 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*
 				$scope.messageShow = true;
 				$scope.messageClass = "alert-danger";
 		        $scope.messageText = "Rellene los datos correctamente";
-				console.log("Datos invalidos: "+$scope.message);
 			}
 		};
 
