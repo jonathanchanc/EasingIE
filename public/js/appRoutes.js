@@ -23,6 +23,22 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
 			controller: 'ExpedienteController'
 		})
 
+        //Oficina
+        .when('/oficinas', {
+            templateUrl: 'views/oficina/list.html',
+            controller: 'OficinaController'
+        })
+
+        .when('/oficinas/create', {
+            templateUrl: 'views/oficina/form.html',
+            controller: 'OficinaController'
+        })
+
+        .when('/oficinas/update/:oficinaId', {
+            templateUrl: 'views/oficina/form.html',
+            controller: 'OficinaController'
+        })
+
         //Pivilegios
         .when('/privilegios', {
             templateUrl: 'views/admin/privilegio/privilegio.html',

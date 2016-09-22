@@ -1,0 +1,55 @@
+<div class="text-center" ng-init="inicio()">
+	<h1>Busqueda {{controllerInstance}}</h1>
+    <div ng-if="messageShow" ng-class="messageClass" class="alert" role="alert">
+        {{messageText}}
+    </div>
+</div>
+<div class="text-center">
+
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" >
+        <input type="data" class="form-control" placeholder="Buscar" ng-model="searchData.data">
+    </div>
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 text-left" >
+        <button type="submit" class="btn btn-primary btn-sm" ng-click="search()">Buscar</button>
+    </div>
+
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 text-right" >
+        <a class="button btn btn-primary" href="/{{controllerInstance}}/create">Nuevo {{controllerInstance}}</a>
+    </div>
+    
+</div>
+
+<div>
+    <table class="table">
+        <thead>
+            <th>Id Doctor</th>
+            <th>Nombre</th>
+            <th>Telefono</th>
+            <th>Email</th>
+            <th>Sucursal</th>
+            <th>Estado</th>
+            <th>Editar</th>
+        </thead>
+        <tbody>
+            <!--LOPP OVER INSTANCE -->
+            <tr ng-repeat="instance in doctores" ng-show="doctores.length > 0">
+                <td>{{instance.apPaterno}} {{instance.apMaterno}} {{instance.nombre}}</td>
+                <td>{{instance.telefono}}</td>
+                <td>{{instance.email}}</td>
+                <td>{{instance.edad}}</td>
+                <td>{{instance.lugar_nacimiento}}</td>
+                <td>{{instance.fecha_nacimiento | date:"MM/dd/yyyy" }}</td>
+                <td><a class="button btn btn-success" href="/{{controllerInstance}}/update/{{instance._id}}">Editar</a></td>
+            </tr>
+            <!--END LOOP -->
+            <tr ng-if="doctores.length <= 0">
+                <td colspan="6">No se encontraron {{controllerInstance}}</td>
+            </tr>
+            
+        </tbody>
+    </table>
+</div>
+
+<div class="text-center" ng-show="loading">
+    <span class="fa fa-spinner fa-spin fa-3x"></span>
+</div>

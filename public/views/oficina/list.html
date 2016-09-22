@@ -1,0 +1,51 @@
+<div class="text-center" ng-init="inicio()">
+	<h1>{{controlNamePlural}}</h1>
+    <div ng-if="messageShow" ng-class="messageClass" class="alert" role="alert">
+        {{messageText}}
+    </div>
+</div>
+<div class="text-center">
+
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" >
+        <input type="data" class="form-control" placeholder="Buscar" ng-model="searchData.data">
+    </div>
+    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 text-left" >
+        <button type="submit" class="btn btn-primary btn-sm" ng-click="searchOficina()">Buscar</button>
+    </div>
+
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 text-right" >
+        <a class="button btn btn-primary" href="/{{controllerInstance}}/create">Nuevo/a {{controlNameSingular}}</a>
+    </div>
+    
+</div>
+
+<div>
+    <table class="table">
+        <thead>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Telefono</th>
+            <th>Estado</th>
+            <th>Editar</th>
+        </thead>
+        <tbody>
+            <!--LOPP OVER INSTANCE -->
+            <tr ng-repeat="instance in oficinas" ng-show="oficinas.length > 0">
+                <td>{{instance.nombre}}</td>
+                <td>{{instance.direccion}}</td>
+                <td>{{instance.telefono}}</td>
+                <td>{{instance.estado}}</td>
+                <td><a class="button btn btn-success" href="/{{controllerInstance}}/update/{{instance._id}}">Editar</a></td>
+            </tr>
+            <!--END LOOP -->
+            <tr ng-if="oficinas.length <= 0">
+                <td colspan="6">No se encontraron {{controlNamePlural}}</td>
+            </tr>
+            
+        </tbody>
+    </table>
+</div>
+
+<div class="text-center" ng-show="loading">
+    <span class="fa fa-spinner fa-spin fa-3x"></span>
+</div>
