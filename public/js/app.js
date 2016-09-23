@@ -3,6 +3,8 @@ angular.module('sampleApp', [
 	'ngStorage', 
 	'appRoutes', 
 	'MainCtrl', 
+	'ClienteCtrl', 
+	'ClienteService', 
 	'ExpedienteCtrl', 
 	'ExpedienteService',
 	'UserCtrl', 

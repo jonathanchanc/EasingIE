@@ -8,6 +8,23 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
 			controller: 'MainController'
 		})
 
+        //Cliente
+        .when('/clientes', {
+            templateUrl: 'views/cliente/list.html',
+            controller: 'ClienteController'
+        })
+
+        .when('/clientes/create', {
+            templateUrl: 'views/cliente/form.html',
+            controller: 'ClienteController'
+        })
+
+        .when('/clientes/update/:clienteId', {
+            templateUrl: 'views/cliente/form.html',
+            controller: 'ClienteController'
+        })
+
+        //Expedientes
 		.when('/expedientes', {
 			templateUrl: 'views/expediente.html',
 			controller: 'ExpedienteController'

@@ -1,4 +1,4 @@
-angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*/])
+angular.module('ClienteCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*/])
 	//NUEVO
 	/*
 	.factory('Socket', ['socketFactory',
@@ -12,70 +12,71 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*
 	*/
 	//NUEVO
 
-	// inject the Oficina service factory into our controller
-	.controller('OficinaController', ['$scope','$routeParams','$location','$http','Oficinas','$filter', /*'Socket',*/ function($scope, $routeParams, $location, $http, Oficinas, $filter /*, Socket*/) {
-		$scope.controlNameSingular = 'Oficina';
-		$scope.controlNamePlural = 'Oficinas';
-		$scope.controllerInstance = 'oficinas';
+	// inject the Cliente service factory into our controller
+	.controller('ClienteController', ['$scope','$routeParams','$location','$http','Clientes','$filter', /*'Socket',*/ function($scope, $routeParams, $location, $http, Clientes, $filter /*, Socket*/) {
+		$scope.controlNameSingular = 'Cliente';
+		$scope.controlNamePlural = 'Clientes';
+		$scope.controllerInstance = 'clientes';
 
 		$scope.searchData = {};
 		$scope.formData = {estado:'Activo'};
 		
 		$scope.loading = true;
-		$scope.oficinas = [];
+		$scope.clientes = [];
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
 		$scope.messageText = '';
 
-		//console.log($routeParams.oficinaId);
+		//console.log($routeParams.clienteId);
 		
 		// GET =====================================================================
 		// when landing on the page, get all rows and show them
 		// use the service to get all the rows
 
 		$scope.inicio = function(){
-			Oficinas.get()
+			Clientes.get()
 				.success(function(data) {
-					//DESCOMENTAR AL IMPLEMENTAR DB $scope.oficinas = angular.copy(data);
+					$scope.clientes = angular.copy(data);
 					$scope.loading = false;
-					//DESCOMENTAR AL IMPLEMENTAR DB console.log(data);
+					console.log(data);
 				})
 				.error(function(data, status) {
-					console.log("Error en la busqueda de oficinas");
+					console.log("Error en la busqueda de "+$scope.controlNamePlural);
 	            })
 			;
 		}
 
 		
-		$scope.searchOficina = function(){
+		$scope.searchCliente = function(){
 			if($scope.searchData.data != undefined && $scope.searchData.data != ''){
-				Oficinas.search($scope.searchData)
+				Clientes.search($scope.searchData)
 					.success(function(data) {
-						$scope.oficinas = {};
-						$scope.oficinas = angular.copy(data);
+						$scope.clientes = {};
+						$scope.clientes = angular.copy(data);
 					})
 					.error(function(data, status) {
-						console.log("Error en la busqueda de oficinas");
-						$location.path('/oficinas');
+						console.log("Error en la busqueda de "+$scope.controlNamePlural);
+						$location.path('/'+$scope.controllerInstance);
 		            })
 					;
 			}
 		}
 		
 
-		$scope.getOficina = function(){
+		$scope.getCliente = function(){
 			//console.log($routeParams);
-			if($routeParams.oficinaId != undefined){
-				Oficinas.findById($routeParams.oficinaId)
+			if($routeParams.clienteId != undefined){
+				Clientes.findById($routeParams.clienteId)
 					.success(function(data) {
-						$scope._id = $routeParams.oficinaId;
+						$scope._id = $routeParams.clienteId;
 						$scope.formData = angular.copy(data);
+						$scope.formData.fecha_nacimiento = new Date($scope.formData.fecha_nacimiento);
 						//console.log(data);
 					})
 					.error(function(data, status) {
-						console.log("No se encontró oficina");
-						$location.path('/oficinas');
+						console.log("No se encontró cliente");
+						$location.path('/'+$scope.controllerInstance);
 		            })
 					;
 			}
@@ -85,25 +86,25 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*
 
 		// CREATE ==================================================================
 		// when submitting the add form, send the text to the node API
-		$scope.createOrUpdateOficina = function(isValid, _id) {
+		$scope.createOrUpdateCliente = function(isValid, _id) {
 			//console.log($scope.formData);
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
-			//$scope.formData.estado = "Activo";
+			$scope.formData.estado = "Activo";
 
-			// Valida formData, si el #Instancia y el Nombre estan asiganaods, crea el registro
+			// Valida formData, si el #Dispositivo y el Nombre estan asiganaods, crea el registro
 			if (isValid) {
 
 				$scope.loading = true;
 
 				if(_id != undefined) {
 					//UPDATE
-					Oficinas.update(_id,$scope.formData)
+					Clientes.update(_id,$scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
 							console.log("Registro actualizado con exito");
-							$location.path('/oficinas');
+							$location.path('/'+$scope.controllerInstance);
 						})
 						.error(function(data, status) {
 							$scope.messageShow = true;
@@ -116,11 +117,11 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*
 				} else {
 					//CREATE
 					// call the create function from our service (returns a promise object)
-					Oficinas.create($scope.formData)
+					Clientes.create($scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
 							console.log("Registro insertado con exito");
-							$location.path('/oficinas');
+							$location.path('/'+$scope.controllerInstance);
 						})
 						.error(function(data, status) {
 							$scope.messageShow = true;
@@ -142,29 +143,32 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*
 
 		// DELETE ==================================================================
 		// Delete Method
-		$scope.deleteOficina = function(_id,id) {
+		$scope.deleteCliente = function(_id,id) {
 			$scope.loading = true;
 
-			Oficinas.delete(_id);
+			Clientes.delete(_id);
 		};
 
 		// Update ==================================================================
 		// Update Method
-		$scope.updateOficina = function(_id,id) {
+		$scope.updateCliente = function(_id,id) {
 			//$scope.loading = true; //COMENTAR AL GUSTO
 			//Valida formData, si el #Dispositivo y el Nombre estan asiganaods, crea el registro
 			if (_id != undefined && _id != '') {
 				//Validamos los campos del formulario
+				//$scope.formData.nombre = nombre; //Asignamos el disposito para que no se cambie de pin
 				$scope.formData.nombre = ($scope.formData.nombre!=undefined)?$scope.formData.nombre:'';
-				$scope.formData.direccion = ($scope.formData.direccion!=undefined)?$scope.formData.direccion:'';
-				$scope.formData.telefono = ($scope.formData.telefono!=undefined)?$scope.formData.telefono:'';
-				$scope.formData.estado = ($scope.formData.estado!=undefined)?$scope.formData.estado:'';
+				$scope.formData.apPaterno = ($scope.formData.apPaterno!=undefined)?$scope.formData.apPaterno:'';
+				$scope.formData.apaMaterno = ($scope.formData.apaMaterno!=undefined)?$scope.formData.apaMaterno:'';
+				$scope.formData.edad = ($scope.formData.edad!=undefined)?$scope.formData.edad:'';
+				$scope.formData.estado_civil = ($scope.formData.estado_civil!=undefined)?$scope.formData.estado_civil:'';
 
 				//Actualizamos
-            	Oficinas.update(_id,$scope.formData);
+            	Clientes.update(_id,$scope.formData);
 			}
 
 		};
+
 
 
 	}]);
