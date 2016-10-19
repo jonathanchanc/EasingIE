@@ -4,8 +4,8 @@ angular.module('DoctorService', [])
 	// each function returns a promise object 
 	.factory('Doctores', ['$http',function($http) {
 		//var baseUrl = "http://ades-suciqroo.rhcloud.com";
-        var baseUrl = "http://10.10.35.44:3000";
-        //var baseUrl = "http://localhost:3000";
+        //var baseUrl = "http://10.10.35.44:3000";
+        var baseUrl = "http://localhost:3000";
 
 		return {
 			get : function() {

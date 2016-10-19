@@ -5,6 +5,7 @@
     "bootstrap": "latest",
     "angular": "latest",
     "angular-route": "latest",
-    "ngstorage": "^0.3.10"
+    "ngstorage": "^0.3.10",
+    "angular-messages": "^1.5.8"
   }
 }
