@@ -5,6 +5,8 @@ angular.module('sampleApp', [
 	'MainCtrl', 
 	'ClienteCtrl', 
 	'ClienteService', 
+	'DoctorCtrl', 
+	'DoctorService', 
 	'ExpedienteCtrl', 
 	'ExpedienteService',
 	'UserCtrl', 

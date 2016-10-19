@@ -14,7 +14,7 @@
     </div>
 
     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 text-right" >
-        <a class="button btn btn-primary" href="/{{controllerInstance}}/create">Nuevo {{controllerInstance}}</a>
+        <a class="button btn btn-primary" href="/{{controllerInstance}}/create">Nuevo {{controlNameSingular}}</a>
     </div>
     
 </div>
@@ -22,28 +22,24 @@
 <div>
     <table class="table">
         <thead>
-            <th>Id Doctor</th>
             <th>Nombre</th>
             <th>Telefono</th>
             <th>Email</th>
-            <th>Sucursal</th>
             <th>Estado</th>
             <th>Editar</th>
         </thead>
         <tbody>
             <!--LOPP OVER INSTANCE -->
             <tr ng-repeat="instance in doctores" ng-show="doctores.length > 0">
-                <td>{{instance.apPaterno}} {{instance.apMaterno}} {{instance.nombre}}</td>
+                <td>{{instance.nombre}} {{instance.apPaterno}} {{instance.apMaterno}}</td>
                 <td>{{instance.telefono}}</td>
                 <td>{{instance.email}}</td>
-                <td>{{instance.edad}}</td>
-                <td>{{instance.lugar_nacimiento}}</td>
-                <td>{{instance.fecha_nacimiento | date:"MM/dd/yyyy" }}</td>
+                <td>{{instance.estado}}</td>
                 <td><a class="button btn btn-success" href="/{{controllerInstance}}/update/{{instance._id}}">Editar</a></td>
             </tr>
             <!--END LOOP -->
             <tr ng-if="doctores.length <= 0">
-                <td colspan="6">No se encontraron {{controllerInstance}}</td>
+                <td colspan="5">No se encontraron {{controlNamePlural}}</td>
             </tr>
             
         </tbody>

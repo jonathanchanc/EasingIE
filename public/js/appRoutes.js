@@ -24,6 +24,22 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
             controller: 'ClienteController'
         })
 
+         //Doctor
+        .when('/doctores', {
+            templateUrl: 'views/doctor/list.html',
+            controller: 'DoctorController'
+        })
+
+        .when('/doctores/create', {
+            templateUrl: 'views/doctor/form.html',
+            controller: 'DoctorController'
+        })
+
+        .when('/doctores/update/:doctorId', {
+            templateUrl: 'views/doctor/form.html',
+            controller: 'DoctorController'
+        })
+
         //Expedientes
 		.when('/expedientes', {
 			templateUrl: 'views/expediente.html',

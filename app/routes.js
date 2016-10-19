@@ -3,6 +3,7 @@ module.exports = function(app) {
 	//Call all functions definition for the routes
 	require('./functions/ExpedienteFunctions.js');
 	require('./functions/UserFunctions.js');
+	require('./functions/DoctorFunctions.js');
 	require('./functions/admin/PrivilegioFunctions.js');
 
 	//Link routes and functions
@@ -23,6 +24,16 @@ module.exports = function(app) {
 	app.post('/api/authenticate', authenticate);
 	app.post('/api/signin', signin);
 	app.get('/api/me', ensureAuthorized, me);	
+
+	// --------------------------------------------------------------------------
+
+	//Doctores Functions
+	app.get('/api/doctores', ensureAuthorized, findAllDoctores);
+	app.post('/api/doctoresSearch/', ensureAuthorized, searchDoctores);
+	app.get('/api/doctores/:id', ensureAuthorized, findByIdDoctor);
+	app.post('/api/doctores', ensureAuthorized, addDoctor);
+	app.put('/api/doctores/:id', ensureAuthorized, updateDoctor);
+	app.delete('/api/doctores/:id', ensureAuthorized, deleteDoctor);
 
 	//Privilegios Functions
 	app.get('/api/privilegios', ensureAuthorized, findAllPrivilegios);

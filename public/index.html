@@ -21,6 +21,9 @@
 	<!-- Cliente -->
 	<script src="js/controllers/ClienteCtrl.js"></script>
 	<script src="js/services/ClienteService.js"></script>
+	<!-- Cliente -->
+	<script src="js/controllers/DoctorCtrl.js"></script>
+	<script src="js/services/DoctorService.js"></script>
 	<!-- Expedientes -->
 	<script src="js/controllers/ExpedienteCtrl.js"></script>
 	<script src="js/services/ExpedienteService.js"></script>
@@ -119,8 +122,8 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administración <span class="caret"></span></a>
 							<ul class="dropdown-menu">
 								<li data-ng-show="token"><a ng-href="/doctores">Doctores</a></li>
-								<li data-ng-show="token"><a ng-href="/oficinas">Sucursales (Oficinas)</a></li>
-								<li data-ng-show="token"><a ng-href="/programas">Programas (Servicios)</a></li>
+								<li data-ng-show="token"><a ng-href="/oficinas">Oficinas</a></li>
+								<li data-ng-show="token"><a ng-href="/programas">Servicios</a></li>
 								<li data-ng-show="token"><a ng-href="/clientes">Clientes (Afiliados)</a></li>
 							</ul>
 						</li>
