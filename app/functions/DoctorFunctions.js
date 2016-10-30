@@ -10,6 +10,7 @@
   				res.json(doctores); //Atencion AQUI en la forma de enviar los resultlados
   			} else {
   				console.log('ERROR: ' + err);
+  				res.status(500).send(err);
   			}
   		});
   	};
@@ -32,13 +33,28 @@
   			}, 
   			function(err, doctores) {
 	  			if(!err) {
-	        		//console.log('GET /doctores search');
-	  				res.json(doctores); //Atencion AQUI en la forma de enviar los resultlados
+	  				res.json(doctores);
 	  			} else {
 	  				console.log('ERROR: ' + err);
+	  				res.status(500).send(err);
 	  			}
   			}
   		);
+  	};
+
+  	//GET - Return all rows by query
+  	queryDoctores = function(req, res) {
+  		Doctor.find(
+  			req.body,
+  			function(err, doctores) {
+  			if(!err) {
+        		console.log('GET /queryDoctores');
+  				res.json(doctores);
+  			} else {
+  				console.log('ERROR: ' + err);
+  				res.status(500).send(err);
+  			}
+  		});
   	};
   	
 
@@ -50,6 +66,7 @@
 				res.json(doctor);
 			} else {
 				console.log('ERROR: ' + err);
+				res.status(500).send(err);
 			}
 		});
 	};
@@ -71,12 +88,12 @@
 		doctor.save(function(err) {
 			if(!err) {
 				console.log('Created');
+				res.json(doctor);
 			} else {
 				console.log('ERROR: ' + err);
+				res.status(500).send(err);
 			}
 		});
-
-		res.json(doctor);
 	};
 
 	//PUT - Update a register already exists
@@ -92,10 +109,11 @@
 			doctor.save(function(err) {
 				if(!err) {
 					console.log('Updated');
+					res.json(doctor);
 				} else {
 					console.log('ERROR: ' + err);
+					res.status(500).send(err);
 				}
-				res.json(doctor);
 			});
 		});
 	}
@@ -108,6 +126,7 @@
 					console.log('Removed');
 				} else {
 					console.log('ERROR: ' + err);
+					res.status(500).send(err);
 				}
 			})
 		});

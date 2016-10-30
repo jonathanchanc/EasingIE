@@ -35,11 +35,13 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
             controller: 'DoctorController'
         })
 
-        .when('/doctores/update/:doctorId', {
+        .when('/doctores/update/:instanceId', {
             templateUrl: 'views/doctor/form.html',
             controller: 'DoctorController'
         })
 
+
+        // ---------------------------------REVISAR
         //Expedientes
 		.when('/expedientes', {
 			templateUrl: 'views/expediente.html',
@@ -55,6 +57,7 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
 			templateUrl: 'views/expediente.create.html',
 			controller: 'ExpedienteController'
 		})
+        // -----------------------------------
 
         //Oficina
         .when('/oficinas', {
@@ -67,25 +70,57 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
             controller: 'OficinaController'
         })
 
-        .when('/oficinas/update/:oficinaId', {
+        .when('/oficinas/update/:instanceId', {
             templateUrl: 'views/oficina/form.html',
             controller: 'OficinaController'
         })
 
         //Pivilegios
         .when('/privilegios', {
-            templateUrl: 'views/admin/privilegio/privilegio.html',
+            templateUrl: 'views/privilegio/list.html',
             controller: 'PrivilegioController'
         })
 
         .when('/privilegios/create', {
-            templateUrl: 'views/admin/privilegio/privilegio.create.html',
+            templateUrl: 'views/privilegio/form.html',
             controller: 'PrivilegioController'
         })
 
-        .when('/privilegios/update/:privilegioId', {
-            templateUrl: 'views/admin/privilegio/privilegio.create.html',
+        .when('/privilegios/update/:instanceId', {
+            templateUrl: 'views/privilegio/form.html',
             controller: 'PrivilegioController'
+        })
+
+         //Rol
+        .when('/roles', {
+            templateUrl: 'views/rol/list.html',
+            controller: 'RolController'
+        })
+
+        .when('/roles/create', {
+            templateUrl: 'views/rol/form.html',
+            controller: 'RolController'
+        })
+
+        .when('/roles/update/:instanceId', {
+            templateUrl: 'views/rol/form.html',
+            controller: 'RolController'
+        })
+
+        //User
+        .when('/users', {
+            templateUrl: 'views/user/list.html',
+            controller: 'UserController'
+        })
+
+        .when('/users/create', {
+            templateUrl: 'views/user/form.html',
+            controller: 'UserController'
+        })
+
+        .when('/users/update/:instanceId', {
+            templateUrl: 'views/user/form.html',
+            controller: 'UserController'
         })
 
 		
@@ -97,16 +132,16 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
         })
 
 		.when('/signin', {
-            templateUrl: 'views/user/signin.html',
+            templateUrl: 'views/main/signin.html',
             controller: 'MainController'
         })
-        .when('/signup', {
-            templateUrl: 'views/user/signup.html',
-            controller: 'MainController'
-        })
+        // .when('/signup', {
+        //     templateUrl: 'views/main/signup.html',
+        //     controller: 'MainController'
+        // })
         .when('/me', {
-            templateUrl: 'views/user/form.html',
-            controller: 'UserController'
+            templateUrl: 'views/main/detail.html',
+            controller: 'MainController'
         })
         .otherwise({
             redirectTo: '/'

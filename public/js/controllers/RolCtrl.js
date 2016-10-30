@@ -1,26 +1,26 @@
-angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'])
-	
-	.controller('OficinaController', ['$scope','$routeParams','$location','Oficinas', function($scope, $routeParams, $location, Oficinas) {
-		$scope.controlNameSingular = 'Oficina';
-		$scope.controlNamePlural = 'Oficinas';
-		$scope.controllerInstance = 'oficinas';
+angular.module('RolCtrl', ['ngMessages','ui.bootstrap', 'localytics.directives'])
+
+	.controller('RolController', ['$scope','$routeParams','$location','Roles','Privilegios', function($scope, $routeParams, $location, Roles, Privilegios) {
+		$scope.controlNameSingular = 'Rol';
+		$scope.controlNamePlural = 'Roles';
+		$scope.controllerInstance = 'roles';
 
 		$scope.searchData = {};
 		$scope.formData = {estado:'Activo'};
+		$scope.formData.privilegios = [];
 		
 		$scope.loading = true;
 		$scope.instanceList = [];
+		$scope.Privilegios = [];
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
 		$scope.messageText = '';
 
-		//console.log($routeParams.instanceId);
-		
 		// GET =====================================================================
 		// Get all rows and show them, use the service to get all the rows
 		$scope.inicio = function(){
-			Oficinas.get()
+			Roles.get()
 				.success(function(data) {
 					$scope.instanceList = angular.copy(data);
 					$scope.loading = false;
@@ -34,7 +34,7 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'])
 		
 		$scope.search = function(){
 			if($scope.searchData.data != undefined && $scope.searchData.data != ''){
-				Oficinas.search($scope.searchData)
+				Roles.search($scope.searchData)
 					.success(function(data) {
 						$scope.instanceList = {};
 						$scope.instanceList = angular.copy(data);
@@ -49,9 +49,21 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'])
 		
 
 		$scope.get = function(){
+			//Get Privilegios List
+			Privilegios.query({estado: 'Activo'})
+				.success(function(data) {
+					$scope.Privilegios = angular.copy(data);
+					//console.log(data);
+				})
+				.error(function(data, status) {
+					console.log("Error al obtener Privilegios");
+	            })
+			;
+
+
 			//console.log($routeParams);
 			if($routeParams.instanceId != undefined){
-				Oficinas.findById($routeParams.instanceId)
+				Roles.findById($routeParams.instanceId)
 					.success(function(data) {
 						$scope._id = $routeParams.instanceId;
 						$scope.formData = angular.copy(data);
@@ -70,11 +82,9 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'])
 		// CREATE ==================================================================
 		// when submitting the add form, send the text to the node API
 		$scope.createOrUpdate = function(isValid, _id) {
-			//console.log($scope.formData);
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
-			//$scope.formData.estado = "Activo";
 
 			// Valida formData, si el #Instancia y el Nombre estan asiganaods, crea el registro
 			if (isValid) {
@@ -83,7 +93,7 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'])
 
 				if(_id != undefined) {
 					//UPDATE
-					Oficinas.update(_id,$scope.formData)
+					Roles.update(_id,$scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
 							console.log("Registro actualizado con exito");
@@ -100,7 +110,7 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'])
 				} else {
 					//CREATE
 					// call the create function from our service (returns a promise object)
-					Oficinas.create($scope.formData)
+					Roles.create($scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
 							console.log("Registro insertado con exito");
@@ -110,14 +120,13 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'])
 							$scope.messageShow = true;
 							$scope.messageClass = "alert-danger";
 							$scope.messageText = "Error al crear";
-					        console.log('Error: ' + status);
+							console.log('Error: ' + status);
 					        console.log(data);
 			            })
 						;
 				}
 			} else {
 				$scope.loading = false;
-				//$scope.status = 0;
 				$scope.messageShow = true;
 				$scope.messageClass = "alert-danger";
 		        $scope.messageText = "Rellene los datos correctamente";
@@ -128,8 +137,7 @@ angular.module('OficinaCtrl', ['ngMessages','ui.bootstrap'])
 		// Delete Method
 		$scope.delete = function(_id) {
 			$scope.loading = true;
-
-			Oficinas.delete(_id);
+			Roles.delete(_id);
 		};
 
 	}]);

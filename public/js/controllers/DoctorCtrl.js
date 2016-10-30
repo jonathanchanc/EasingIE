@@ -1,19 +1,6 @@
-angular.module('DoctorCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*/])
-	//NUEVO
-	/*
-	.factory('Socket', ['socketFactory',
-	    function(socketFactory) {
-	    	return socketFactory();
-	    }
-	])
-	.factory('_',['$window', function($window){
-            return $window._;
-        }])
-	*/
-	//NUEVO
-
-	// inject the Doctor service factory into our controller
-	.controller('DoctorController', ['$scope','$routeParams','$location','$http','Doctores','$filter', /*'Socket',*/ function($scope, $routeParams, $location, $http, Doctores, $filter /*, Socket*/) {
+angular.module('DoctorCtrl', ['ngMessages','ui.bootstrap'])
+	
+	.controller('DoctorController', ['$scope','$routeParams','$location','Doctores', function($scope, $routeParams, $location, Doctores, $filter) {
 		$scope.controlNameSingular = 'Doctor';
 		$scope.controlNamePlural = 'Doctores';
 		$scope.controllerInstance = 'doctores';
@@ -22,13 +9,13 @@ angular.module('DoctorCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*/
 		$scope.formData = {estado:'Activo'};
 		
 		$scope.loading = true;
-		$scope.doctores = [];
+		$scope.instanceList = [];
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
 		$scope.messageText = '';
 
-		//console.log($routeParams.doctorId);
+		//console.log($routeParams.instanceId);
 		
 		// GET =====================================================================
 		// Get all rows and show them, use the service to get all the rows
@@ -36,10 +23,8 @@ angular.module('DoctorCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*/
 			Doctores.get()
 				.success(function(data) {
 					//DESCOMENTAR AL IMPLEMENTAR DB 
-					$scope.doctores = angular.copy(data);
+					$scope.instanceList = angular.copy(data);
 					$scope.loading = false;
-					//DESCOMENTAR AL IMPLEMENTAR DB 
-					console.log(data);
 				})
 				.error(function(data, status) {
 					console.log("Error en la busqueda de "+$scope.controlNamePlural);
@@ -52,8 +37,8 @@ angular.module('DoctorCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*/
 			if($scope.searchData.data != undefined && $scope.searchData.data != ''){
 				Doctores.search($scope.searchData)
 					.success(function(data) {
-						$scope.doctores = {};
-						$scope.doctores = angular.copy(data);
+						$scope.instanceList = {};
+						$scope.instanceList = angular.copy(data);
 					})
 					.error(function(data, status) {
 						console.log("Error en la busqueda de "+$scope.controlNamePlural);
@@ -66,15 +51,15 @@ angular.module('DoctorCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*/
 
 		$scope.get = function(){
 			//console.log($routeParams);
-			if($routeParams.doctorId != undefined){
-				Doctores.findById($routeParams.doctorId)
+			if($routeParams.instanceId != undefined){
+				Doctores.findById($routeParams.instanceId)
 					.success(function(data) {
-						$scope._id = $routeParams.doctorId;
+						$scope._id = $routeParams.instanceId;
 						$scope.formData = angular.copy(data);
 						//console.log(data);
 					})
 					.error(function(data, status) {
-						console.log("No se encontró doctor");
+						console.log("No se encontró "+$scope.controlNameSingular);
 						$location.path('/'+$scope.controllerInstance);
 		            })
 					;
@@ -109,8 +94,8 @@ angular.module('DoctorCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*/
 							$scope.messageShow = true;
 							$scope.messageClass = "alert-danger";
 							$scope.messageText = "Error al actualizar";
-					        $scope.message = data || "Request failed";
-							console.log("Datos invalidos: "+status+" - "+$scope.message);
+					        console.log('Error: ' + status);
+					        console.log(data);
 			            })
 						;
 				} else {
@@ -126,8 +111,8 @@ angular.module('DoctorCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*/
 							$scope.messageShow = true;
 							$scope.messageClass = "alert-danger";
 							$scope.messageText = "Error al crear";
-					        $scope.message = data || "Request failed";
-							console.log("Datos invalidos: "+status+" - "+$scope.message);
+					        console.log('Error: ' + status);
+					        console.log(data);
 			            })
 						;
 				}

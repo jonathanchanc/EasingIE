@@ -1,11 +1,28 @@
 var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
+	Schema = mongoose.Schema,
+	Oficina = mongoose.model('Oficina'),
+	Rol = mongoose.model('Rol');
+	
 
 var UserSchema = new Schema({
-	email: String,
-    password: String,
-    token: String
+	usuario: 							{ type: String, unique: true },
+	password: 							{ type: String },
+	token: 								{ type: String },
+	titulo: 							{ type: String },
+	siglas: 							{ type: String },
+	apPaterno:							{ type: String },
+	apMaterno:							{ type: String },
+	nombre:								{ type: String },
+	telefono:							{ type: String },
+	email:								{ type: String },
+    fecha_alta: 						{ type: Date, default: Date.now },
+    estado: 							{ type: String },
+    
+    oficina: 							{ type: mongoose.Schema.Types.ObjectId, ref: 'Oficina' },
+    rol: 								{ type: mongoose.Schema.Types.ObjectId, ref: 'Rol' }
+    
 });
 
+UserSchema.index({ nombre: 1, apPaterno: 1, apMaterno: 1}, { unique: true });
 
 module.exports = mongoose.model('User', UserSchema);

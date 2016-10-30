@@ -1,14 +1,14 @@
-angular.module('DoctorService', [])
+angular.module('PrivilegioService', [])
 
 	// super simple service
 	// each function returns a promise object 
-	.factory('Doctores', ['$rootScope', '$http',function($rootScope, $http) {
+	.factory('Privilegios', ['$rootScope', '$http',function($rootScope, $http) {
         var baseUrl = $rootScope.baseUrl;
-        var nameUrl = '/api/doctores'
+        var nameUrl = '/api/privilegios'
 
 		return {
-			get : function() {
-				return $http.get(baseUrl + nameUrl);
+			query : function(data) {
+				return $http.post(baseUrl + nameUrl + '/query/', data);
 			},
 			findById : function(id) {
 				return $http.get(baseUrl + nameUrl + '/' + id);
@@ -21,12 +21,6 @@ angular.module('DoctorService', [])
 			},
 			delete : function(id) {
 				return $http.delete(baseUrl + nameUrl + '/' + id);
-			},
-			search : function(data) {
-				return $http.post(baseUrl + nameUrl + 'Search/', data);
-			},
-			query : function(data) {
-				return $http.post(baseUrl + nameUrl + 'Query/', data);
 			}
 		}
 	}]);

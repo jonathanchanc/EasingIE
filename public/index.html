@@ -12,12 +12,14 @@
 	<link rel="stylesheet" href="css/style.css"> <!-- custom styles -->
 
 	<!-- JS -->
+	<script src="libs/jquery/dist/jquery.min.js"></script> <!-- Using for CHOSEN -->
 	<script src="libs/angular/angular.min.js"></script>
 	<script src="libs/angular-route/angular-route.min.js"></script>
 	<script src="libs/ngstorage/ngStorage.js"></script>
 
 	<!-- ANGULAR CUSTOM -->
 	<script src="js/controllers/MainCtrl.js"></script>
+	<script src="js/services/MainService.js"></script>
 	<!-- Cliente -->
 	<script src="js/controllers/ClienteCtrl.js"></script>
 	<script src="js/services/ClienteService.js"></script>
@@ -34,8 +36,11 @@
 	<script src="js/controllers/OficinaCtrl.js"></script>
 	<script src="js/services/OficinaService.js"></script>
 	<!-- Privilegio -->
-	<script src="js/controllers/admin/PrivilegioCtrl.js"></script>
-	<script src="js/services/admin/PrivilegioService.js"></script>
+	<script src="js/controllers/PrivilegioCtrl.js"></script>
+	<script src="js/services/PrivilegioService.js"></script>
+	<!-- Rol -->
+	<script src="js/controllers/RolCtrl.js"></script>
+	<script src="js/services/RolService.js"></script>
 	
 
 	<!--script src="js/controllers/NerdCtrl.js"></script>
@@ -43,129 +48,156 @@
 	<script src="js/controllers/GeekCtrl.js"></script>
 	<script src="js/services/GeekService.js"></script>
 
-
+	<script src="js/appDirectives.js"></script>
 	<script src="js/appRoutes.js"></script>
 	<script src="js/app.js"></script>
 
 	<!-- BOOTSRAP AND JQUERY - JS  -->
-	<script src="libs/jquery/dist/jquery.min.js"></script>
+	<!--script src="libs/jquery/dist/jquery.min.js"></script-->
 	<script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
 
-	<!-- ANGULAR UI BOOTSTRAP - DATEPICKER -->
+	<!-- ANGULAR UI BOOTSTRAP -->
 	<link rel="stylesheet" href="libs/angular-ui-bootstrap/ui-bootstrap-csp.css">
 	<script src="libs/angular-ui-bootstrap/ui-bootstrap.js"></script>
 
 	<!-- MESSAGES -->
-	<!--script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script-->
 	<script src="libs/angular-messages/angular-messages.js"></script>
+
+	<!-- CHOSEN -->
+	<link rel="stylesheet" href="libs/chosen/chosen.css" type="text/css" />
+	<script src="libs/chosen/chosen.jquery.js"></script>
+	<script src="libs/chosen/chosen.js"></script>
+	<script src="libs/angular-chosen-localytics/dist/angular-chosen.min.js"></script>
+
+	<!-- UDERSCORE -->
+	<script src="libs/underscore/underscore.js"></script>
+
+	<!-- LOADING BAR -->
+	<link rel='stylesheet' href='libs/angular-loading-bar/build/loading-bar.min.css' type='text/css' media='all' />
+	<script type='text/javascript' src='libs/angular-loading-bar/build/loading-bar.min.js'></script>
 </head>
 
 <body ng-app="sampleApp">
-<!--body ng-app="sampleApp" ng-controller="ExpedienteController"-->
-	<div class="container">
+	<div id="wrapper">
+		<!--div id="header" ></div-->
+		<div id="content" class="container">
 
-		<!-- HEADER -->
-		<nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="MainController">
-			<div class="container-fluid">
-				<!-- Brand and toggle get grouped for better mobile display -->
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="/">Inicio</a>
-				</div>
+			<!-- HEADER -->
+			<nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="MainController">
+				<div class="container-fluid">
+					<!-- Brand and toggle get grouped for better mobile display -->
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="/">Inicio</a>
+					</div>
 
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav">
-						
+					<!-- Collect the nav links, forms, and other content for toggling -->
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" ng-init="getPrivilegios()">
+						<ul class="nav navbar-nav">
+							
 
-						<li data-ng-show="token" class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ingresos <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li data-ng-show="token"><a ng-href="/fichas">Fichas</a></li>
-								<li data-ng-show="token"><a ng-href="/afiliacion">Afiliación</a></li>
-							</ul>
-						</li>
+							<li data-ng-show="token && _.contains(modulos,'Ingresos')" class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ingresos <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/fichas">Fichas</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/afiliacion">Afiliación</a></li>
+								</ul>
+							</li>
 
-						<li data-ng-show="token" class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Egresos <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li data-ng-show="token"><a ng-href="/pagoDoctores">Pago a doctores</a></li>
-								<li data-ng-show="token"><a ng-href="/pagoServicios">Pago de servicios</a></li>
-							</ul>
-						</li>
+							<li data-ng-show="token && _.contains(modulos,'Egresos')" class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Egresos <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/pagoDoctores">Pago a doctores</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/pagoServicios">Pago de servicios</a></li>
+								</ul>
+							</li>
 
-						<li data-ng-show="token" class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Consultas <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li data-ng-show="token"><a href="/expedientes">Expedientes</a></li>
-								<li data-ng-show="token"><a href="/geeks">Revisiones</a></li>
-							</ul>
-						</li>
+							<li data-ng-show="token" class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Consultas <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a href="/expedientes">Expedientes</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a href="/geeks">Revisiones</a></li>
+								</ul>
+							</li>
 
-						<li data-ng-show="token" class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reportes <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li data-ng-show="token"><a ng-href="/reporteServicios">Servicios Pagados</a></li>
-								<li data-ng-show="token"><a ng-href="/reporteDoctores">Doctores Pagados</a></li>
-								<li data-ng-show="token"><a ng-href="/reporteBalance">Balance General</a></li>
-								<li data-ng-show="token"><a ng-href="/reporteFichas">Fichas por Usuario</a></li>
-								<li data-ng-show="token"><a ng-href="/reporteHistorico">Histórico</a></li>
-							</ul>
-						</li>
+							<li data-ng-show="token" class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reportes <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteServicios">Servicios Pagados</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteDoctores">Doctores Pagados</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteBalance">Balance General</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteFichas">Fichas por Usuario</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteHistorico">Histórico</a></li>
+								</ul>
+							</li>
 
-						<li data-ng-show="token" class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administración <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li data-ng-show="token"><a ng-href="/doctores">Doctores</a></li>
-								<li data-ng-show="token"><a ng-href="/oficinas">Oficinas</a></li>
-								<li data-ng-show="token"><a ng-href="/programas">Servicios</a></li>
-								<li data-ng-show="token"><a ng-href="/clientes">Clientes (Afiliados)</a></li>
-							</ul>
-						</li>
-
-
-						<li data-ng-show="token" class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seguridad <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li data-ng-show="token"><a ng-href="/privilegios">Privilegios</a></li>
-								<li data-ng-show="token"><a ng-href="/usuarios">Usuarios</a></li>
-								<!--li role="separator" class="divider"></li>
-								<li><a href="#">Separated link</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="#">One more separated link</a></li-->
-							</ul>
-						</li>
+							<li data-ng-show="token && _.contains(modulos,'Administracion')" class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administración <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Doctores')"><a ng-href="/doctores">Doctores</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/oficinas">Oficinas</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Programas')"><a ng-href="/programas">Servicios</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Clientes')"><a ng-href="/clientes">Clientes (Afiliados)</a></li>
+								</ul>
+							</li>
 
 
-					</ul>
-					<!--form class="navbar-form navbar-left" role="search">
-						<div class="form-group">
-							<input type="text" class="form-control" placeholder="Search">
-						</div>
-						<button type="submit" class="btn btn-default">Submit</button>
-					</form-->
-					<ul class="nav navbar-nav navbar-right">
-						<li data-ng-show="token"><a ng-href="/me">Me</a></li>
-	                    <li data-ng-hide="token"><a ng-href="/signin">Signin</a></li>
-	                    <li data-ng-hide="token"><a ng-href="/signup">Signup</a></li>
-						<li data-ng-show="token"><a ng-click="logout()">Logout</a></li>
-						
-					</ul>
-				</div><!-- /.navbar-collapse -->
-			</div><!-- /.container-fluid -->
-		</nav>
+							<li data-ng-show="token && _.contains(modulos,'Seguridad')" class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seguridad <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Privilegios')"><a ng-href="/privilegios">Privilegios</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Roles')"><a ng-href="/roles">Roles</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Usuarios')"><a ng-href="/users">Usuarios</a></li>
+									<!--li role="separator" class="divider"></li>
+									<li><a href="#">Separated link</a></li>
+									<li role="separator" class="divider"></li>
+									<li><a href="#">One more separated link</a></li-->
+								</ul>
+							</li>
 
-		<br/>
-		<br/>
 
-		<!-- ANGULAR DYNAMIC CONTENT -->
-		<div ng-view></div>
+						</ul>
+						<!--form class="navbar-form navbar-left" role="search">
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="Search">
+							</div>
+							<button type="submit" class="btn btn-default">Submit</button>
+						</form-->
+						<ul class="nav navbar-nav navbar-right">
+							<li data-ng-show="token"><a ng-href="/me">Me</a></li>
+		                    <li data-ng-hide="token"><a ng-href="/signin">Iniciar Sesion</a></li>
+		                    <!--li data-ng-hide="token"><a ng-href="/signup">Signup</a></li-->
+							<li data-ng-show="token"><a ng-click="logout()">Salir</a></li>
+							
+						</ul>
+					</div><!-- /.navbar-collapse -->
+				</div><!-- /.container-fluid -->
+			</nav>
 
+			<!-- ANGULAR DYNAMIC CONTENT -->
+			<div ng-view></div>
+
+		</div>
+		<div id="footer">
+			<p class="text-center" style="padding-top: 15px">Footer - JRC</p>
+		</div>
 	</div>
+
+	<!-- VALIDATION MESSAGES FOR FORMS -->
+	<script type="text/ng-template" id="error-messages">
+	    <p ng-message="required">Este campo es obligatorio</p>
+	    <p ng-message="number">Este campo debe ser numérico</p>
+	    <p ng-message="min">Ingrese un número mayor</p>
+	    <p ng-message="max">Ingrese un número menor</p>
+	    <p ng-message="minlength">Este dato es muy corto</p>
+	    <p ng-message="maxlength">Este dato es muy largo</p>
+	    <p ng-message="email">Ingrese un Correo Electrónico válido</p>
+	</script>
+
 </body>
 </html>

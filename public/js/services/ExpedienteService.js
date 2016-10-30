@@ -2,29 +2,28 @@ angular.module('ExpedienteService', [])
 
 	// super simple service
 	// each function returns a promise object 
-	.factory('Expedientes', ['$http',function($http) {
-		var baseUrl = "http://ades-suciqroo.rhcloud.com";
-        //var baseUrl = "http://10.10.35.44:3000";
-        //var baseUrl = "http://localhost:3000";
+	.factory('Expedientes', ['$rootScope', '$http',function($rootScope, $http) {
+        var baseUrl = $rootScope.baseUrl;
+        var nameUrl = '/api/expedientes'
 
 		return {
 			get : function() {
-				return $http.get(baseUrl + '/api/expedientes');
+				return $http.get(baseUrl + nameUrl);
 			},
 			findById : function(id) {
-				return $http.get(baseUrl + '/api/expedientes/' + id);
+				return $http.get(baseUrl + nameUrl + '/' + id);
 			},
-			create : function(expedienteData) {
-				return $http.post(baseUrl + '/api/expedientes', expedienteData);
+			create : function(data) {
+				return $http.post(baseUrl + nameUrl, data);
 			},
-			update : function(id,expedienteData) {
-				return $http.put(baseUrl + '/api/expedientes/' + id, expedienteData);
+			update : function(id,data) {
+				return $http.put(baseUrl + nameUrl + '/' + id, data);
 			},
 			delete : function(id) {
-				return $http.delete(baseUrl + '/api/expedientes/' + id);
+				return $http.delete(baseUrl + nameUrl + '/' + id);
 			},
 			search : function(data) {
-				return $http.post(baseUrl + '/api/expedientesSearch/', data);
+				return $http.post(baseUrl + nameUrl + 'Search/', data);
 			}
 		}
 	}]);

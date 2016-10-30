@@ -22,8 +22,8 @@
 <div>
     <table class="table">
         <thead>
+            <th>Usuario</th>
             <th>Nombre</th>
-            <th>Direccion</th>
             <th>Telefono</th>
             <th>Email</th>
             <th>Estado</th>
@@ -32,8 +32,8 @@
         <tbody>
             <!--LOPP OVER INSTANCE -->
             <tr ng-repeat="instance in instanceList" ng-show="instanceList.length > 0">
-                <td>{{instance.nombre}}</td>
-                <td>{{instance.direccion}}</td>
+                <td>{{instance.usuario}}</td>
+                <td>{{instance.nombre}} {{instance.apPaterno}} {{instance.apMaterno}}</td>
                 <td>{{instance.telefono}}</td>
                 <td>{{instance.email}}</td>
                 <td>{{instance.estado}}</td>
@@ -41,7 +41,7 @@
             </tr>
             <!--END LOOP -->
             <tr ng-if="instanceList.length <= 0">
-                <td colspan="6">No se encontraron {{controlNamePlural}}</td>
+                <td colspan="5">No se encontraron {{controlNamePlural}}</td>
             </tr>
             
         </tbody>

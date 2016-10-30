@@ -1,10 +1,10 @@
-angular.module('DoctorService', [])
+angular.module('RolService', [])
 
 	// super simple service
 	// each function returns a promise object 
-	.factory('Doctores', ['$rootScope', '$http',function($rootScope, $http) {
+	.factory('Roles', ['$rootScope', '$http',function($rootScope, $http) {
         var baseUrl = $rootScope.baseUrl;
-        var nameUrl = '/api/doctores'
+        var nameUrl = '/api/roles'
 
 		return {
 			get : function() {

@@ -1,4 +1,4 @@
-angular.module('ExpedienteCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*/])
+angular.module('ExpedienteCtrl', ['ngMessages'/*,'btford.socket-io'*/])
 	//NUEVO
 	/*
 	.factory('Socket', ['socketFactory',

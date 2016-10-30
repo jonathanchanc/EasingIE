@@ -30,7 +30,7 @@
         </thead>
         <tbody>
             <!--LOPP OVER INSTANCE -->
-            <tr ng-repeat="instance in doctores" ng-show="doctores.length > 0">
+            <tr ng-repeat="instance in instanceList" ng-show="instanceList.length > 0">
                 <td>{{instance.nombre}} {{instance.apPaterno}} {{instance.apMaterno}}</td>
                 <td>{{instance.telefono}}</td>
                 <td>{{instance.email}}</td>
@@ -38,7 +38,7 @@
                 <td><a class="button btn btn-success" href="/{{controllerInstance}}/update/{{instance._id}}">Editar</a></td>
             </tr>
             <!--END LOOP -->
-            <tr ng-if="doctores.length <= 0">
+            <tr ng-if="instanceList.length <= 0">
                 <td colspan="5">No se encontraron {{controlNamePlural}}</td>
             </tr>
             

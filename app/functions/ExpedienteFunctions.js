@@ -10,6 +10,7 @@
   				res.json(expedientes); //Atencion AQUI en la forma de enviar los resultlados
   			} else {
   				console.log('ERROR: ' + err);
+  				res.status(500).send(err);
   			}
   		});
   	};
@@ -36,6 +37,7 @@
 	  				res.json(expedientes); //Atencion AQUI en la forma de enviar los resultlados
 	  			} else {
 	  				console.log('ERROR: ' + err);
+	  				res.status(500).send(err);
 	  			}
   			}
   		);
@@ -50,6 +52,7 @@
 				res.json(expediente);
 			} else {
 				console.log('ERROR: ' + err);
+				res.status(500).send(err);
 			}
 		});
 	};
@@ -114,12 +117,12 @@
 		expediente.save(function(err) {
 			if(!err) {
 				console.log('Created');
+				res.json(expediente);
 			} else {
 				console.log('ERROR: ' + err);
+				res.status(500).send(err);
 			}
 		});
-
-		res.json(expediente);
 	};
 
 	//PUT - Update a register already exists
@@ -183,10 +186,11 @@
 			expediente.save(function(err) {
 				if(!err) {
 					console.log('Updated');
+					res.json(expediente);
 				} else {
 					console.log('ERROR: ' + err);
+					res.status(500).send(err);
 				}
-				res.json(expediente);
 			});
 		});
 	}
@@ -199,6 +203,7 @@
 					console.log('Removed');
 				} else {
 					console.log('ERROR: ' + err);
+					res.status(500).send(err);
 				}
 			})
 		});

@@ -25,36 +25,22 @@
     <div class="panel-body">
     
         <div class="row">
-            <div class="col-xs-12 col-md-6" ng-class="{ 'has-error': form.nombre.$touched && form.nombre.$invalid }">
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.nombre.$touched && form.nombre.$invalid }">
                 <label for="nombre">Nombre</label>
                 <input type="text" name="nombre" class="form-control" placeholder="Nombre" ng-model="formData.nombre" required>
                 <div class="help-block" ng-messages="form.nombre.$error" ng-if="form.nombre.$touched">
                         <div ng-messages-include="error-messages"></div>
                 </div>
             </div>
-            <div class="col-xs-12 col-md-6" ng-class="{ 'has-error': form.direccion.$touched && form.direccion.$invalid }">
-                <label for="direccion">Dirrecion</label>
-                <input type="text" name="direccion" class="form-control" placeholder="Direccion" ng-model="formData.direccion" required>
-                <div class="help-block" ng-messages="form.direccion.$error" ng-if="form.direccion.$touched">
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.descripcion.$touched && form.descripcion.$invalid }">
+                <label for="descripcion">Descripcion</label>
+                <input type="text" name="descripcion" class="form-control" placeholder="Descripcion" ng-model="formData.descripcion" required>
+                <div class="help-block" ng-messages="form.descripcion.$error" ng-if="form.descripcion.$touched">
                         <div ng-messages-include="error-messages"></div>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.telefono.$touched && form.telefono.$invalid }">
-                <label for="telefono">Telefono</label>
-                <input type="text" name="telefono" class="form-control" placeholder="Telefono" ng-model="formData.telefono" required>
-                <div class="help-block" ng-messages="form.telefono.$error" ng-if="form.telefono.$touched">
-                        <div ng-messages-include="error-messages"></div>
-                </div>
-            </div>
-            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.email.$touched && form.email.$invalid }">
-                <label for="email">Correo Electrónico</label>
-                <input type="email" name="email" class="form-control" placeholder="email" ng-model="formData.email" >
-                <div class="help-block" ng-messages="form.email.$error" ng-if="form.email.$touched">
-                        <div ng-messages-include="error-messages"></div>
-                </div>
-            </div>
             <div class="col-xs-12 col-md-3">
                 <label for="estado">Estado</label>
                 <div class="form-group">
@@ -65,6 +51,26 @@
                         <label><input type="radio" name="estado" value="Inactivo" ng-model="formData.estado">Inactivo</label>
                     </div>
                 </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Privilegios</div>
+    <div class="panel-body">
+    
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                
+                <select style="width:100%;" chosen multiple
+                        options="Privilegios"
+                        placeholder-text-multiple="'Privilegios'"
+                        data-ng-model="formData.privilegios"
+                        data-ng-options="privilegio._id as privilegio.nombre for privilegio in Privilegios">
+                        <option value=""></option>
+                </select>
             </div>
         </div>
 

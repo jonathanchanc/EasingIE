@@ -51,3 +51,52 @@ require('./app/routes')(app); // pass our application into our routes
 app.listen(port);	
 console.log('EASING IE running on port: ' + port); 			// shoutout to the user
 exports = module.exports = app; 						// expose app
+
+
+
+
+// Socket.io connection handler
+/*
+io.on('connection', function (socket) {  
+        console.log(socket.id);
+
+        //Simple example
+        socket.on('led:on', function (data) {
+           led.on();
+           console.log('LED ON RECEIVED');
+        });
+
+        
+        //Example using data
+        socket.on('led:on', function (data) {
+            switch(data.pin){
+                case 1: led1.on();
+                    break;
+                case 2: led2.on();
+                    break;
+                default: console.log('NO PIN RECEIVED');
+            }
+            
+            console.log('LED '+data.pin+' ON RECEIVED');
+            var dataS = {pin: data.pin, stat: 'on'};
+            io.sockets.emit('led:change', dataS );
+            //console.log(io);
+            //var clients = io.sockets; //clients is an array
+            //console.log(clients);
+        });
+
+        //Example refresh after create|update|delete
+        socket.on('led:created', function (data) {
+            io.sockets.emit('led:refresh');
+        });
+
+        socket.on('led:deleted', function (data) {
+            io.sockets.emit('led:refresh');
+        });
+
+        socket.on('led:updated', function (data) {
+            io.sockets.emit('led:refresh');
+        });
+
+    });
+*/
