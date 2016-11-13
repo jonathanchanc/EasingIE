@@ -8,38 +8,6 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
 			controller: 'MainController'
 		})
 
-        //Cliente
-        .when('/clientes', {
-            templateUrl: 'views/cliente/list.html',
-            controller: 'ClienteController'
-        })
-
-        .when('/clientes/create', {
-            templateUrl: 'views/cliente/form.html',
-            controller: 'ClienteController'
-        })
-
-        .when('/clientes/update/:clienteId', {
-            templateUrl: 'views/cliente/form.html',
-            controller: 'ClienteController'
-        })
-
-         //Doctor
-        .when('/doctores', {
-            templateUrl: 'views/doctor/list.html',
-            controller: 'DoctorController'
-        })
-
-        .when('/doctores/create', {
-            templateUrl: 'views/doctor/form.html',
-            controller: 'DoctorController'
-        })
-
-        .when('/doctores/update/:instanceId', {
-            templateUrl: 'views/doctor/form.html',
-            controller: 'DoctorController'
-        })
-
 
         // ---------------------------------REVISAR
         //Expedientes
@@ -59,6 +27,24 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
 		})
         // -----------------------------------
 
+        //CONTABILIDAD --------------------------
+        //Ficha
+        .when('/fichas', {
+            templateUrl: 'views/ficha/list.html',
+            controller: 'FichaController'
+        })
+
+        .when('/fichas/create', {
+            templateUrl: 'views/ficha/form.html',
+            controller: 'FichaController'
+        })
+
+        .when('/fichas/update/:instanceId', {
+            templateUrl: 'views/ficha/form.html',
+            controller: 'FichaController'
+        })
+
+        //ADMINISTRACION --------------------------
         //Oficina
         .when('/oficinas', {
             templateUrl: 'views/oficina/list.html',
@@ -75,6 +61,87 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
             controller: 'OficinaController'
         })
 
+        //Especialidad
+        .when('/especialidades', {
+            templateUrl: 'views/especialidad/list.html',
+            controller: 'EspecialidadController'
+        })
+
+        .when('/especialidades/create', {
+            templateUrl: 'views/especialidad/form.html',
+            controller: 'EspecialidadController'
+        })
+
+        .when('/especialidades/update/:instanceId', {
+            templateUrl: 'views/especialidad/form.html',
+            controller: 'EspecialidadController'
+        })
+
+        //Programa
+        .when('/programas', {
+            templateUrl: 'views/programa/list.html',
+            controller: 'ProgramaController'
+        })
+
+        .when('/programas/create', {
+            templateUrl: 'views/programa/form.html',
+            controller: 'ProgramaController'
+        })
+
+        .when('/programas/update/:instanceId', {
+            templateUrl: 'views/programa/form.html',
+            controller: 'ProgramaController'
+        })
+
+         //Doctor
+        .when('/doctores', {
+            templateUrl: 'views/doctor/list.html',
+            controller: 'DoctorController'
+        })
+
+        .when('/doctores/create', {
+            templateUrl: 'views/doctor/form.html',
+            controller: 'DoctorController'
+        })
+
+        .when('/doctores/update/:instanceId', {
+            templateUrl: 'views/doctor/form.html',
+            controller: 'DoctorController'
+        })
+
+        //Proveedor
+        .when('/proveedores', {
+            templateUrl: 'views/proveedor/list.html',
+            controller: 'ProveedorController'
+        })
+
+        .when('/proveedores/create', {
+            templateUrl: 'views/proveedor/form.html',
+            controller: 'ProveedorController'
+        })
+
+        .when('/proveedores/update/:instanceId', {
+            templateUrl: 'views/proveedor/form.html',
+            controller: 'ProveedorController'
+        })
+
+         //Cliente
+        .when('/clientes', {
+            templateUrl: 'views/cliente/list.html',
+            controller: 'ClienteController'
+        })
+
+        .when('/clientes/create', {
+            templateUrl: 'views/cliente/form.html',
+            controller: 'ClienteController'
+        })
+
+        .when('/clientes/update/:instanceId', {
+            templateUrl: 'views/cliente/form.html',
+            controller: 'ClienteController'
+        })
+
+        //SEGURIDAD ---------------------------------
         //Pivilegios
         .when('/privilegios', {
             templateUrl: 'views/privilegio/list.html',
@@ -125,12 +192,6 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
 
 		
 		////pendiente de cambio de  nombre -----------------------
-
-        .when('/geeks', {
-            templateUrl: 'views/geek.html',
-            controller: 'GeekController'    
-        })
-
 		.when('/signin', {
             templateUrl: 'views/main/signin.html',
             controller: 'MainController'

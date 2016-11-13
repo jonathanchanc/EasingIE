@@ -1,143 +1,229 @@
-angular.module('RolCtrl', ['ngMessages','ui.bootstrap', 'localytics.directives'])
+angular.module('RolCtrl',[])
 
 	.controller('RolController', ['$scope','$routeParams','$location','Roles','Privilegios', function($scope, $routeParams, $location, Roles, Privilegios) {
 		$scope.controlNameSingular = 'Rol';
 		$scope.controlNamePlural = 'Roles';
 		$scope.controllerInstance = 'roles';
 
-		$scope.searchData = {};
-		$scope.formData = {estado:'Activo'};
-		$scope.formData.privilegios = [];
-		
-		$scope.loading = true;
-		$scope.instanceList = [];
-		$scope.Privilegios = [];
+		$scope.label = {};
+		$scope.label.search = 'Buscar';
+		$scope.label.searchResults = 'Resultados de la búsqueda: ';
+		$scope.label.add = 'Nuevo';
+		$scope.label.edit = 'Editar';
+		$scope.label.createOrEdit = '';
+		$scope.label.save = 'Guardar';
+		$scope.label.cancel = 'Cancelar';
+		$scope.label.data = 'Datos';
+		$scope.label.list = 'Lista';
+		$scope.label.backToList = 'Click aqui para regresar a la lista';
+		$scope.label.noResults = 'No se encontraron resultados';
+		$scope.label.errorResults = 'Error al cargar lista';
+		$scope.label.invalidDataForm = 'Rellene los datos correctamente';
+		$scope.label.noFindRow = 'Registro no encontrado';
+		$scope.label.createSuccess = 'Registro insertado con éxito';
+		$scope.label.createFailed = 'Error al crear';
+		$scope.label.updateSuccess = 'Registro actualizado con éxito';
+		$scope.label.updateFailed = 'Error al actualizar';
+		$scope.label.paginationShowing = 'Mostrando resultados';
+		$scope.label.paginationTo = '-';
+		$scope.label.paginationFrom = 'de';
+		$scope.label.active = 'Activo';
+		$scope.label.inactive = 'Inactivo';
+		$scope.label.management = 'Administración';
+		$scope.label.yes = 'Si';
+		$scope.label.no = 'No';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
 		$scope.messageText = '';
+		$scope.messageAlertSuccess = 'alert-success';
+		$scope.messageAlertInfo = 'alert-info';
+		$scope.messageAlertDanger = 'alert-danger';
 
-		// GET =====================================================================
-		// Get all rows and show them, use the service to get all the rows
+		$scope.searchData = {};
+		$scope.formData = {estado:'Activo'};
+		$scope.formData.privilegios = [];
+
+		$scope.instanceList = [];
+		$scope.Privilegios = [];
+
+		$scope.totalItems = 0;
+		$scope.currentPage = 1;
+		$scope.itemsPerPage = 5;
+		$scope.textPagination = '';
+
+		$scope.model = { 
+						nombre: 'Nombre',
+						descripcion: 'Descripción',
+						homepage: 'Home',
+						privilegios: 'Privilegios',
+						estado: 'Estado'
+					};
+
 		$scope.inicio = function(){
-			Roles.get()
+			$scope.pagination();
+		}
+
+		$scope.pagination = function(search){
+			var query = {};
+			if(search==1) //if is from "Search" button, then set $scope.currentPage = 1; for pagination of search
+				$scope.currentPage = 1;
+			else if(search==0) //if is from "List" button, then set $scope.searchData.data = ''; for retur to normla list
+				$scope.searchData.data = '';
+
+			//Si $scope.searchData.data no esta vacio, buscamos por ese dato
+			if($scope.searchData.data != undefined && $scope.searchData.data != ''){
+				$scope.searchData.active = true;
+				var data = $scope.searchData.data;
+				data = data.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+	  			query.query = 	{ $or: [
+					  				{nombre: { $regex : data, $options:"i" } },
+					  				{descripcion: { $regex : data, $options:"i" } },
+					  				{homepage: { $regex : data, $options:"i" } },
+					  				]
+					  			};
+			} else {
+				$scope.searchData.active = false;
+				$scope.messageShow = false;
+	  			query.query = {};
+			}
+			
+			query.limit = $scope.itemsPerPage;
+    		query.page = $scope.currentPage-1;
+    		query.sort = {};
+			$scope.query(query);
+		}
+
+
+		$scope.query = function(query){
+			Roles.query(query)
 				.success(function(data) {
-					$scope.instanceList = angular.copy(data);
-					$scope.loading = false;
+					$scope.instanceList = angular.copy(data.instanceList);
+					$scope.totalItems = data.totalItems;
+					$scope.calculateTextPagination();
+					if($scope.searchData.active){
+						$scope.messageShow = true;
+						$scope.messageClass = $scope.messageAlertInfo;
+						$scope.messageText = $scope.label.searchResults+' "'+$scope.searchData.data+'"... ';
+					}
+					
 				})
 				.error(function(data, status) {
-					console.log("Error en la busqueda de "+$scope.controlNamePlural);
+					$scope.messageShow = true;
+					$scope.messageClass = $scope.messageAlertDanger;
+					$scope.messageText = $scope.label.errorResults;
+			        console.log('Error: ' + status);
+			        console.log(data);
 	            })
 			;
 		}
 
-		
-		$scope.search = function(){
-			if($scope.searchData.data != undefined && $scope.searchData.data != ''){
-				Roles.search($scope.searchData)
-					.success(function(data) {
-						$scope.instanceList = {};
-						$scope.instanceList = angular.copy(data);
-					})
-					.error(function(data, status) {
-						console.log("Error en la busqueda de "+$scope.controlNamePlural);
-						$location.path('/'+$scope.controllerInstance);
-		            })
-					;
-			}
+
+		$scope.calculateTextPagination = function(){
+			var strFrom = ((($scope.currentPage - 1) * $scope.itemsPerPage) + 1);
+			var strTo = ($scope.currentPage * $scope.itemsPerPage);
+			if(strTo > $scope.totalItems || strTo == 0)
+				strTo = $scope.totalItems;
+			
+			$scope.textPagination = 
+				$scope.label.paginationShowing+' '+strFrom+' '+
+				$scope.label.paginationTo +' '+strTo+' '+
+				$scope.label.paginationFrom+' '+$scope.totalItems;
 		}
 		
 
 		$scope.get = function(){
-			//Get Privilegios List
-			Privilegios.query({estado: 'Activo'})
+			Privilegios.query({ query: { estado: 'Activo' } })
 				.success(function(data) {
-					$scope.Privilegios = angular.copy(data);
-					//console.log(data);
+					$scope.Privilegios = angular.copy(data.instanceList);
+					console.log(data);
 				})
 				.error(function(data, status) {
-					console.log("Error al obtener Privilegios");
+					$scope.messageShow = true;
+					$scope.messageClass = $scope.messageAlertDanger;
+					$scope.messageText = $scope.label.errorResults;
+					console.log('Error: ' + status);
+			        console.log(data);
 	            })
 			;
 
-
-			//console.log($routeParams);
+			$scope.label.createOrEdit = $scope.label.add;
 			if($routeParams.instanceId != undefined){
 				Roles.findById($routeParams.instanceId)
 					.success(function(data) {
 						$scope._id = $routeParams.instanceId;
 						$scope.formData = angular.copy(data);
-						//console.log(data);
+						$scope.label.createOrEdit = $scope.label.edit;
 					})
 					.error(function(data, status) {
-						console.log("No se encontró "+$scope.controlNameSingular);
+						console.log($scope.label.noFindRow);
 						$location.path('/'+$scope.controllerInstance);
 		            })
 					;
 			}
-			//console.log($scope._id);
 		}
 
 
-		// CREATE ==================================================================
-		// when submitting the add form, send the text to the node API
 		$scope.createOrUpdate = function(isValid, _id) {
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
 
-			// Valida formData, si el #Instancia y el Nombre estan asiganaods, crea el registro
+			//Valida formData
 			if (isValid) {
-
-				$scope.loading = true;
-
+				
 				if(_id != undefined) {
-					//UPDATE
 					Roles.update(_id,$scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
-							console.log("Registro actualizado con exito");
+							console.log($scope.label.updateSuccess);
 							$location.path('/'+$scope.controllerInstance);
+
+							//COMO ENVIAR ALERTA?							
+							$scope.messageShow = true;
+							$scope.messageClass = $scope.messageAlertSuccess;
+							$scope.messageText = $scope.label.updateSuccess;
+
 						})
 						.error(function(data, status) {
 							$scope.messageShow = true;
-							$scope.messageClass = "alert-danger";
-							$scope.messageText = "Error al actualizar";
+							$scope.messageClass = $scope.messageAlertDanger;
+							$scope.messageText = $scope.label.updateFailed;
 					        console.log('Error: ' + status);
 					        console.log(data);
 			            })
 						;
 				} else {
-					//CREATE
-					// call the create function from our service (returns a promise object)
 					Roles.create($scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
-							console.log("Registro insertado con exito");
+							console.log($scope.label.createSuccess);
 							$location.path('/'+$scope.controllerInstance);
+
+							//COMO ENVIAR ALERTA?							
+							$scope.messageShow = true;
+							$scope.messageClass = $scope.messageAlertSuccess;
+							$scope.messageText = $scope.label.createSuccess;
+
 						})
 						.error(function(data, status) {
 							$scope.messageShow = true;
-							$scope.messageClass = "alert-danger";
-							$scope.messageText = "Error al crear";
-							console.log('Error: ' + status);
+							$scope.messageClass = $scope.messageAlertDanger;
+							$scope.messageText = $scope.label.createFailed;
+					        console.log('Error: ' + status);
 					        console.log(data);
 			            })
 						;
 				}
 			} else {
-				$scope.loading = false;
 				$scope.messageShow = true;
-				$scope.messageClass = "alert-danger";
-		        $scope.messageText = "Rellene los datos correctamente";
+				$scope.messageClass = $scope.messageAlertDanger;
+		        $scope.messageText = $scope.label.invalidDataForm;
 			}
 		};
 
-		// DELETE ==================================================================
-		// Delete Method
 		$scope.delete = function(_id) {
-			$scope.loading = true;
-			Roles.delete(_id);
+			//Roles.delete(_id);
 		};
 
 	}]);

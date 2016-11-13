@@ -1,70 +1,48 @@
 	var jwt	 = require('jsonwebtoken');
-	var User = require('../models/User.js');
-	//var Cita = require('./models/Cita.js');
+	var Instance = require('../models/User.js');
 
-  	//GET - Return all users in the DB
-  	findAllUsers = function(req, res) {
-  		User.find(function(err, users) {
-  			if(!err) {
-        		console.log('GET /users');
-  				res.json(users); //Atencion AQUI en la forma de enviar los resultlados
-  			} else {
-  				console.log('ERROR: ' + err);
-  				res.status(500).send(err);
-  			}
-  		});
-  	};
+  	//POST - Return all rows by query
+  	queryUser = function(req, res) {
+  		var query = Instance.find(req.body.query); 					//Array
 
-  	
-  	//GET - Return all users in the DB with search data
-  	searchUsers = function(req, res) {
-  		//console.log(req.body.data);
-  		req.body.data = req.body.data.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&"); //To escape special characters
-  		//console.log(req.body.data);
-  		User.find(
-  			//Tipe of operator and fields with values $regex = like, $options:"i" = insensitive
-  			{ $or: [
-  				{apPaterno: { $regex : req.body.data, $options:"i" } },
-  				{apMaterno: { $regex : req.body.data, $options:"i" } },
-  				{nombre: 	{ $regex : req.body.data, $options:"i" } },
-  				{telefono: 	{ $regex : req.body.data, $options:"i" } },
-  				{email: 	{ $regex : req.body.data, $options:"i" } }
-  				]
-  			}, 
-  			function(err, users) {
-	  			if(!err) {
-	  				res.json(users);
+  		if(req.body.select)
+			query.select(req.body.select);							//Array || String
+  			
+		if(req.body.limit)
+			query.limit(req.body.limit); 							//Number
+
+    	if(req.body.limit && req.body.page)
+			query.skip(req.body.limit * req.body.page);				//Number
+
+    	if(req.body.sort)
+			query.sort(req.body.sort);								//Array	|| String
+  			
+		query.exec(function(err, instanceList) {
+				Instance.count(req.body.query).exec(function(err, count) {
+					if(!err) {
+	        		//console.log('POST - query');
+	  				res.json({
+	  					instanceList: instanceList,
+	  					totalItems: count 
+		            });
+
 	  			} else {
 	  				console.log('ERROR: ' + err);
 	  				res.status(500).send(err);
 	  			}
-  			}
-  		);
-  	};
-
-
-  	//GET - Return all rows by query
-  	queryUsers = function(req, res) {
-  		User.find(
-  			req.body,
-  			function(err, users) {
-  			if(!err) {
-        		console.log('GET /queryUsers');
-  				res.json(users);
-  			} else {
-  				console.log('ERROR: ' + err);
-  				res.status(500).send(err);
-  			}
+	            
+	        });
+  			
   		});
   	};
   	
 
-	//GET - Return a User with specified ID
+	//GET - Return a instance with specified ID
 	findByIdUser = function(req, res) {
-		User.findById(req.params.id, function(err, user) {
+		Instance.findById(req.params.id, function(err, instance) {
 			if(!err) {
-	    		console.log('GET /user/' + req.params.id);
-				res.json(user);
+	    		//console.log('GET /' + req.params.id);
+				res.json(instance);
 			} else {
 				console.log('ERROR: ' + err);
 				res.status(500).send(err);
@@ -72,82 +50,78 @@
 		});
 	};
 
-	//POST - Insert a new User in the DB
+	//POST - Insert a new row in the DB
 	addUser = function(req, res) {
-		console.log('POST');
-		console.log(req.body);
+		var instance = {};
+		instance.usuario = req.body.usuario;
+		instance.password = req.body.password;
+		instance.token = req.body.token;
+		instance.titulo = req.body.titulo;
+		instance.siglas = req.body.siglas;
+		instance.apPaterno = req.body.apPaterno;
+		instance.apMaterno = req.body.apMaterno;
+		instance.nombre = req.body.nombre;
+		instance.telefono = req.body.telefono;
+		instance.email = req.body.email;
+		instance.fecha_alta = req.body.fecha_alta;
+		instance.estado = req.body.estado;
 
-		var user = new User({
-				usuario: 							req.body.usuario,
-				password: 							req.body.password,
-				//token: 							req.body.token,
-				titulo: 							req.body.titulo,
-				siglas: 							req.body.siglas,
-				apPaterno:							req.body.apPaterno,
-				apMaterno:							req.body.apMaterno,
-				nombre:								req.body.nombre,
-				telefono:							req.body.telefono,
-				email:								req.body.email,
-			    fecha_alta: 						req.body.fecha_alta,
-			    estado: 							req.body.estado,
-			    
-			    oficina: 							req.body.oficina,
-			    rol: 								req.body.rol
-		});
+		instance.oficina = req.body.oficina;
+		instance.rol = req.body.rol;
 
-		user.save(function(err, user) {
-            user.token = jwt.sign(user, /*process.env.JWT_SECRET ||*/ 'randomkey');
-            user.save(function(err, user1) {
-            	if(!err) {
-					console.log('Created');
-					res.json(user1);
-				} else {
-					console.log('ERROR: ' + err);
-					res.status(500).send(err);
-				}
-            });
-        });
-	};
-
-	//PUT - Update a register already exists
-	updateUser = function(req, res) {
-		User.findById(req.params.id, function(err, user) {
-			user.usuario=							req.body.usuario;
-			user.password=							req.body.password;
-			user.token=								req.body.token;
-			user.titulo=							req.body.titulo;
-			user.siglas=							req.body.siglas;
-			user.apPaterno=							req.body.apPaterno;
-			user.apMaterno=							req.body.apMaterno;
-			user.nombre=							req.body.nombre;
-			user.telefono=							req.body.telefono;
-			user.email=								req.body.email;
-			user.fecha_alta=						req.body.fecha_alta;
-			user.estado= 							req.body.estado;
-
-			user.oficina= 							req.body.oficina;
-			user.rol= 								req.body.rol;
-
-			user.save(function(err, user) {
-	            user.token = jwt.sign(user, /*process.env.JWT_SECRET ||*/ 'randomkey');
+		instance = new Instance(instance);
+		instance.save(function(err,user) {
+			user.token = jwt.sign(user, /*process.env.JWT_SECRET ||*/ 'randomkey');
 	            user.save(function(err, user1) {
 	            	if(!err) {
-						console.log('Created');
+						//console.log('Created');
 						res.json(user1);
 					} else {
 						console.log('ERROR: ' + err);
 						res.status(500).send(err);
 					}
 	            });
-	        });
-			
+		});
+	};
+
+	//PUT - Update a register already exists
+	updateUser = function(req, res) {
+		Instance.findById(req.params.id, function(err, instance) {
+			instance.usuario = req.body.usuario;
+			instance.password = req.body.password;
+			instance.token = req.body.token;
+			instance.titulo = req.body.titulo;
+			instance.siglas = req.body.siglas;
+			instance.apPaterno = req.body.apPaterno;
+			instance.apMaterno = req.body.apMaterno;
+			instance.nombre = req.body.nombre;
+			instance.telefono = req.body.telefono;
+			instance.email = req.body.email;
+			instance.fecha_alta = req.body.fecha_alta;
+			instance.estado = req.body.estado;
+
+			instance.oficina = req.body.oficina;
+			instance.rol = req.body.rol;
+
+			instance.save(function(err, user) {
+				user.token = jwt.sign(user, /*process.env.JWT_SECRET ||*/ 'randomkey');
+	            user.save(function(err, user1) {
+	            	if(!err) {
+						//console.log('Updated');
+						res.json(user1);
+					} else {
+						console.log('ERROR: ' + err);
+						res.status(500).send(err);
+					}
+	            });
+			});
 		});
 	}
 
-	//DELETE - Delete a User with specified ID
+	//DELETE - Delete a instance with specified ID
 	deleteUser = function(req, res) {
-		User.findById(req.params.id, function(err, user) {
-			user.remove(function(err) {
+		Instance.findById(req.params.id, function(err, instance) {
+			instance.remove(function(err) {
 				if(!err) {
 					console.log('Removed');
 				} else {

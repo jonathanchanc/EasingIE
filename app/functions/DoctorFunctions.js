@@ -1,69 +1,47 @@
+	var Instance = require('../models/Doctor.js');
 
-	var Doctor = require('../models/Doctor.js');
-	//var Cita = require('./models/Cita.js');
+  	//POST - Return all rows by query
+  	queryDoctor = function(req, res) {
+  		var query = Instance.find(req.body.query); 					//Array
 
-  	//GET - Return all doctores in the DB
-  	findAllDoctores = function(req, res) {
-  		Doctor.find(function(err, doctores) {
-  			if(!err) {
-        		console.log('GET /doctores');
-  				res.json(doctores); //Atencion AQUI en la forma de enviar los resultlados
-  			} else {
-  				console.log('ERROR: ' + err);
-  				res.status(500).send(err);
-  			}
-  		});
-  	};
+  		if(req.body.select)
+			query.select(req.body.select);							//Array || String
+  			
+		if(req.body.limit)
+			query.limit(req.body.limit); 							//Number
 
-  	
-  	//GET - Return all doctores in the DB with search data
-  	searchDoctores = function(req, res) {
-  		//console.log(req.body.data);
-  		req.body.data = req.body.data.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&"); //To escape special characters
-  		//console.log(req.body.data);
-  		Doctor.find(
-  			//Tipe of operator and fields with values $regex = like, $options:"i" = insensitive
-  			{ $or: [
-  				{apPaterno: { $regex : req.body.data, $options:"i" } },
-  				{apMaterno: { $regex : req.body.data, $options:"i" } },
-  				{nombre: 	{ $regex : req.body.data, $options:"i" } },
-  				{telefono: 	{ $regex : req.body.data, $options:"i" } },
-  				{email: 	{ $regex : req.body.data, $options:"i" } }
-  				]
-  			}, 
-  			function(err, doctores) {
-	  			if(!err) {
-	  				res.json(doctores);
+    	if(req.body.limit && req.body.page)
+			query.skip(req.body.limit * req.body.page);				//Number
+
+    	if(req.body.sort)
+			query.sort(req.body.sort);								//Array	|| String
+  			
+		query.exec(function(err, instanceList) {
+				Instance.count(req.body.query).exec(function(err, count) {
+					if(!err) {
+	        		//console.log('POST - query');
+	  				res.json({
+	  					instanceList: instanceList,
+	  					totalItems: count 
+		            });
+
 	  			} else {
 	  				console.log('ERROR: ' + err);
 	  				res.status(500).send(err);
 	  			}
-  			}
-  		);
-  	};
-
-  	//GET - Return all rows by query
-  	queryDoctores = function(req, res) {
-  		Doctor.find(
-  			req.body,
-  			function(err, doctores) {
-  			if(!err) {
-        		console.log('GET /queryDoctores');
-  				res.json(doctores);
-  			} else {
-  				console.log('ERROR: ' + err);
-  				res.status(500).send(err);
-  			}
+	            
+	        });
+  			
   		});
   	};
   	
 
-	//GET - Return a Doctor with specified ID
+	//GET - Return a instance with specified ID
 	findByIdDoctor = function(req, res) {
-		Doctor.findById(req.params.id, function(err, doctor) {
+		Instance.findById(req.params.id, function(err, instance) {
 			if(!err) {
-	    		console.log('GET /doctor/' + req.params.id);
-				res.json(doctor);
+	    		//console.log('GET /' + req.params.id);
+				res.json(instance);
 			} else {
 				console.log('ERROR: ' + err);
 				res.status(500).send(err);
@@ -71,24 +49,23 @@
 		});
 	};
 
-	//POST - Insert a new Doctor in the DB
+	//POST - Insert a new row in the DB
 	addDoctor = function(req, res) {
-		console.log('POST');
-		console.log(req.body);
+		var instance = {};
+		instance.apPaterno = req.body.apPaterno;
+		instance.apMaterno = req.body.apMaterno;
+		instance.nombre = req.body.nombre;
+		instance.telefono = req.body.telefono;
+		instance.email = req.body.email;
+		instance.fecha_alta = req.body.fecha_alta;
+		instance.especialidades = req.body.especialidades;
+		instance.estado = req.body.estado;
 
-		var doctor = new Doctor({
-				apPaterno:							req.body.apPaterno,
-				apMaterno:							req.body.apMaterno,
-				nombre:								req.body.nombre,
-				telefono:							req.body.telefono,
-				email:								req.body.email,
-				estado: 							req.body.estado
-		});
-
-		doctor.save(function(err) {
+		instance = new Instance(instance);
+		instance.save(function(err) {
 			if(!err) {
-				console.log('Created');
-				res.json(doctor);
+				//console.log('Created');
+				res.json(instance);
 			} else {
 				console.log('ERROR: ' + err);
 				res.status(500).send(err);
@@ -98,18 +75,20 @@
 
 	//PUT - Update a register already exists
 	updateDoctor = function(req, res) {
-		Doctor.findById(req.params.id, function(err, doctor) {
-			doctor.apPaterno=							req.body.apPaterno;
-			doctor.apMaterno=							req.body.apMaterno;
-			doctor.nombre=								req.body.nombre;
-			doctor.telefono=							req.body.telefono;
-			doctor.email=								req.body.email;
-			doctor.estado= 								req.body.estado;
+		Instance.findById(req.params.id, function(err, instance) {
+			instance.apPaterno = req.body.apPaterno;
+			instance.apMaterno = req.body.apMaterno;
+			instance.nombre = req.body.nombre;
+			instance.telefono = req.body.telefono;
+			instance.email = req.body.email;
+			instance.fecha_alta = req.body.fecha_alta;
+			instance.especialidades = req.body.especialidades;
+			instance.estado = req.body.estado;
 
-			doctor.save(function(err) {
+			instance.save(function(err) {
 				if(!err) {
-					console.log('Updated');
-					res.json(doctor);
+					//console.log('Updated');
+					res.json(instance);
 				} else {
 					console.log('ERROR: ' + err);
 					res.status(500).send(err);
@@ -118,10 +97,10 @@
 		});
 	}
 
-	//DELETE - Delete a Doctor with specified ID
+	//DELETE - Delete a instance with specified ID
 	deleteDoctor = function(req, res) {
-		Doctor.findById(req.params.id, function(err, doctor) {
-			doctor.remove(function(err) {
+		Instance.findById(req.params.id, function(err, instance) {
+			instance.remove(function(err) {
 				if(!err) {
 					console.log('Removed');
 				} else {

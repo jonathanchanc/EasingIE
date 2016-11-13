@@ -1,178 +1,218 @@
-angular.module('ClienteCtrl', ['ngMessages','ui.bootstrap'/*,'btford.socket-io'*/])
-	//NUEVO
-	/*
-	.factory('Socket', ['socketFactory',
-	    function(socketFactory) {
-	    	return socketFactory();
-	    }
-	])
-	.factory('_',['$window', function($window){
-            return $window._;
-        }])
-	*/
-	//NUEVO
+angular.module('ClienteCtrl',[])
 
-	// inject the Cliente service factory into our controller
-	.controller('ClienteController', ['$scope','$routeParams','$location','$http','Clientes','$filter', /*'Socket',*/ function($scope, $routeParams, $location, $http, Clientes, $filter /*, Socket*/) {
+	.controller('ClienteController', ['$scope','$routeParams','$location','Clientes', function($scope, $routeParams, $location, Clientes) {
 		$scope.controlNameSingular = 'Cliente';
 		$scope.controlNamePlural = 'Clientes';
 		$scope.controllerInstance = 'clientes';
 
-		$scope.searchData = {};
-		$scope.formData = {estado:'Activo'};
-		
-		$scope.loading = true;
-		$scope.clientes = [];
+		$scope.label = {};
+		$scope.label.search = 'Buscar';
+		$scope.label.searchResults = 'Resultados de la búsqueda: ';
+		$scope.label.add = 'Nuevo';
+		$scope.label.edit = 'Editar';
+		$scope.label.createOrEdit = '';
+		$scope.label.save = 'Guardar';
+		$scope.label.cancel = 'Cancelar';
+		$scope.label.data = 'Datos';
+		$scope.label.list = 'Lista';
+		$scope.label.backToList = 'Click aqui para regresar a la lista';
+		$scope.label.noResults = 'No se encontraron resultados';
+		$scope.label.errorResults = 'Error al cargar lista';
+		$scope.label.invalidDataForm = 'Rellene los datos correctamente';
+		$scope.label.noFindRow = 'Registro no encontrado';
+		$scope.label.createSuccess = 'Registro insertado con éxito';
+		$scope.label.createFailed = 'Error al crear';
+		$scope.label.updateSuccess = 'Registro actualizado con éxito';
+		$scope.label.updateFailed = 'Error al actualizar';
+		$scope.label.paginationShowing = 'Mostrando resultados';
+		$scope.label.paginationTo = '-';
+		$scope.label.paginationFrom = 'de';
+		$scope.label.active = 'Activo';
+		$scope.label.inactive = 'Inactivo';
+		$scope.label.management = 'Administración';
+		$scope.label.yes = 'Si';
+		$scope.label.no = 'No';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
 		$scope.messageText = '';
+		$scope.messageAlertSuccess = 'alert-success';
+		$scope.messageAlertInfo = 'alert-info';
+		$scope.messageAlertDanger = 'alert-danger';
 
-		//console.log($routeParams.clienteId);
+		$scope.searchData = {};
+		$scope.formData = {estado:'Activo', afiliado:'No'};
+
+		$scope.instanceList = [];
 		
-		// GET =====================================================================
-		// when landing on the page, get all rows and show them
-		// use the service to get all the rows
+		$scope.totalItems = 0;
+		$scope.currentPage = 1;
+		$scope.itemsPerPage = 5;
+		$scope.textPagination = '';
+
+		$scope.model = { 
+						apPaterno: 'Apellido Paterno',
+						apMaterno: 'Apellido Materno',
+						nombre: 'Nombre',
+						telefono: 'Telefono',
+						direccion: 'Dirección',
+						email: 'Email',
+					    fecha_alta: 'Fecha de alta',
+					    especialidades: 'Especialidades',
+					    afiliado: 'Afiliado',
+					    credencial: 'Credencial',
+					    estado: 'Estado'
+					};
 
 		$scope.inicio = function(){
-			Clientes.get()
+			$scope.pagination();
+		}
+
+		$scope.pagination = function(search){
+			var query = {};
+			if(search==1) //if is from "Search" button, then set $scope.currentPage = 1; for pagination of search
+				$scope.currentPage = 1;
+			else if(search==0) //if is from "List" button, then set $scope.searchData.data = ''; for retur to normla list
+				$scope.searchData.data = '';
+
+			//Si $scope.searchData.data no esta vacio, buscamos por ese dato
+			if($scope.searchData.data != undefined && $scope.searchData.data != ''){
+				$scope.searchData.active = true;
+				var data = $scope.searchData.data;
+				data = data.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+	  			query.query = 	{ $or: [
+					  				{nombre: { $regex : data, $options:"i" } },
+					  				{descripcion: { $regex : data, $options:"i" } },
+					  				]
+					  			};
+			} else {
+				$scope.searchData.active = false;
+				$scope.messageShow = false;
+	  			query.query = {};
+			}
+			
+			query.limit = $scope.itemsPerPage;
+    		query.page = $scope.currentPage-1;
+    		query.sort = {};
+			$scope.query(query);
+		}
+
+
+		$scope.query = function(query){
+			Clientes.query(query)
 				.success(function(data) {
-					$scope.clientes = angular.copy(data);
-					$scope.loading = false;
-					console.log(data);
+					$scope.instanceList = angular.copy(data.instanceList);
+					$scope.totalItems = data.totalItems;
+					$scope.calculateTextPagination();
+					if($scope.searchData.active){
+						$scope.messageShow = true;
+						$scope.messageClass = $scope.messageAlertInfo;
+						$scope.messageText = $scope.label.searchResults+' "'+$scope.searchData.data+'"... ';
+					}
+					
 				})
 				.error(function(data, status) {
-					console.log("Error en la busqueda de "+$scope.controlNamePlural);
+					$scope.messageShow = true;
+					$scope.messageClass = $scope.messageAlertDanger;
+					$scope.messageText = $scope.label.errorResults;
+			        console.log('Error: ' + status);
+			        console.log(data);
 	            })
 			;
 		}
 
-		
-		$scope.searchCliente = function(){
-			if($scope.searchData.data != undefined && $scope.searchData.data != ''){
-				Clientes.search($scope.searchData)
-					.success(function(data) {
-						$scope.clientes = {};
-						$scope.clientes = angular.copy(data);
-					})
-					.error(function(data, status) {
-						console.log("Error en la busqueda de "+$scope.controlNamePlural);
-						$location.path('/'+$scope.controllerInstance);
-		            })
-					;
-			}
+
+		$scope.calculateTextPagination = function(){
+			var strFrom = ((($scope.currentPage - 1) * $scope.itemsPerPage) + 1);
+			var strTo = ($scope.currentPage * $scope.itemsPerPage);
+			if(strTo > $scope.totalItems || strTo == 0)
+				strTo = $scope.totalItems;
+			
+			$scope.textPagination = 
+				$scope.label.paginationShowing+' '+strFrom+' '+
+				$scope.label.paginationTo +' '+strTo+' '+
+				$scope.label.paginationFrom+' '+$scope.totalItems;
 		}
 		
 
-		$scope.getCliente = function(){
-			//console.log($routeParams);
-			if($routeParams.clienteId != undefined){
-				Clientes.findById($routeParams.clienteId)
+		$scope.get = function(){
+			$scope.label.createOrEdit = $scope.label.add;
+			if($routeParams.instanceId != undefined){
+				Clientes.findById($routeParams.instanceId)
 					.success(function(data) {
-						$scope._id = $routeParams.clienteId;
+						$scope._id = $routeParams.instanceId;
 						$scope.formData = angular.copy(data);
-						$scope.formData.fecha_nacimiento = new Date($scope.formData.fecha_nacimiento);
-						//console.log(data);
+						$scope.label.createOrEdit = $scope.label.edit;
 					})
 					.error(function(data, status) {
-						console.log("No se encontró cliente");
+						console.log($scope.label.noFindRow);
 						$location.path('/'+$scope.controllerInstance);
 		            })
 					;
 			}
-			console.log($scope._id);
 		}
 
 
-		// CREATE ==================================================================
-		// when submitting the add form, send the text to the node API
-		$scope.createOrUpdateCliente = function(isValid, _id) {
-			//console.log($scope.formData);
+		$scope.createOrUpdate = function(isValid, _id) {
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
-			$scope.formData.estado = "Activo";
 
-			// Valida formData, si el #Dispositivo y el Nombre estan asiganaods, crea el registro
+			//Valida formData
 			if (isValid) {
-
-				$scope.loading = true;
-
+				
 				if(_id != undefined) {
-					//UPDATE
 					Clientes.update(_id,$scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
-							console.log("Registro actualizado con exito");
+							console.log($scope.label.updateSuccess);
 							$location.path('/'+$scope.controllerInstance);
+
+							//COMO ENVIAR ALERTA?							
+							$scope.messageShow = true;
+							$scope.messageClass = $scope.messageAlertSuccess;
+							$scope.messageText = $scope.label.updateSuccess;
+
 						})
 						.error(function(data, status) {
 							$scope.messageShow = true;
-							$scope.messageClass = "alert-danger";
-							$scope.messageText = "Error al actualizar";
-					        $scope.message = data || "Request failed";
-							console.log("Datos invalidos: "+status+" - "+$scope.message);
+							$scope.messageClass = $scope.messageAlertDanger;
+							$scope.messageText = $scope.label.updateFailed;
+					        console.log('Error: ' + status);
+					        console.log(data);
 			            })
 						;
 				} else {
-					//CREATE
-					// call the create function from our service (returns a promise object)
 					Clientes.create($scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
-							console.log("Registro insertado con exito");
+							console.log($scope.label.createSuccess);
 							$location.path('/'+$scope.controllerInstance);
+
+							//COMO ENVIAR ALERTA?							
+							$scope.messageShow = true;
+							$scope.messageClass = $scope.messageAlertSuccess;
+							$scope.messageText = $scope.label.createSuccess;
+
 						})
 						.error(function(data, status) {
 							$scope.messageShow = true;
-							$scope.messageClass = "alert-danger";
-							$scope.messageText = "Error al crear";
-					        $scope.message = data || "Request failed";
-							console.log("Datos invalidos: "+status+" - "+$scope.message);
+							$scope.messageClass = $scope.messageAlertDanger;
+							$scope.messageText = $scope.label.createFailed;
+					        console.log('Error: ' + status);
+					        console.log(data);
 			            })
 						;
 				}
 			} else {
-				$scope.loading = false;
-				//$scope.status = 0;
 				$scope.messageShow = true;
-				$scope.messageClass = "alert-danger";
-		        $scope.messageText = "Rellene los datos correctamente";
+				$scope.messageClass = $scope.messageAlertDanger;
+		        $scope.messageText = $scope.label.invalidDataForm;
 			}
 		};
 
-		// DELETE ==================================================================
-		// Delete Method
-		$scope.deleteCliente = function(_id,id) {
-			$scope.loading = true;
-
-			Clientes.delete(_id);
+		$scope.delete = function(_id) {
+			//Clientes.delete(_id);
 		};
-
-		// Update ==================================================================
-		// Update Method
-		$scope.updateCliente = function(_id,id) {
-			//$scope.loading = true; //COMENTAR AL GUSTO
-			//Valida formData, si el #Dispositivo y el Nombre estan asiganaods, crea el registro
-			if (_id != undefined && _id != '') {
-				//Validamos los campos del formulario
-				//$scope.formData.nombre = nombre; //Asignamos el disposito para que no se cambie de pin
-				$scope.formData.nombre = ($scope.formData.nombre!=undefined)?$scope.formData.nombre:'';
-				$scope.formData.apPaterno = ($scope.formData.apPaterno!=undefined)?$scope.formData.apPaterno:'';
-				$scope.formData.apaMaterno = ($scope.formData.apaMaterno!=undefined)?$scope.formData.apaMaterno:'';
-				$scope.formData.edad = ($scope.formData.edad!=undefined)?$scope.formData.edad:'';
-				$scope.formData.estado_civil = ($scope.formData.estado_civil!=undefined)?$scope.formData.estado_civil:'';
-
-				//Actualizamos
-            	Clientes.update(_id,$scope.formData);
-			}
-
-		};
-
-
 
 	}]);
-
-
-
-	

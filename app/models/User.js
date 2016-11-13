@@ -3,7 +3,6 @@ var mongoose = require('mongoose'),
 	Oficina = mongoose.model('Oficina'),
 	Rol = mongoose.model('Rol');
 	
-
 var UserSchema = new Schema({
 	usuario: 							{ type: String, unique: true },
 	password: 							{ type: String },
@@ -21,6 +20,17 @@ var UserSchema = new Schema({
     oficina: 							{ type: mongoose.Schema.Types.ObjectId, ref: 'Oficina' },
     rol: 								{ type: mongoose.Schema.Types.ObjectId, ref: 'Rol' }
     
+}, {
+	toObject: {
+		virtuals: true
+	},
+	toJSON: {
+		virtuals: true 
+	}
+});
+
+UserSchema.virtual('nombre_completo').get(function () {
+	return this.nombre + ' ' + this.apPaterno + ' ' + this.apMaterno;
 });
 
 UserSchema.index({ nombre: 1, apPaterno: 1, apMaterno: 1}, { unique: true });

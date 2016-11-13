@@ -19,7 +19,7 @@
 		query.exec(function(err, instanceList) {
 				Instance.count(req.body.query).exec(function(err, count) {
 					if(!err) {
-	        		console.log('POST - query');
+	        		//console.log('POST - query');
 	  				res.json({
 	  					instanceList: instanceList,
 	  					totalItems: count 

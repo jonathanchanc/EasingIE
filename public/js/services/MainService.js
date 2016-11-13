@@ -55,6 +55,7 @@ angular.module('MainService', [])
             logout: function(success) {
                 changeUser({});
                 delete $localStorage.token;
+                //delete $localStorage.privilegios;
                 success();
             }
         };

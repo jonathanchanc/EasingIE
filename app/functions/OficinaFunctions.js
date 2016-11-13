@@ -1,70 +1,47 @@
+	var Instance = require('../models/Oficina.js');
 
-	var Oficina = require('../models/Oficina.js');
-	//var Cita = require('./models/Cita.js');
+  	//POST - Return all rows by query
+  	queryOficina = function(req, res) {
+  		var query = Instance.find(req.body.query); 					//Array
 
-  	//GET - Return all oficinas in the DB
-  	findAllOficinas = function(req, res) {
-  		Oficina.find(function(err, oficinas) {
-  			if(!err) {
-        		console.log('GET /oficinas');
-  				res.json(oficinas); //Atencion AQUI en la forma de enviar los resultlados
-  			} else {
-  				console.log('ERROR: ' + err);
-  				res.status(500).send(err);
-  			}
-  		});
-  	};
+  		if(req.body.select)
+			query.select(req.body.select);							//Array || String
+  			
+		if(req.body.limit)
+			query.limit(req.body.limit); 							//Number
 
-  	
-  	//GET - Return all oficinas in the DB with search data
-  	searchOficinas = function(req, res) {
-  		//console.log(req.body.data);
-  		req.body.data = req.body.data.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&"); //To escape special characters
-  		//console.log(req.body.data);
-  		Oficina.find(
-  			//Tipe of operator and fields with values $regex = like, $options:"i" = insensitive
-  			{ $or: [
-  				{nombre: 	{ $regex : req.body.data, $options:"i" } },
-  				{direccion: 	{ $regex : req.body.data, $options:"i" } },
-  				{telefono: 	{ $regex : req.body.data, $options:"i" } },
-  				{email: 	{ $regex : req.body.data, $options:"i" } }
-  				]
-  			}, 
-  			function(err, oficinas) {
-	  			if(!err) {
-	        		//console.log('GET /oficinas search');
-	  				res.json(oficinas); //Atencion AQUI en la forma de enviar los resultlados
+    	if(req.body.limit && req.body.page)
+			query.skip(req.body.limit * req.body.page);				//Number
+
+    	if(req.body.sort)
+			query.sort(req.body.sort);								//Array	|| String
+  			
+		query.exec(function(err, instanceList) {
+				Instance.count(req.body.query).exec(function(err, count) {
+					if(!err) {
+	        		//console.log('POST - query');
+	  				res.json({
+	  					instanceList: instanceList,
+	  					totalItems: count 
+		            });
+
 	  			} else {
 	  				console.log('ERROR: ' + err);
 	  				res.status(500).send(err);
 	  			}
-  			}
-  		);
-  	};
-
-
-  	//GET - Return all rows by query
-  	queryOficinas = function(req, res) {
-  		Oficina.find(
-  			req.body,
-  			function(err, oficinas) {
-  			if(!err) {
-        		console.log('GET /queryOficinas');
-  				res.json(oficinas);
-  			} else {
-  				console.log('ERROR: ' + err);
-  				res.status(500).send(err);
-  			}
+	            
+	        });
+  			
   		});
   	};
   	
 
-	//GET - Return a Oficina with specified ID
+	//GET - Return a instance with specified ID
 	findByIdOficina = function(req, res) {
-		Oficina.findById(req.params.id, function(err, oficina) {
+		Instance.findById(req.params.id, function(err, instance) {
 			if(!err) {
-	    		console.log('GET /oficina/' + req.params.id);
-				res.json(oficina);
+	    		//console.log('GET /' + req.params.id);
+				res.json(instance);
 			} else {
 				console.log('ERROR: ' + err);
 				res.status(500).send(err);
@@ -72,23 +49,20 @@
 		});
 	};
 
-	//POST - Insert a new Oficina in the DB
+	//POST - Insert a new row in the DB
 	addOficina = function(req, res) {
-		console.log('POST');
-		console.log(req.body);
+		var instance = {};
+		instance.nombre = req.body.nombre;
+		instance.direccion = req.body.direccion;
+		instance.telefono = req.body.telefono;
+		instance.email = req.body.email;
+		instance.estado = req.body.estado;
 
-		var oficina = new Oficina({
-				nombre:								req.body.nombre,
-				direccion:							req.body.direccion,
-				telefono:							req.body.telefono,
-				email:								req.body.email,
-				estado: 							req.body.estado
-		});
-
-		oficina.save(function(err) {
+		instance = new Instance(instance);
+		instance.save(function(err) {
 			if(!err) {
-				console.log('Created');
-				res.json(oficina);
+				//console.log('Created');
+				res.json(instance);
 			} else {
 				console.log('ERROR: ' + err);
 				res.status(500).send(err);
@@ -98,17 +72,17 @@
 
 	//PUT - Update a register already exists
 	updateOficina = function(req, res) {
-		Oficina.findById(req.params.id, function(err, oficina) {
-			oficina.nombre=								req.body.nombre;
-			oficina.direccion=							req.body.direccion;
-			oficina.telefono=							req.body.telefono;
-			oficina.email=								req.body.email;
-			oficina.estado= 								req.body.estado;
+		Instance.findById(req.params.id, function(err, instance) {
+			instance.nombre = req.body.nombre;
+			instance.direccion = req.body.direccion;
+			instance.telefono = req.body.telefono;
+			instance.email = req.body.email;
+			instance.estado = req.body.estado;
 
-			oficina.save(function(err) {
+			instance.save(function(err) {
 				if(!err) {
-					console.log('Updated');
-					res.json(oficina);
+					//console.log('Updated');
+					res.json(instance);
 				} else {
 					console.log('ERROR: ' + err);
 					res.status(500).send(err);
@@ -117,10 +91,10 @@
 		});
 	}
 
-	//DELETE - Delete a Oficina with specified ID
+	//DELETE - Delete a instance with specified ID
 	deleteOficina = function(req, res) {
-		Oficina.findById(req.params.id, function(err, oficina) {
-			oficina.remove(function(err) {
+		Instance.findById(req.params.id, function(err, instance) {
+			instance.remove(function(err) {
 				if(!err) {
 					console.log('Removed');
 				} else {

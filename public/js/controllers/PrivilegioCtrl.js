@@ -5,26 +5,30 @@ angular.module('PrivilegioCtrl',[])
 		$scope.controlNamePlural = 'Privilegios';
 		$scope.controllerInstance = 'privilegios';
 
-		$scope.labels = {};
-		$scope.labels.search = 'Buscar';
-		$scope.labels.searchResults = 'Resultados de la búsqueda: ';
-		$scope.labels.add = 'Nuevo';
-		$scope.labels.edit = 'Editar';
-		$scope.labels.save = 'Guardar';
-		$scope.labels.cancel = 'Cancelar';
-		$scope.labels.list = 'Lista';
-		$scope.labels.backToList = 'Click aqui para regresar a la lista';
-		$scope.labels.noResults = 'No se encontraron resultados';
-		$scope.labels.errorResults = 'Error al cargar lista';
-		$scope.labels.invalidDataForm = 'Rellene los datos correctamente';
-		$scope.labels.noFindRow = 'Registro no encontrado';
-		$scope.labels.createSuccess = 'Registro insertado con éxito';
-		$scope.labels.createFailed = 'Error al crear';
-		$scope.labels.updateSuccess = 'Registro actualizado con éxito';
-		$scope.labels.updateFailed = 'Error al actualizar';
-		$scope.labels.paginationShowing = 'Mostrando resultados';
-		$scope.labels.paginationTo = '-';
-		$scope.labels.paginationFrom = 'de';
+		$scope.label = {};
+		$scope.label.search = 'Buscar';
+		$scope.label.searchResults = 'Resultados de la búsqueda: ';
+		$scope.label.add = 'Nuevo';
+		$scope.label.edit = 'Editar';
+		$scope.label.createOrEdit = '';
+		$scope.label.save = 'Guardar';
+		$scope.label.cancel = 'Cancelar';
+		$scope.label.data = 'Datos';
+		$scope.label.list = 'Lista';
+		$scope.label.backToList = 'Click aqui para regresar a la lista';
+		$scope.label.noResults = 'No se encontraron resultados';
+		$scope.label.errorResults = 'Error al cargar lista';
+		$scope.label.invalidDataForm = 'Rellene los datos correctamente';
+		$scope.label.noFindRow = 'Registro no encontrado';
+		$scope.label.createSuccess = 'Registro insertado con éxito';
+		$scope.label.createFailed = 'Error al crear';
+		$scope.label.updateSuccess = 'Registro actualizado con éxito';
+		$scope.label.updateFailed = 'Error al actualizar';
+		$scope.label.paginationShowing = 'Mostrando resultados';
+		$scope.label.paginationTo = '-';
+		$scope.label.paginationFrom = 'de';
+		$scope.label.active = 'Activo';
+		$scope.label.inactive = 'Inactivo';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -37,10 +41,19 @@ angular.module('PrivilegioCtrl',[])
 		$scope.formData = {estado:'Activo'};
 
 		$scope.instanceList = [];
+		
 		$scope.totalItems = 0;
 		$scope.currentPage = 1;
 		$scope.itemsPerPage = 5;
 		$scope.textPagination = '';
+
+		$scope.model = { 
+						id: 'ids',
+						nombre: 'Nombre',
+						modulo: 'Módulo',
+						descripcion: 'Descripción',
+						estado: 'Estado'
+					};
 
 		$scope.inicio = function(){
 			$scope.pagination();
@@ -83,18 +96,12 @@ angular.module('PrivilegioCtrl',[])
 					$scope.totalItems = data.totalItems;
 					$scope.calculateTextPagination();
 					if($scope.searchData.active){
-						$scope.messageShow = true;
-						$scope.messageClass = $scope.messageAlertInfo;
-						$scope.messageText = $scope.labels.searchResults+' "'+$scope.searchData.data+'"... ';
+						$scope.showMessage(true, $scope.messageAlertInfo, $scope.label.searchResults+' "'+$scope.searchData.data+'"... ');
 					}
 					
 				})
 				.error(function(data, status) {
-					$scope.messageShow = true;
-					$scope.messageClass = $scope.messageAlertDanger;
-					$scope.messageText = $scope.labels.errorResults;
-			        console.log('Error: ' + status);
-			        console.log(data);
+					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
 	            })
 			;
 		}
@@ -107,21 +114,23 @@ angular.module('PrivilegioCtrl',[])
 				strTo = $scope.totalItems;
 			
 			$scope.textPagination = 
-				$scope.labels.paginationShowing+' '+strFrom+' '+
-				$scope.labels.paginationTo +' '+strTo+' '+
-				$scope.labels.paginationFrom+' '+$scope.totalItems;
+				$scope.label.paginationShowing+' '+strFrom+' '+
+				$scope.label.paginationTo +' '+strTo+' '+
+				$scope.label.paginationFrom+' '+$scope.totalItems;
 		}
 		
 
 		$scope.get = function(){
+			$scope.label.createOrEdit = $scope.label.add;
 			if($routeParams.instanceId != undefined){
 				Privilegios.findById($routeParams.instanceId)
 					.success(function(data) {
 						$scope._id = $routeParams.instanceId;
 						$scope.formData = angular.copy(data);
+						$scope.label.createOrEdit = $scope.label.edit;
 					})
 					.error(function(data, status) {
-						console.log($scope.labels.noFindRow);
+						console.log($scope.label.noFindRow);
 						$location.path('/'+$scope.controllerInstance);
 		            })
 					;
@@ -141,54 +150,50 @@ angular.module('PrivilegioCtrl',[])
 					Privilegios.update(_id,$scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
-							console.log($scope.labels.updateSuccess);
+							console.log($scope.label.updateSuccess);
 							$location.path('/'+$scope.controllerInstance);
-
 							//COMO ENVIAR ALERTA?							
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertSuccess;
-							$scope.messageText = $scope.labels.updateSuccess;
-
+							//$scope.messageShow = true;
+							//$scope.messageClass = $scope.messageAlertSuccess;
+							//$scope.messageText = $scope.label.updateSuccess;
 						})
 						.error(function(data, status) {
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertDanger;
-							$scope.messageText = $scope.labels.updateFailed;
-					        console.log('Error: ' + status);
-					        console.log(data);
+							$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.updateFailed, status, data);
 			            })
 						;
 				} else {
 					Privilegios.create($scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
-							console.log($scope.labels.createSuccess);
+							console.log($scope.label.createSuccess);
 							$location.path('/'+$scope.controllerInstance);
-
 							//COMO ENVIAR ALERTA?							
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertSuccess;
-							$scope.messageText = $scope.labels.createSuccess;
-
+							//$scope.messageShow = true;
+							//$scope.messageClass = $scope.messageAlertSuccess;
+							//$scope.messageText = $scope.label.createSuccess;
 						})
 						.error(function(data, status) {
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertDanger;
-							$scope.messageText = $scope.labels.createFailed;
-					        console.log('Error: ' + status);
-					        console.log(data);
+							$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
 			            })
 						;
 				}
 			} else {
-				$scope.messageShow = true;
-				$scope.messageClass = $scope.messageAlertDanger;
-		        $scope.messageText = $scope.labels.invalidDataForm;
+				$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.invalidDataForm);
 			}
 		};
 
 		$scope.delete = function(_id) {
 			//Privilegios.delete(_id);
+		};
+
+		$scope.showMessage = function(show,type,message,status,data) {
+			$scope.messageShow = show;
+			$scope.messageClass = type;
+			$scope.messageText = message;
+			if(status){
+				console.log('Error: ' + status);
+	        	console.log(data);
+			}
 		};
 
 	}]);

@@ -20,33 +20,50 @@
 	<!-- ANGULAR CUSTOM -->
 	<script src="js/controllers/MainCtrl.js"></script>
 	<script src="js/services/MainService.js"></script>
-	<!-- Cliente -->
-	<script src="js/controllers/ClienteCtrl.js"></script>
-	<script src="js/services/ClienteService.js"></script>
-	<!-- Cliente -->
-	<script src="js/controllers/DoctorCtrl.js"></script>
-	<script src="js/services/DoctorService.js"></script>
 	<!-- Expedientes -->
 	<script src="js/controllers/ExpedienteCtrl.js"></script>
 	<script src="js/services/ExpedienteService.js"></script>
-	<!--Users -->
-	<script src="js/controllers/UserCtrl.js"></script>
-	<script src="js/services/UserService.js"></script>
+
+	<!-- Ficha -->
+	<script src="js/controllers/FichaCtrl.js"></script>
+	<script src="js/services/FichaService.js"></script>
+
+	
 	<!-- Oficina -->
 	<script src="js/controllers/OficinaCtrl.js"></script>
 	<script src="js/services/OficinaService.js"></script>
+	<!-- Especialidad -->
+	<script src="js/controllers/EspecialidadCtrl.js"></script>
+	<script src="js/services/EspecialidadService.js"></script>
+	<!-- Programa -->
+	<script src="js/controllers/ProgramaCtrl.js"></script>
+	<script src="js/services/ProgramaService.js"></script>
+	<!-- Doctor -->
+	<script src="js/controllers/DoctorCtrl.js"></script>
+	<script src="js/services/DoctorService.js"></script>
+	<!-- Proveedor -->
+	<script src="js/controllers/ProveedorCtrl.js"></script>
+	<script src="js/services/ProveedorService.js"></script>
+	<!-- Cliente -->
+	<script src="js/controllers/ClienteCtrl.js"></script>
+	<script src="js/services/ClienteService.js"></script>
+
+
 	<!-- Privilegio -->
 	<script src="js/controllers/PrivilegioCtrl.js"></script>
 	<script src="js/services/PrivilegioService.js"></script>
 	<!-- Rol -->
 	<script src="js/controllers/RolCtrl.js"></script>
 	<script src="js/services/RolService.js"></script>
-	
+	<!--Users -->
+	<script src="js/controllers/UserCtrl.js"></script>
+	<script src="js/services/UserService.js"></script>
+
 
 	<!--script src="js/controllers/NerdCtrl.js"></script>
-	<script src="js/services/NerdService.js"></script-->
+	<script src="js/services/NerdService.js"></script>
 	<script src="js/controllers/GeekCtrl.js"></script>
-	<script src="js/services/GeekService.js"></script>
+	<script src="js/services/GeekService.js"></script-->
 
 	<script src="js/appDirectives.js"></script>
 	<script src="js/appRoutes.js"></script>
@@ -100,52 +117,59 @@
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" ng-init="getPrivilegios()">
 						<ul class="nav navbar-nav">
 							
-
-							<li data-ng-show="token && _.contains(modulos,'Ingresos')" class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ingresos <span class="caret"></span></a>
+							<li data-ng-show="token" class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Operación<span class="caret"></span></a>
 								<ul class="dropdown-menu">
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/fichas">Fichas</a></li>
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/afiliacion">Afiliación</a></li>
-								</ul>
-							</li>
-
-							<li data-ng-show="token && _.contains(modulos,'Egresos')" class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Egresos <span class="caret"></span></a>
-								<ul class="dropdown-menu">
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/pagoDoctores">Pago a doctores</a></li>
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/pagoServicios">Pago de servicios</a></li>
+									<li data-ng-show="token"><a ng-href="/fichas/create">Agregar Ficha</a></li>
 								</ul>
 							</li>
 
 							<li data-ng-show="token" class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Contabilidad<span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li class="dropdown-header"><b>Ingresos</b></li>
+									<li data-ng-show="token"><a ng-href="/fichas">Fichas</a></li>
+									<li data-ng-show="token"><a ng-href="/afiliacion">--Afiliación</a></li>
+									<li role="separator" class="divider"></li>
+									<li class="dropdown-header"><b>Egresos</b></li>
+									<li data-ng-show="token"><a ng-href="/pagoDoctores">--Pago a doctores</a></li>
+									<li data-ng-show="token"><a ng-href="/pagoServicios">--Pago de servicios</a></li>
+								</ul>
+							</li>
+
+							<!--li data-ng-show="token" class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Consultas <span class="caret"></span></a>
 								<ul class="dropdown-menu">
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a href="/expedientes">Expedientes</a></li>
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a href="/geeks">Revisiones</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a href="/revisiones">Revisiones</a></li>
 								</ul>
-							</li>
+							</li-->
 
 							<li data-ng-show="token" class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reportes <span class="caret"></span></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">--Reportes <span class="caret"></span></a>
 								<ul class="dropdown-menu">
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteServicios">Servicios Pagados</a></li>
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteDoctores">Doctores Pagados</a></li>
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteBalance">Balance General</a></li>
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteFichas">Fichas por Usuario</a></li>
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteHistorico">Histórico</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteServicios">--Servicios Pagados</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteDoctores">--Doctores Pagados</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteBalance">--Balance General</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteFichas">--Fichas por Usuario</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteHistorico">--Histórico</a></li>
 								</ul>
 							</li>
 
 							<li data-ng-show="token && _.contains(modulos,'Administracion')" class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administración <span class="caret"></span></a>
 								<ul class="dropdown-menu">
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Doctores')"><a ng-href="/doctores">Doctores</a></li>
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/oficinas">Oficinas</a></li>
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Programas')"><a ng-href="/programas">Servicios</a></li>
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Clientes')"><a ng-href="/clientes">Clientes (Afiliados)</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Oficinas')"><a ng-href="/oficinas">Oficinas</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Especialidades')"><a ng-href="/especialidades">Especialidades</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Programas')"><a ng-href="/programas">Programas</a></li>
+									
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Doctores')"><a ng-href="/doctores">Doctores -- ¿¿ELIMINAR?? --</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Proveedores')"><a ng-href="/proveedores">Proveedores</a></li>
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Clientes')"><a ng-href="/clientes">Clientes</a></li>
+
+
 								</ul>
 							</li>
-
 
 							<li data-ng-show="token && _.contains(modulos,'Seguridad')" class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seguridad <span class="caret"></span></a>
@@ -153,10 +177,6 @@
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Privilegios')"><a ng-href="/privilegios">Privilegios</a></li>
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Roles')"><a ng-href="/roles">Roles</a></li>
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Usuarios')"><a ng-href="/users">Usuarios</a></li>
-									<!--li role="separator" class="divider"></li>
-									<li><a href="#">Separated link</a></li>
-									<li role="separator" class="divider"></li>
-									<li><a href="#">One more separated link</a></li-->
 								</ul>
 							</li>
 

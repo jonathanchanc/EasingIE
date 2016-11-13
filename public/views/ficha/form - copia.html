@@ -1,0 +1,209 @@
+<div class=" text-center" ng-init="get()">
+	<h1>{{label.createOrEdit}} {{controlNameSingular}}</h1>
+    <div ng-if="messageShow" ng-class="messageClass" class="alert" role="alert">
+        {{messageText}}
+    </div>
+</div>
+
+<form name="form" ng-submit="createOrUpdate(form.$valid,_id)" novalidate>
+
+<div class="panel panel-default">
+    <div class="panel-heading">{{label.data}} TEST</div>
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-xs-12 col-md-3">
+                <label for="especialidad">{{model.especialidad}}</label>
+                <select style="width:100%;" chosen
+                        options="Especialidades"
+                        data-placeholder-text-single="'{{model.especialidad}}'"
+                        data-ng-model="formData.especialidad"
+                        data-ng-options="especialidad._id as especialidad.nombre for especialidad in Especialidades"
+                        ng-change="getProgramasByEspecialidad()">
+                        <option value=""></option>
+                </select>
+            </div>
+            <div class="col-xs-12 col-md-3">
+                <label for="programa">{{model.programa}}</label>
+                <select style="width:100%;" chosen
+                        options="Programas"
+                        data-placeholder-text-single="'{{model.programa}}'"
+                        data-ng-model="formData.programa"
+                        data-ng-options="programa._id as programa.nombre for programa in Programas"
+                        ng-change="getDataPrograma()">
+                        <option value=""></option>
+                </select>
+            </div>
+            <div class="col-xs-12 col-md-3">
+                <label for="doctor">{{model.doctor}}</label>
+                <select style="width:100%;" chosen
+                        options="Doctores"
+                        data-placeholder-text-single="'{{model.doctor}}'"
+                        data-ng-model="formData.doctor"
+                        data-ng-options="doctor._id as doctor.nombre for doctor in Doctores">
+                        <option value=""></option>
+                </select>
+            </div>
+            <div class="col-xs-12 col-md-3 text-left" style="padding-top: 20px;">
+                <button type="button" class="btn btn-primary btn-sm" ng-click="getAllProgramas(1)">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> {{label.search}}</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">{{label.data}}</div>
+    <div class="panel-body">
+    
+        <div class="row">
+            
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.concepto.$touched && form.concepto.$invalid }">
+                <label for="concepto">{{model.concepto}}</label>
+                <input type="text" name="concepto" class="form-control" placeholder="{{model.concepto}}" ng-model="formData.concepto" required>
+                <div class="help-block" ng-messages="form.concepto.$error" ng-if="form.concepto.$touched">
+                        <div ng-messages-include="error-messages"></div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.comentario.$touched && form.comentario.$invalid }">
+                <label for="comentario">{{model.comentario}}</label>
+                <input type="text" name="comentario" class="form-control" placeholder="{{model.comentario}}" ng-model="formData.comentario" required>
+                <div class="help-block" ng-messages="form.comentario.$error" ng-if="form.comentario.$touched">
+                        <div ng-messages-include="error-messages"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.monto_total.$touched && form.monto_total.$invalid }">
+                <label for="monto_total">{{model.monto_total}}</label>
+                <input type="number" name="monto_total" class="form-control" placeholder="{{model.monto_total}}" ng-model="formData.monto_total" required>
+                <div class="help-block" ng-messages="form.monto_total.$error" ng-if="form.monto_total.$touched">
+                        <div ng-messages-include="error-messages"></div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.monto_apoyo_terceros.$touched && form.monto_apoyo_terceros.$invalid }">
+                <label for="monto_apoyo_terceros">{{model.monto_apoyo_terceros}}</label>
+                <input type="number" name="monto_apoyo_terceros" class="form-control" placeholder="{{model.monto_apoyo_terceros}}" ng-model="formData.monto_apoyo_terceros" required>
+                <div class="help-block" ng-messages="form.monto_apoyo_terceros.$error" ng-if="form.monto_apoyo_terceros.$touched">
+                        <div ng-messages-include="error-messages"></div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.monto_suciqroo.$touched && form.monto_suciqroo.$invalid }">
+                <label for="monto_suciqroo">{{model.monto_suciqroo}}</label>
+                <input type="number" name="monto_suciqroo" class="form-control" placeholder="{{model.monto_suciqroo}}" ng-model="formData.monto_suciqroo" required>
+                <div class="help-block" ng-messages="form.monto_suciqroo.$error" ng-if="form.monto_suciqroo.$touched">
+                        <div ng-messages-include="error-messages"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-3">
+                <label for="afiliado">{{model.afiliado}}</label>
+                <div class="form-group">
+                    <div class="radio-inline">
+                        <label><input type="radio" name="afiliado" value="Si" ng-model="formData.afiliado" ng-change="getDataPrograma()">{{label.yes}}</label>
+                    </div>
+                    <div class="radio-inline">
+                        <label><input type="radio" name="afiliado" value="No" ng-model="formData.afiliado" ng-change="getDataPrograma()">{{label.no}}</label>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="row">
+            
+           
+            <div class="col-xs-12 col-md-6">
+                <label for="cliente">{{model.cliente}}</label>
+                <select style="width:100%;" chosen
+                        options="Clientes"
+                        data-placeholder-text-single="'{{model.cliente}}'"
+                        data-ng-model="formData.cliente"
+                        data-ng-options="cliente._id as cliente.nombre for cliente in Clientes">
+                        <option value=""></option>
+                </select>
+            </div>
+        </div>
+        
+
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">{{label.data}} AUTOMATICOS / NO APARECEN EN CREACION</div>
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.id.$touched && form.id.$invalid }">
+                <label for="id">{{model.id}}</label>
+                <input type="number" name="id" class="form-control" placeholder="{{model.id}}" ng-model="formData.id" min="0" max="10000" required>
+                <div class="help-block" ng-messages="form.id.$error" ng-if="form.id.$touched">
+                        <div ng-messages-include="error-messages"></div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.folio.$touched && form.folio.$invalid }">
+                <label for="folio">{{model.folio}}</label>
+                <input type="number" name="folio" class="form-control" placeholder="{{model.folio}}" ng-model="formData.folio" min="0" max="10000" required>
+                <div class="help-block" ng-messages="form.folio.$error" ng-if="form.folio.$touched">
+                        <div ng-messages-include="error-messages"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-3">
+                <label for="usuario">{{model.usuario}}</label>
+                <select style="width:100%;" chosen
+                        options="Usuarios"
+                        data-placeholder-text-single="'{{model.usuario}}'"
+                        data-ng-model="formData.usuario"
+                        data-ng-options="usuario._id as usuario.nombre for usuario in Usuarios">
+                        <option value=""></option>
+                </select>
+            </div>
+            <div class="col-xs-12 col-md-3">
+                <label for="pagado">{{model.pagado}}</label>
+                <div class="form-group">
+                    <div class="radio-inline">
+                        <label><input type="radio" name="pagado" value="Si" ng-model="formData.pagado">{{label.yes}}</label>
+                    </div>
+                    <div class="radio-inline">
+                        <label><input type="radio" name="pagado" value="No" ng-model="formData.pagado">{{label.no}}</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-3">
+                <label for="estado">{{model.estado}}</label>
+                <div class="form-group">
+                    <div class="radio-inline">
+                        <label><input type="radio" name="estado" value="Activo" ng-model="formData.estado">{{label.active}}</label>
+                    </div>
+                    <div class="radio-inline">
+                        <label><input type="radio" name="estado" value="Inactivo" ng-model="formData.estado">{{label.inactive}}</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.fecha_alta.$touched && form.fecha_alta.$invalid }" ng-show="formData.fecha_alta">
+                <label for="fecha_alta">{{model.fecha_alta}}</label>
+                <input type="text" readOnly="" name="fecha_alta" class="form-control" ng-model="formData.fecha_alta" >
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 text-left" >
+        <br><a class="button btn btn-danger" href="/{{controllerInstance}}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>  {{label.cancel}}</a>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 text-right" >
+        <br><button name="submit" class="btn btn-primary"  ><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> {{label.save}}</button>
+    </div>
+</div>
+
+
+<br/>
+</form>

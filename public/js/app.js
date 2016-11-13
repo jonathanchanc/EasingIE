@@ -5,25 +5,36 @@ angular.module('sampleApp', [
 	'appRoutes', 
 	'appDirectives', 
 	'angular-loading-bar',
+	'localytics.directives',
 	'ui.bootstrap',
 	'MainCtrl', 
 	'MainService', 
-	'ClienteCtrl', 
-	'ClienteService', 
-	'DoctorCtrl', 
-	'DoctorService', 
 	'ExpedienteCtrl', 
 	'ExpedienteService',
+	//CONTABILIDAD
+	'FichaCtrl', 
+	'FichaService', 
+	//ADMINISTRACION
 	'OficinaCtrl', 
 	'OficinaService', 
+	'EspecialidadCtrl', 
+	'EspecialidadService',
+	'ProgramaCtrl', 
+	'ProgramaService', 
+	'DoctorCtrl', 
+	'DoctorService', 
+	'ProveedorCtrl', 
+	'ProveedorService', 
+	'ClienteCtrl', 
+	'ClienteService',
+	//SEGURIDAD
 	'PrivilegioCtrl', 
 	'PrivilegioService', 
 	'RolCtrl', 
 	'RolService', 
 	'UserCtrl', 
-	'UserService', 
-	'GeekCtrl', 
-	'GeekService'])
+	'UserService'
+])
 
 .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
 		cfpLoadingBarProvider.includeSpinner = false;

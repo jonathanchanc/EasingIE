@@ -12,6 +12,7 @@ angular.module('MainCtrl', [])
     //$rootScope.baseUrl = "http://localhost:3000";
     $rootScope._ = _;
 	$scope.token = $localStorage.token;
+    $localStorage.privilegios = [];
     
     $scope.getPrivilegios = function(){
         if($scope.token)
@@ -31,7 +32,8 @@ angular.module('MainCtrl', [])
                             //Asiganmos al $scope el array sin valores repetidos (unique)
                             $scope.privilegios = _.uniq(privilegios);
                             $scope.modulos = _.uniq(modulos);
-                            console.log($scope.privilegios);
+                            //console.log($scope.privilegios);
+                            $localStorage.privilegios = $scope.privilegios
                         });
 
                 });
@@ -42,8 +44,6 @@ angular.module('MainCtrl', [])
         })
                 
     }
-
-
     
 	$scope.signin = function() {
         var formData = {

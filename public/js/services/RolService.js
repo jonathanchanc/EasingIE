@@ -7,8 +7,8 @@ angular.module('RolService', [])
         var nameUrl = '/api/roles'
 
 		return {
-			get : function() {
-				return $http.get(baseUrl + nameUrl);
+			query : function(data) {
+				return $http.post(baseUrl + nameUrl + '/query/', data);
 			},
 			findById : function(id) {
 				return $http.get(baseUrl + nameUrl + '/' + id);
@@ -21,12 +21,6 @@ angular.module('RolService', [])
 			},
 			delete : function(id) {
 				return $http.delete(baseUrl + nameUrl + '/' + id);
-			},
-			search : function(data) {
-				return $http.post(baseUrl + nameUrl + 'Search/', data);
-			},
-			query : function(data) {
-				return $http.post(baseUrl + nameUrl + 'Query/', data);
 			}
 		}
 	}]);
