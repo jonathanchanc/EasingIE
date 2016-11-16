@@ -8,7 +8,17 @@
 <form name="form" ng-submit="createOrUpdate(form.$valid,_id)" novalidate>
 
 <div class="panel panel-default">
-    <div class="panel-heading">{{label.data}} CLIENTE</div>
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-xs-6 col-md-10">
+                {{label.data}} CLIENTE
+            </div>
+            <div class="col-xs-6 col-md-2  text-right">
+                <button type="button" class="btn btn-warning btn-sm" ng-click="resetCliente()">
+                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> {{label.delete}} CLIENTE</button>
+            </div>
+        </div>
+    </div>
     <div class="panel-body">
     
         <div class="row">
@@ -20,7 +30,8 @@
                         data-placeholder-text-single="'{{model.cliente._id}}'"
                         data-ng-model="formData.cliente._id"
                         data-ng-options="cliente._id as cliente.nombre+' '+cliente.apPaterno+' '+cliente.apMaterno for cliente in Clientes"
-                        ng-change="getDataCliente()">
+                        ng-change="getDataCliente()"
+                        ng-disabled="formTemp.lockCliente">
                         <option value=""></option>
                 </select>
             </div>
@@ -28,22 +39,45 @@
         <div class="row">
             <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.clienteNombre.$touched && form.clienteNombre.$invalid }">
                 <label for="clienteNombre">{{model.cliente.nombre}}</label>
-                <input type="text" name="clienteNombre" class="form-control" placeholder="{{model.cliente.nombre}}" ng-model="formData.cliente.nombre" required>
+                <input type="text" name="clienteNombre" class="form-control" placeholder="{{model.cliente.nombre}}" ng-model="formData.cliente.nombre" ng-readonly="formTemp.lockCliente" required>
                 <div class="help-block" ng-messages="form.clienteNombre.$error" ng-if="form.clienteNombre.$touched">
                         <div ng-messages-include="error-messages"></div>
                 </div>
             </div>
-            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.cliente.apPaterno.$touched && form.cliente.apPaterno.$invalid }">
-                <label for="cliente.apPaterno">{{model.cliente.apPaterno}}</label>
-                <input type="text" name="cliente.apPaterno" class="form-control" placeholder="{{model.cliente.apPaterno}}" ng-model="formData.cliente.apPaterno" required>
-                <div class="help-block" ng-messages="form.cliente.apPaterno.$error" ng-if="form.cliente.apPaterno.$touched">
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.clienteApPaterno.$touched && form.clienteApPaterno.$invalid }">
+                <label for="clienteApPaterno">{{model.cliente.apPaterno}}</label>
+                <input type="text" name="clienteApPaterno" class="form-control" placeholder="{{model.cliente.apPaterno}}" ng-model="formData.cliente.apPaterno" ng-readonly="formTemp.lockCliente" required>
+                <div class="help-block" ng-messages="form.clienteApPaterno.$error" ng-if="form.clienteApPaterno.$touched">
                         <div ng-messages-include="error-messages"></div>
                 </div>
             </div>
-            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.cliente.apMaterno.$touched && form.cliente.apMaterno.$invalid }">
-                <label for="cliente.apMaterno">{{model.cliente.apMaterno}}</label>
-                <input type="text" name="cliente.apMaterno" class="form-control" placeholder="{{model.cliente.apMaterno}}" ng-model="formData.cliente.apMaterno" required>
-                <div class="help-block" ng-messages="form.cliente.apMaterno.$error" ng-if="form.cliente.apMaterno.$touched">
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.clienteApMaterno.$touched && form.clienteApMaterno.$invalid }">
+                <label for="clienteApMaterno">{{model.cliente.apMaterno}}</label>
+                <input type="text" name="clienteApMaterno" class="form-control" placeholder="{{model.cliente.apMaterno}}" ng-model="formData.cliente.apMaterno" ng-readonly="formTemp.lockCliente" required>
+                <div class="help-block" ng-messages="form.clienteApMaterno.$error" ng-if="form.clienteApMaterno.$touched">
+                        <div ng-messages-include="error-messages"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-6" ng-class="{ 'has-error': form.clienteDireccion.$touched && form.clienteDireccion.$invalid }">
+                <label for="clienteDireccion">{{model.cliente.direccion}}</label>
+                <input type="text" name="clienteDireccion" class="form-control" placeholder="{{model.cliente.direccion}}" ng-model="formData.cliente.direccion" ng-readonly="formTemp.lockCliente" required>
+                <div class="help-block" ng-messages="form.clienteDireccion.$error" ng-if="form.clienteDireccion.$touched">
+                        <div ng-messages-include="error-messages"></div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.clienteTelefono.$touched && form.clienteTelefono.$invalid }">
+                <label for="clienteTelefono">{{model.cliente.telefono}}</label>
+                <input type="text" name="clienteTelefono" class="form-control" placeholder="{{model.cliente.telefono}}" ng-model="formData.cliente.telefono" ng-readonly="formTemp.lockCliente" required>
+                <div class="help-block" ng-messages="form.clienteTelefono.$error" ng-if="form.clienteTelefono.$touched">
+                        <div ng-messages-include="error-messages"></div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.clienteEmail.$touched && form.clienteEmail.$invalid }">
+                <label for="clienteEmail">{{model.cliente.email}}</label>
+                <input type="email" name="clienteEmail" class="form-control" placeholder="{{model.cliente.email}}" ng-model="formData.cliente.email" ng-readonly="formTemp.lockCliente" >
+                <div class="help-block" ng-messages="form.clienteEmail.$error" ng-if="form.clienteEmail.$touched">
                         <div ng-messages-include="error-messages"></div>
                 </div>
             </div>
@@ -53,19 +87,23 @@
                 <label for="cliente.afiliado">{{model.cliente.afiliado}}</label>
                 <div class="form-group">
                     <div class="radio-inline">
-                        <label><input type="radio" name="cliente.afiliado" value="Si" ng-model="formData.cliente.afiliado" ng-change="getDataPrograma()">{{label.yes}}</label>
+                        <label><input type="radio" name="cliente.afiliado" value="Si" ng-model="formData.cliente.afiliado" ng-change="getDataPrograma()" ng-disabled="formTemp.lockCliente">{{label.yes}}</label>
                     </div>
                     <div class="radio-inline">
-                        <label><input type="radio" name="cliente.afiliado" value="No" ng-model="formData.cliente.afiliado" ng-change="getDataPrograma()">{{label.no}}</label>
+                        <label><input type="radio" name="cliente.afiliado" value="No" ng-model="formData.cliente.afiliado" ng-change="getDataPrograma()" ng-disabled="formTemp.lockCliente">{{label.no}}</label>
                     </div>
                 </div>
             </div>
-            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.cliente.credencial.$touched && form.cliente.credencial.$invalid }" ng-show="formData.cliente.afiliado == 'Si'">
-                <label for="cliente.credencial">{{model.cliente.credencial}}</label>
-                <input type="number" name="cliente.credencial" class="form-control" placeholder="{{model.cliente.credencial}}" ng-model="formData.cliente.credencial" ng-required="formData.cliente.afiliado == 'Si'">
-                <div class="help-block" ng-messages="form.cliente.credencial.$error" ng-if="form.cliente.credencial.$touched">
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.clienteCredencial.$touched && form.clienteCredencial.$invalid }" ng-show="formData.cliente.afiliado == 'Si'">
+                <label for="clienteCredencial">{{model.cliente.credencial}}</label>
+                <input type="number" name="clienteCredencial" class="form-control" placeholder="{{model.cliente.credencial}}" ng-model="formData.cliente.credencial" ng-readonly="formTemp.lockCliente" ng-required="formData.cliente.afiliado == 'Si'">
+                <div class="help-block" ng-messages="form.clienteCredencial.$error" ng-if="form.clienteCredencial.$touched">
                         <div ng-messages-include="error-messages"></div>
                 </div>
+            </div>
+            <div class="col-xs-12 col-md-3 text-left" style="padding-top: 25px;" ng-show="formData.cliente.afiliado == 'Si'" >
+                <button type="button" class="btn btn-info btn-sm" ng-click="getDataClienteByCredencial()" ng-disabled="formTemp.lockCliente">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> {{label.search}}</button>
             </div>
         </div>
 
@@ -73,9 +111,18 @@
 </div>
 
 <div class="panel panel-default">
-    <div class="panel-heading">{{label.data}} PROGRAMA</div>
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-xs-6 col-md-10">
+                {{label.data}} BUSQUEDA
+            </div>
+            <div class="col-xs-6 col-md-2  text-right">
+                <button type="button" class="btn btn-warning btn-sm" ng-click="resetProgramasSearch()">
+                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> {{label.delete}} BUSQUEDA</button>
+            </div>
+        </div>
+    </div>
     <div class="panel-body">
-
         <div class="row">
             <div class="col-xs-12 col-md-3">
                 <label for="especialidad">{{modelTemp.especialidad}}</label>
@@ -112,23 +159,45 @@
                         <option value=""></option>
                 </select>
             </div>
-            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.precio.$touched && form.precio.$invalid }">
-                <label for="precio">{{modelTemp.precio}}</label>
-                <input type="number" name="precio" class="form-control" placeholder="{{modelTemp.precio}}" ng-model="formTemp.precio" readOnly>
-                <div class="help-block" ng-messages="form.precio.$error" ng-if="form.precio.$touched">
+            <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.total.$touched && form.total.$invalid }">
+                <label for="total">{{modelTemp.total}}</label>
+                <input type="number" name="total" class="form-control" placeholder="{{modelTemp.total}}" ng-model="formTemp.total" readOnly>
+                <div class="help-block" ng-messages="form.total.$error" ng-if="form.total.$touched">
                         <div ng-messages-include="error-messages"></div>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12 col-md-1 text-left" style="padding-top: 20px;">
+            <div class="col-xs-6 col-md-1 text-left" style="padding-top: 20px;" >
                 <button type="button" class="btn btn-success btn-sm" ng-click="addPrograma()">
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{label.agregar}}</button>
             </div>
-            <div class="col-xs-12 col-md-3 text-left" style="padding-top: 20px;">
-                <button type="button" class="btn btn-danger btn-sm" ng-click="getAllProgramas(1)">
-                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> {{label.delete}}</button>
+            <div class="col-xs-6 col-md-3 col-md-offset-5">
+                <label for="tiene_descuento">{{modelTemp.tiene_descuento}}</label>
+                <div class="form-group">
+                    <div class="radio-inline">
+                        <label><input type="radio" name="tiene_descuento" value="Si" ng-model="formTemp.tiene_descuento" ng-change="getDataPrograma()" ng-disabled="formData.cliente.afiliado=='Si' || formTemp.cortesia=='Si'">{{label.yes}}</label>
+                    </div>
+                    <div class="radio-inline">
+                        <label><input type="radio" name="tiene_descuento" value="No" ng-model="formTemp.tiene_descuento" ng-change="getDataPrograma()" ng-disabled="formData.cliente.afiliado=='Si' || formTemp.cortesia=='Si'">{{label.no}}</label>
+                    </div>
+                </div>
             </div>
+            <div class="col-xs-6 col-md-3">
+                <label for="cortesia">{{modelTemp.cortesia}}</label>
+                <div class="form-group">
+                    <div class="radio-inline">
+                        <label><input type="radio" name="cortesia" value="Si" ng-model="formTemp.cortesia" ng-change="getDataPrograma()">{{label.yes}}</label>
+                    </div>
+                    <div class="radio-inline">
+                        <label><input type="radio" name="cortesia" value="No" ng-model="formTemp.cortesia" ng-change="getDataPrograma()">{{label.no}}</label>
+                    </div>
+                </div>
+            </div>
+            {{formTemp.precio}}
+            {{formTemp.descuento}}
+            {{formTemp.total}}
+            {{formTemp.monto_apoyo_terceros}}
             
             <!--div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.nombre_programa.$touched && form.nombre_programa.$invalid }">
                 <label for="nombre_programa">{{modelTemp.nombre_programa}}</label>
@@ -153,13 +222,21 @@
             </div-->
             
         </div>
-
     </div>
 </div>
 
-
 <div class="panel panel-default">
-    <div class="panel-heading">{{label.data}} TABLLE PROGRAMAS</div>
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-xs-6 col-md-10">
+                {{label.data}} PROGRAMAS
+            </div>
+            <div class="col-xs-6 col-md-2  text-right">
+                <button type="button" class="btn btn-warning btn-sm" ng-click="resetProgramasTable()">
+                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> {{label.delete}} PROGRAMAS</button>
+            </div>
+        </div>
+    </div>
     <div class="panel-body">
     
         <div class="row">
@@ -168,8 +245,12 @@
                     <thead>
                         <th>{{model.programas.nombre}}</th>
                         <th>{{model.programas.precio}}</th>
+                        <th>{{model.programas.descuento}}</th>
+                        <th>{{model.programas.total}}</th>
                         <th>{{model.programas.proveedor}}</th>
                         <th>{{model.programas.especialidad}}</th>
+                        <th>{{model.programas.tiene_descuento}}</th>
+                        <th>{{model.programas.cortesia}}</th>
                         <th>{{label.delete}}</th>
                     </thead>
                     <tbody>
@@ -177,8 +258,12 @@
                         <tr ng-repeat="instance in formData.programas" ng-show="formData.programas.length > 0">
                             <td>{{instance.nombre}}</td>
                             <td>{{instance.precio}}</td>
+                            <td>{{instance.descuento}}</td>
+                            <td>{{instance.total}}</td>
                             <td>{{instance.proveedor.nombre}}</td>
                             <td>{{instance.especialidad.nombre}}</td>
+                            <td>{{instance.tiene_descuento}}</td>
+                            <td>{{instance.cortesia}}</td>
                             <td><button type="button" class="btn btn-danger btn-sm" ng-click="removePrograma(instance)">
                                 <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> {{label.delete}}</button></td>
                         </tr>
@@ -264,7 +349,7 @@
     </div>
 </div>
 
-<div class="panel panel-default">
+<!--div class="panel panel-default">
     <div class="panel-heading">{{label.data}} AUTOMATICOS / NO APARECEN EN CREACION</div>
     <div class="panel-body">
 
@@ -325,7 +410,7 @@
         </div>
 
     </div>
-</div>
+</div-->
 
 
 

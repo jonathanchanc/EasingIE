@@ -4,9 +4,9 @@ angular.module('MainService', [])
 	// each function returns a promise object 
 	.factory('Main', ['$rootScope', '$http', '$localStorage', function($rootScope, $http, $localStorage){
         //$rootScope.baseUrl = "http://ades-suciqroo.rhcloud.com";
-        //$rootScope.baseUrl = "http://10.10.35.44:3000";
+        $rootScope.baseUrl = "http://10.10.35.44:3000";
         //$rootScope.baseUrl = "http://192.168.1.132:3000";
-        $rootScope.baseUrl = "http://localhost:3000";
+        //$rootScope.baseUrl = "http://localhost:3000";
         var baseUrl = $rootScope.baseUrl;
 
         function changeUser(user) {

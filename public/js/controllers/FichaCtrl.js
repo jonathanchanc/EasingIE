@@ -40,14 +40,15 @@ angular.module('FichaCtrl',[])
 		$scope.messageText = '';
 		$scope.messageAlertSuccess = 'alert-success';
 		$scope.messageAlertInfo = 'alert-info';
+		$scope.messageAlertWarning = 'alert-warning';
 		$scope.messageAlertDanger = 'alert-danger';
 
 		$scope.searchData = {};
-		$scope.formTemp = {};
+		$scope.formTemp = {tiene_descuento: 'No', cortesia: 'No'};
 		$scope.formData = {estado:'Activo', afiliado:'No', pagado:'No', cliente:{afiliado:'No'}, usuario: { oficina: {} }, programas:[] };
 
 		$scope.instanceList = [];
-		$scope.Usuarios = [];
+		//$scope.Usuarios = [];
 		$scope.Especialidades = [];
 		$scope.Programas = [];
 		$scope.Proveedores = [];
@@ -61,10 +62,13 @@ angular.module('FichaCtrl',[])
 		$scope.modelTemp = {
 			especialidad: 'Especialidad',
 			programa: 'Programa',
-			proveedor: 'Proveedor',
+			proveedor: 'Proveedor/Doctor',
 			nombre_programa: 'Programa',
 			concepto: 'Concepto',
 			precio: 'Precio',
+			total: 'PRecio',
+			tiene_descuento: 'Descuento',
+			cortesia: 'Cortesia',
 		}
 
 		$scope.model = {
@@ -74,17 +78,6 @@ angular.module('FichaCtrl',[])
 						fecha_alta: 'Fecha de alta',
 						pagado: 'Pagado',
 						estado: 'Estado',
-
-						//YA no usados
-						afiliado: 'Afiliado',
-						precio: 'Precio',
-						monto_apoyo_terceros: 'Monto terceros',
-						monto_suciqroo: 'Monto suciqroo',
-						programa: 'Programa',
-						especialidad: 'Especialidad',
-						proveedor: 'Proveedor/Doctor',
-						cliente: 'Cliente',
-
 
 						//Usados
 						monto_total: 'Monto total',
@@ -96,6 +89,9 @@ angular.module('FichaCtrl',[])
 							apMaterno: 'Apellido Materno',
 							afiliado: 'Afiliado',
 							credencial: 'Credencial',
+							direccion: 'Dirección',
+							telefono: 'Telefono',
+							email: 'Email',
 						},
 						usuario: {
 							_id: 'Usuario',
@@ -109,10 +105,14 @@ angular.module('FichaCtrl',[])
 							_id: 'Programa',
 							nombre: 'Nombre programa',
 							precio: 'Precio',
+							descuento: 'Descuento',
+							total: 'Total',
 							monto_apoyo_terceros: 'Monto terceros',
 							monto_suciqroo: 'Monto suciqroo',
 							proveedor: 'Proveedor/Doctor',
-							especialidad: 'Especialidad/',
+							especialidad: 'Especialidad',
+							tiene_descuento: 'Descuento',
+							cortesia: 'Cortesia',
 							pagado: 'Pagado',
 							fecha_pago: 'Fecha pago',
 						},						
@@ -187,11 +187,13 @@ angular.module('FichaCtrl',[])
 		$scope.get = function(){
 
 			//Comentar este bloque de users
+			/*
 			Users.query({ query: { estado: 'Activo' } })
 				.success(function(data) { $scope.Usuarios = angular.copy(data.instanceList); })
 				.error(function(data, status) {
 					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
 	            });
+	        */
 			
 	        Especialidades.query({ query: { estado: 'Activo' } })
 				.success(function(data) { $scope.Especialidades = angular.copy(data.instanceList); })
@@ -234,7 +236,7 @@ angular.module('FichaCtrl',[])
 				Main.me(function(userData) {
 					Oficinas.query({ query: { _id: userData.data.oficina } })
 						.success(function(data) {
-							$scope.Usuarios = angular.copy(userData); //Comentar esta linea tambien
+							//$scope.Usuarios = angular.copy(userData); //Comentar esta linea tambien
 							data = data.instanceList[0];
 							$scope.formData.usuario._id = userData.data._id;
 							$scope.formData.usuario.nombre = userData.data.nombre_completo;
@@ -277,23 +279,44 @@ angular.module('FichaCtrl',[])
 			            })
 						;
 				} else {
-					Fichas.create($scope.formData)
-						.success(function(data) {
-							$scope.formData = {};
-							console.log($scope.label.createSuccess);
-							$location.path('/'+$scope.controllerInstance);
-							//COMO ENVIAR ALERTA?							
-							//$scope.messageShow = true;
-							//$scope.messageClass = $scope.messageAlertSuccess;
-							//$scope.messageText = $scope.label.createSuccess;
-						})
-						.error(function(data, status) {
-							$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
-			            })
-						;
+					//CREAR
+					if($scope.validateCliente()){ //VALIDAMOS CLIENTE
+						if($scope.formData.cliente._id){ //Si existe cliente - solo agregamos ficha
+							Fichas.create($scope.formData).success(function(data) {
+									$scope.formData = {};
+									console.log($scope.label.createSuccess);
+									$location.path('/'+$scope.controllerInstance);
+								})
+								.error(function(data, status) {
+									$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
+					            })
+					            ;
+						} else { //Si no existe cliente - se crea cliente y despues la ficha
+							Clientes.create($scope.formData.cliente)
+							.success(function(data) {
+								$scope.formData.cliente._id = data._id;
+								//Correcto - Crear Ficha
+								Fichas.create($scope.formData).success(function(data) {
+									$scope.formData = {};
+									console.log($scope.label.createSuccess);
+									$location.path('/'+$scope.controllerInstance);
+								})
+								.error(function(data, status) {
+									$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
+					            })
+					            ;
+							})
+							.error(function(data, status) {
+								$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
+				            })
+							;
+						}
+					} else {
+						$scope.showMessage(true, $scope.messageAlertDanger, "No es un cliente valido");
+					}
 				}
 			} else {
-				$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.invalidDataForm);
+				
 			}
 		};
 
@@ -322,38 +345,27 @@ angular.module('FichaCtrl',[])
 		        $scope.formData.cliente.apMaterno = cliente.apMaterno;
 		        $scope.formData.cliente.afiliado = cliente.afiliado;
 		        $scope.formData.cliente.credencial = cliente.credencial;
+		        $scope.formData.cliente.direccion = cliente.direccion;
+		        $scope.formData.cliente.telefono = cliente.telefono;
+		        $scope.formData.cliente.email = cliente.email;
 		    }
-		    $scope.getDataPrograma();
+		    //$scope.getDataPrograma();
 		};
 
-
-		$scope.getAllProgramas = function(reset){ //TAL VEZ QUITE ESTA FUNCION
-			Especialidades.query({ query: { estado: 'Activo' } })
-				.success(function(data) { $scope.Especialidades = angular.copy(data.instanceList); })
-				.error(function(data, status) {
-					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
-	            });
-
-			Programas.query({ query: { estado: 'Activo' } })
-				.success(function(data) { $scope.Programas = angular.copy(data.instanceList); })
-				.error(function(data, status) {
-					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
-	            });
-
-	        Proveedores.query({ query: { estado: 'Activo' } })
-				.success(function(data) { $scope.Proveedores = angular.copy(data.instanceList); })
-				.error(function(data, status) {
-					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
-	            });
-
-           	if(reset==1){
-           		$scope.formTemp.especialidad = '';
-           		$scope.formTemp.programa = '';
-           		$scope.formTemp.proveedor = '';
-           		$scope.formTemp.nombre_programa = '';
-           		$scope.formTemp.precio = '';
-           		$scope.formTemp.monto_apoyo_terceros = '';
-           	}
+		$scope.getDataClienteByCredencial = function(){
+			if($scope.formData.cliente.afiliado == 'Si' && $scope.formData.cliente.credencial){
+				//Buscar el programa seleccionado dentro de la lista de programas para obtener datos
+		        var cliente = _.find($scope.Clientes, function(cliente){ return cliente.credencial ==$scope.formData.cliente.credencial; });
+		        if(cliente){
+			        $scope.formData.cliente._id = cliente._id;
+			        $scope.getDataCliente(); //Este metodo rellena todos los campos
+			        $scope.showMessage(false,'','');
+			    } else {
+			    	$scope.showMessage(true, $scope.messageAlertInfo, $scope.label.noResults);
+			    }
+		    } else {
+		    	$scope.showMessage(true, $scope.messageAlertWarning, 'Ingrese el numero de credencial');
+		    }
 		};
 
 		$scope.getProgramasByEspecialidad = function(){
@@ -375,6 +387,9 @@ angular.module('FichaCtrl',[])
 		};
 
 		$scope.getDataPrograma = function(){
+			//Si es afiliado no puede hacerse un descuento
+			if($scope.formData.cliente.afiliado == 'Si' || $scope.formTemp.cortesia == 'Si')
+				$scope.formTemp.tiene_descuento = 'No';	
 
 			if($scope.formTemp.programa){
 				//Actualizar especialidad
@@ -397,53 +412,89 @@ angular.module('FichaCtrl',[])
 				//Buscar el programa seleccionado dentro de la lista de programas para obtener datos
 		        var programa = _.find($scope.Programas, function(programa){ return programa._id ==$scope.formTemp.programa; });
 		        $scope.formTemp.nombre_programa = programa.nombre;
+		        //TABLA DE VERDAD DE PRECIOS AFILIADOS Y DESCUENTOS
+		        //Afiliado && Descuento = suciqroo
+				//Afiliado && NODescuento = suciqroo
+				//NoAfiliado && Descuento = suciqroo
+				//NoAfiliado && NODescuento = publico
+		        
+				//Si es afiliado tomamos el precio suciqroo
 		        $scope.formTemp.precio = ($scope.formData.cliente.afiliado=='Si')? programa.precio_suciqroo : programa.precio_publico;
+		        //Si tiene descuento calculamos el descuento quitandole al precio publico el precio de suciqroo
+		        $scope.formTemp.descuento = ($scope.formTemp.tiene_descuento=='Si' && $scope.formData.cliente.afiliado=='No')? programa.precio_publico - programa.precio_suciqroo : 0;
+				//Si es cortesia - Se aplica el monto_apoyo_terceros, para el pago del doctor pero no se cobra al cliente
+		        $scope.formTemp.descuento = ($scope.formTemp.cortesia=='Si')? $scope.formTemp.precio : $scope.formTemp.descuento;
+		        //Calculamos total
+		        $scope.formTemp.total = $scope.formTemp.precio - $scope.formTemp.descuento;
+		        //Agregamos monto terceros
 		        $scope.formTemp.monto_apoyo_terceros = programa.monto_apoyo_terceros;
-		        //$scope.formTemp.monto_suciqroo = programa.monto_suciqroo;
+		        //Agregamos monto suciqroo
+		        $scope.formTemp.monto_suciqroo = $scope.formTemp.total - programa.monto_suciqroo;
+
+		        /*$scope.formTemp.precio = ($scope.formData.cliente.afiliado=='No' && $scope.formTemp.descuento=='No' )? programa.precio_publico : programa.precio_suciqroo;
+				//SI EXISTE CORTESIA - Se aplica el monto_apoyo_terceros, para el pago del doctor pero no se cobra al cliente
+		        $scope.formTemp.precio = ($scope.formTemp.cortesia=='Si')? programa.monto_apoyo_terceros : $scope.formTemp.precio;
+		        $scope.formTemp.monto_apoyo_terceros = programa.monto_apoyo_terceros;*/
 		    }
 		};
 
 		$scope.addPrograma = function(){
 
-			if($scope.formData.cliente.nombre && $scope.formTemp.programa){
-				//Buscar el programa seleccionado dentro de la lista de programas para obtener datos
-				var data = {
-					_id: $scope.formTemp.programa,
-					nombre: $scope.formTemp.nombre_programa,
-					precio: $scope.formTemp.precio,
-					monto_apoyo_terceros: $scope.formTemp.monto_apoyo_terceros,
-					monto_suciqroo: ($scope.formTemp.precio - $scope.formTemp.monto_apoyo_terceros),
-					//pagado: 'No',
-					//fecha_pago: null,
-					especialidad: {},
-					proveedor: {},
-				};
+			var isValidCliente = $scope.validateCliente();
+			//console.log(isValidCliente);
+			if(isValidCliente){
+				if($scope.formTemp.programa){
+					//Buscar el programa seleccionado dentro de la lista de programas para obtener datos
+					var data = {
+						_id: $scope.formTemp.programa,
+						nombre: $scope.formTemp.nombre_programa,
+						precio: $scope.formTemp.precio,
+						descuento: $scope.formTemp.descuento,
+						total: $scope.formTemp.total,
+						monto_apoyo_terceros: $scope.formTemp.monto_apoyo_terceros,
+						monto_suciqroo: $scope.formTemp.monto_suciqroo,
+						tiene_descuento: $scope.formTemp.tiene_descuento,
+						cortesia: $scope.formTemp.cortesia,
+						//pagado: 'No',
+						//fecha_pago: null,
+						especialidad: {},
+						proveedor: {},
+					};
 
-				if($scope.formTemp.especialidad){
-					var especialidad = _.find($scope.Especialidades, function(especialidad){ return especialidad._id ==$scope.formTemp.especialidad; });
-					data.especialidad._id = especialidad._id;
-					data.especialidad.nombre = especialidad.nombre;
-				}
+					if($scope.formTemp.especialidad){
+						var especialidad = _.find($scope.Especialidades, function(especialidad){ return especialidad._id ==$scope.formTemp.especialidad; });
+						data.especialidad._id = especialidad._id;
+						data.especialidad.nombre = especialidad.nombre;
+					}
 
-				if($scope.formTemp.proveedor){
-					var proveedor = _.find($scope.Proveedores, function(proveedor){ return proveedor._id ==$scope.formTemp.proveedor; });
-					data.proveedor._id = proveedor._id;
-					data.proveedor.nombre = proveedor.nombre_completo;
-				}
+					if($scope.formTemp.proveedor){
+						var proveedor = _.find($scope.Proveedores, function(proveedor){ return proveedor._id ==$scope.formTemp.proveedor; });
+						data.proveedor._id = proveedor._id;
+						data.proveedor.nombre = proveedor.nombre_completo;
+					}
 
-		        $scope.formData.programas.push(data);
-		        $scope.getTotalPrograma();
+			        $scope.formData.programas.push(data);
+			        $scope.getTotalPrograma();
 
-		        //Delete form data
-		        delete $scope.formTemp.especialidad;
-           		delete $scope.formTemp.programa;
-           		delete $scope.formTemp.proveedor;
-		        delete $scope.formTemp.nombre_programa;
-		        delete $scope.formTemp.precio;
-		        delete $scope.formTemp.monto_apoyo_terceros;
-		    }
-		    else {
-		    	$scope.showMessage(true, $scope.messageAlertInfo, 'Selecione un Cliente y un Programa ', status, data);
+			        //$scope.lockCliente(true);
+			        $scope.formTemp.lockCliente = true
+
+			        //Delete form data
+			        delete $scope.formTemp.especialidad;
+	           		delete $scope.formTemp.programa;
+	           		delete $scope.formTemp.proveedor;
+			        delete $scope.formTemp.nombre_programa;
+			        delete $scope.formTemp.precio;
+			        delete $scope.formTemp.descuento;
+			        delete $scope.formTemp.total;
+			        delete $scope.formTemp.monto_apoyo_terceros;
+			        delete $scope.formTemp.monto_suciqroo;
+			        $scope.formTemp.cortesia = 'No';
+			        $scope.formTemp.tiene_descuento = 'No';
+			        $scope.showMessage(false, '', '');
+			    } else {
+			    	$scope.showMessage(true, $scope.messageAlertInfo, 'Seleccione un Programa ', status, data);
+			    }
 		    }
 		};
 
@@ -458,10 +509,114 @@ angular.module('FichaCtrl',[])
 			var total = 0;
 			if($scope.formData.programas){
 				angular.forEach($scope.formData.programas, function(programa) {
-					total += programa.precio;
+					total += programa.total;
 				});
 			}
 			$scope.formData.monto_total = total;
 		}
+
+		$scope.resetCliente = function(){
+			$scope.formData.cliente = {afiliado:'No'};
+			$scope.formData.programas = [];
+			$scope.formTemp.lockCliente = false;
+			delete $scope.formData.monto_total;
+		}
+
+		$scope.resetProgramasTable = function(){
+			$scope.formData.programas = [];
+			delete $scope.formData.monto_total;
+			$scope.resetProgramasSearch();
+		}
+
+		$scope.resetProgramasSearch = function(){
+			Especialidades.query({ query: { estado: 'Activo' } })
+				.success(function(data) { $scope.Especialidades = angular.copy(data.instanceList); })
+				.error(function(data, status) {
+					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
+	            });
+
+			Programas.query({ query: { estado: 'Activo' } })
+				.success(function(data) { $scope.Programas = angular.copy(data.instanceList); })
+				.error(function(data, status) {
+					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
+	            });
+
+	        Proveedores.query({ query: { estado: 'Activo' } })
+				.success(function(data) { $scope.Proveedores = angular.copy(data.instanceList); })
+				.error(function(data, status) {
+					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
+	            });
+
+           	delete $scope.formTemp.especialidad;
+       		delete $scope.formTemp.programa;
+       		delete $scope.formTemp.proveedor;
+	        delete $scope.formTemp.nombre_programa;
+	        delete $scope.formTemp.precio;
+	        delete $scope.formTemp.descuento;
+	        delete $scope.formTemp.total;
+	        delete $scope.formTemp.monto_apoyo_terceros;
+	        delete $scope.formTemp.monto_suciqroo;
+	        $scope.formTemp.cortesia = 'No';
+	        $scope.formTemp.tiene_descuento = 'No';
+		};
+
+		$scope.validateCliente = function(){
+			var isValid = false;
+			var mess = '';
+			if( $scope.formData.cliente.nombre &&
+				$scope.formData.cliente.apPaterno &&
+				$scope.formData.cliente.apMaterno &&
+				$scope.formData.cliente.direccion &&
+				$scope.formData.cliente.telefono
+			) {
+				//Campos OK
+				if($scope.formData.cliente.afiliado == 'Si' && !$scope.formData.cliente.credencial){
+					isValid = false;
+					$scope.showMessage(true, $scope.messageAlertWarning, 'Cliente afiliado debe tener numero de credencial');
+				} else {
+					//-------------- VALIDAR NUMERO DE CREDENCIAL ----------------------
+					var isValidCredencial = false;
+					if($scope.formData.cliente.afiliado == 'Si'){ //Afiliado y en este punto se debe tener el numero de credencial
+						//Validar numero credencial
+						var cliente = _.filter($scope.Clientes, function(cliente){ return cliente.credencial == $scope.formData.cliente.credencial; });
+						if(cliente.length == 0){ //Si no hay duplicado
+							isValidCredencial = true;
+						} else if (cliente.length == 1 && $scope.formData.cliente._id && cliente[0]._id == $scope.formData.cliente._id){
+							//Si el duplicado corresponde al cliente seleccionado en el combo
+							isValidCredencial = true;
+						} else {
+							isValidCredencial = false;
+						}
+					} else { //Si no es afiliado, no hay necesidad de validar credencial, se toma como valida automaticamente
+						isValidCredencial = true;
+					}
+					//-------------- FIN VALIDAR CREDENCIAL --------------
+
+					if(isValidCredencial){
+						var nombre_completo = $scope.formData.cliente.nombre+' '+$scope.formData.cliente.apPaterno+' '+$scope.formData.cliente.apMaterno;
+						nombre_completo = nombre_completo.trim();
+						nombre_completo = angular.lowercase(nombre_completo);
+						var cliente = _.filter($scope.Clientes, function(cliente){ return angular.lowercase(cliente.nombre_completo) == nombre_completo; });
+						if(cliente.length == 0){ //Si no hay duplicado
+							isValid = true;
+						} else if (cliente.length == 1 && $scope.formData.cliente._id && angular.lowercase(cliente[0].nombre_completo) == nombre_completo){
+							//Si el duplicado corresponde al nombre del cliente seleccionado en el combo
+							isValid = true;
+						} else {
+							isValid = false;
+							$scope.showMessage(true, $scope.messageAlertWarning, 'Nombre no valido, nombre duplicado');
+						}
+					} else {
+						isValid = false;
+						$scope.showMessage(true, $scope.messageAlertWarning, 'Credencial no valida, credencial duplicada');
+					}
+				}
+			} else {
+				isValid = false;
+				$scope.showMessage(true, $scope.messageAlertWarning, 'Campos de cliente no llenados completamente');
+			}
+			return isValid;
+		}
+
 
 	}]);

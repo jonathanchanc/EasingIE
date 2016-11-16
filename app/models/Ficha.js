@@ -30,7 +30,7 @@ var FichaSchema = new Schema({
 
 /* NUEVO SCHEMA TENTATIVO PARA FICHAS
 var FichaSchema = new Schema({
-	id:									{ type: Number, unique: true },
+	//id:									{ type: Number, unique: true },
 	folio:								{ type: Number, unique: true },
 	fecha_alta:							{ type: Date, default: Date.now },
 	
@@ -38,7 +38,7 @@ var FichaSchema = new Schema({
 		_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente' },
 		nombre: { type: String }, //DEFINIR SI SERÄ NOMBRE COMPLETA O CAMPO POR CAMPO
 		afiliado: { type: String },
-		credencial: { type: Number },
+		credencial: { type: Number, unique: true, sparse: true },
 	},
 
 	usuario: {
@@ -54,6 +54,8 @@ var FichaSchema = new Schema({
 			_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Programa' },
 			nombre: { type: String },
 			precio: { type: Number },
+			descuento: { type: Number },
+			total: { type: Number },
 			monto_apoyo_terceros: { type: Number },
 			monto_suciqroo: { type: Number },
 			pagado: { type: String },
@@ -66,6 +68,8 @@ var FichaSchema = new Schema({
 				_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Especialidad' },
 				nombre: { type: String },
 			},
+			tiene_descuento: { type: String },
+			cortesia: { type: String },
 		}
 	],
 
