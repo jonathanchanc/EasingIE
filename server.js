@@ -5,6 +5,8 @@ var mongoose       = require('mongoose');
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
 var morgan     	   = require("morgan");
+var autoIncrement  = require('mongoose-auto-increment');
+
 
 // Configuracion Socket io
 var socketio = require('socket.io');
@@ -19,7 +21,12 @@ app.set('server', server);
 var db = require('./config/db');
 
 var port = process.env.PORT || 3000; // set our port
+
+var connection = mongoose.createConnection(db.url);
+autoIncrement.initialize(connection);
 mongoose.connect(db.url); // connect to our mongoDB database (commented out after you enter in your own credentials)
+
+
 
 // get all data/stuff of the body (POST) parameters
 app.use(bodyParser.json()); // parse application/json 

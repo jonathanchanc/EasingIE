@@ -119,7 +119,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12 col-md-6">
+            <div class="col-xs-12 col-md-6" ng-show="_.contains(privilegios,controllerInstance+'-status')">
                 <label for="estado">{{model.estado}}</label>
                 <div class="form-group">
                     <div class="radio-inline">
@@ -132,7 +132,7 @@
             </div>
             <div class="col-xs-12 col-md-6" ng-class="{ 'has-error': form.fecha_alta.$touched && form.fecha_alta.$invalid }" ng-show="formData.fecha_alta">
                 <label for="fecha_alta">{{model.fecha_alta}}</label>
-                <input type="text" readOnly="" name="fecha_alta" class="form-control" ng-model="formData.fecha_alta" >
+                <input type="text" readOnly name="fecha_alta" class="form-control" ng-model="formData.fecha_alta" >
             </div>
         </div>
 

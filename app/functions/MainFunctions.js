@@ -1,5 +1,7 @@
 	var jwt	 = require('jsonwebtoken');
 	var User = require('../models/User.js');
+	var Rol = require('../models/Rol.js');
+	var Privilegio = require('../models/Privilegio.js');
 
   	//GET - Return all expedientes in the DB
   	authenticate = function(req, res) {
@@ -86,8 +88,37 @@
 	        var bearer = bearerHeader.split(" ");
 	        bearerToken = bearer[1];
 	        req.token = bearerToken;
+	        //console.log(req);
+	        //console.log(req.parsedUrl);
+	        //console.log(res);
+
+	        //PARA VALIDAR URL
+	        //console.log('originalUrl '+req.originalUrl);
+	        //console.log(req.route);
 	        next();
 	    } else {
 	        res.send(403);
 	    }
+	}
+
+	getPrivilegios = function(req, res) {
+		User.findOne({token: req.token}, function(err, userInstance) {
+			if(!err) {
+				Rol.findById(userInstance.rol, function(err, rolInstance) {
+					if(!err) {
+						var arrQ = { _id: { $in: rolInstance.privilegios } }; ///Verificar que este activos los privilegios
+						var query = Privilegio.find(arrQ);
+						query.exec(function(err, privilegioInstance) {
+					  		res.json(privilegioInstance);
+				        });
+					} else {
+						console.log('ERROR: ' + err);
+						res.status(500).send(err);
+					}
+				});
+			} else {
+				console.log('ERROR: ' + err);
+				res.status(500).send(err);
+			}
+		});
 	}

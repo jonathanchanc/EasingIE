@@ -146,20 +146,27 @@ angular.module('ProgramaCtrl',[])
 	            })
 			;
 
-			$scope.label.createOrEdit = $scope.label.add;
-			if($routeParams.instanceId != undefined){
-				Programas.findById($routeParams.instanceId)
-					.success(function(data) {
-						$scope._id = $routeParams.instanceId;
-						$scope.formData = angular.copy(data);
-						$scope.label.createOrEdit = $scope.label.edit;
-					})
-					.error(function(data, status) {
-						console.log($scope.label.noFindRow);
-						$location.path('/'+$scope.controllerInstance);
-		            })
-					;
-			}
+			Main.me()
+				.success(function(userData) {
+					$scope.formData.usuario = userData.data._id; //Agregamos usuario a temForm
+					$scope.label.createOrEdit = $scope.label.add;
+					if($routeParams.instanceId != undefined){
+						Programas.findById($routeParams.instanceId)
+							.success(function(data) {
+								$scope._id = $routeParams.instanceId;
+								$scope.formData = angular.copy(data);
+								$scope.label.createOrEdit = $scope.label.edit;
+							})
+							.error(function(data, status) {
+								console.log($scope.label.noFindRow);
+								$location.path('/'+$scope.controllerInstance);
+				            })
+							;
+					}
+		        })
+				.error(function(data, status) {
+					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
+	            });
 		}
 
 

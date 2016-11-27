@@ -1,4 +1,5 @@
 	var Instance = require('../models/Ficha.js');
+	var Factura = require('../models/Factura.js');
 
   	//POST - Return all rows by query
   	queryFicha = function(req, res) {
@@ -52,21 +53,22 @@
 	//POST - Insert a new row in the DB
 	addFicha = function(req, res) {
 		var instance = {};
-		instance.id = req.body.id;
-		instance.folio = req.body.folio;
-		instance.fecha_alta = req.body.fecha_alta;
-		instance.concepto = req.body.concepto;
+		//instance.folio = req.body.folio;
+		instance.anio = req.body.anio;
+		instance.monto_total = req.body.monto_total;				
 		instance.comentario = req.body.comentario;
-		instance.monto_total = req.body.monto_total;
-		instance.monto_apoyo_terceros = req.body.monto_apoyo_terceros;
-		instance.monto_suciqroo = req.body.monto_suciqroo;
-		instance.afiliado = req.body.afiliado;
 		instance.pagado = req.body.pagado;
+		instance.pagado_parcialmente = req.body.pagado_parcialmente;
 		instance.estado = req.body.estado;
-		instance.usuario = req.body.usuario;
-		instance.programa = req.body.programa;
+		//Campos objeto
 		instance.cliente = req.body.cliente;
-		//instance.factura = req.body.factura;
+		instance.usuario = req.body.usuario;
+		instance.programas = req.body.programas;
+		//No considerados al crear
+		//instance.usuario = req.body.usuario_modifico;
+		//instance.fecha_alta = req.body.fecha_alta; //Automatico
+		//instance.fecha_pago = req.body.fecha_pago; 
+		//instance.fecha_ultima_modificacion = req.body.fecha_ultima_modificacion;
 
 		instance = new Instance(instance);
 		instance.save(function(err) {
@@ -82,22 +84,37 @@
 
 	//PUT - Update a register already exists
 	updateFicha = function(req, res) {
+		Instance.findByIdAndUpdate(req.params.id, { $set: req.body }, {new: true}, function(err, instance) {
+			if(!err) {
+				console.log('Updated');
+				res.json(instance);
+			} else {
+				console.log('ERROR: ' + err);
+				res.status(500).send(err);
+			}
+		});
+	}
+
+	//PUT - Update a register already exists
+	updateFicha_old = function(req, res) {
 		Instance.findById(req.params.id, function(err, instance) {
-			instance.id = req.body.id;
-			instance.folio = req.body.folio;
-			instance.fecha_alta = req.body.fecha_alta;
-			instance.concepto = req.body.concepto;
+			//instance.folio = req.body.folio;
+			//instance.anio = req.body.anio;
+			instance.monto_total = req.body.monto_total;				
 			instance.comentario = req.body.comentario;
-			instance.monto_total = req.body.monto_total;
-			instance.monto_apoyo_terceros = req.body.monto_apoyo_terceros;
-			instance.monto_suciqroo = req.body.monto_suciqroo;
-			instance.afiliado = req.body.afiliado;
 			instance.pagado = req.body.pagado;
+			instance.pagado_parcialmente = req.body.pagado_parcialmente;
+			instance.fecha_pago = req.body.fecha_pago;
 			instance.estado = req.body.estado;
-			instance.usuario = req.body.usuario;
-			instance.programa = req.body.programa;
+			//Campos objeto
 			instance.cliente = req.body.cliente;
-			//instance.factura = req.body.factura;
+			instance.usuario = req.body.usuario;
+			instance.usuario_modifico = req.body.usuario_modifico;
+			instance.programas = req.body.programas;
+			//No considerados al crear
+			//instance.fecha_alta = req.body.fecha_alta; //Automatico
+			//instance.fecha_pago = req.body.fecha_pago; 
+			//instance.fecha_ultima_modificacion = req.body.fecha_ultima_modificacion;
 
 			instance.save(function(err) {
 				if(!err) {

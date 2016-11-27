@@ -14,6 +14,11 @@ angular.module('sampleApp', [
 	//CONTABILIDAD
 	'FichaCtrl', 
 	'FichaService', 
+	'FacturaCtrl', 
+	'FacturaService', 
+	//REPORTES
+	'ReporteCtrl', 
+	'ReporteService', 
 	//ADMINISTRACION
 	'OficinaCtrl', 
 	'OficinaService', 
@@ -21,8 +26,8 @@ angular.module('sampleApp', [
 	'EspecialidadService',
 	'ProgramaCtrl', 
 	'ProgramaService', 
-	'DoctorCtrl', 
-	'DoctorService', 
+	//'DoctorCtrl', 
+	//'DoctorService', 
 	'ProveedorCtrl', 
 	'ProveedorService', 
 	'ClienteCtrl', 

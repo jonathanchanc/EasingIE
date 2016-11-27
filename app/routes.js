@@ -6,14 +6,15 @@ module.exports = function(app) {
 	require('./functions/PrivilegioFunctions.js');
 	require('./functions/RolFunctions.js');
 	require('./functions/OficinaFunctions.js');
+	require('./functions/UserFunctions.js');
 	require('./functions/EspecialidadFunctions.js');
 	require('./functions/ProgramaFunctions.js');
 	require('./functions/MainFunctions.js');
-	require('./functions/UserFunctions.js');
 	require('./functions/DoctorFunctions.js');
 	require('./functions/ProveedorFunctions.js');
 	require('./functions/ClienteFunctions.js');
 	require('./functions/FichaFunctions.js');
+	require('./functions/FacturaFunctions.js');
 	
 
 
@@ -32,9 +33,10 @@ module.exports = function(app) {
 	app.delete('/api/expedientes/:id', ensureAuthorized, deleteExpediente);
 
 	//User Functions
-	app.post('/api/authenticate', authenticate);
+	app.post('/api/main/authenticate', authenticate);
 	//app.post('/api/signin', signin);
-	app.get('/api/me', ensureAuthorized, me);	
+	app.get('/api/main/me', ensureAuthorized, me);
+	app.post('/api/main/privilegios', ensureAuthorized, getPrivilegios);
 
 	// --------------------------------------------------------------------------
 
@@ -46,6 +48,14 @@ module.exports = function(app) {
 	app.post('/api/fichas', ensureAuthorized, addFicha);
 	app.put('/api/fichas/:id', ensureAuthorized, updateFicha);
 	app.delete('/api/fichas/:id', ensureAuthorized, deleteFicha);
+
+	//Facturas Functions
+	app.post('/api/facturas/query/', ensureAuthorized, queryFactura);
+	app.get('/api/facturas/:id', ensureAuthorized, findByIdFactura);
+	app.post('/api/facturas', ensureAuthorized, addFactura);
+	app.put('/api/facturas/:id', ensureAuthorized, updateFactura);
+	app.post('/api/facturas/updateficha', ensureAuthorized, updateFichasProgramas);
+	app.delete('/api/facturas/:id', ensureAuthorized, deleteFactura);
 
 	//ADMINISTRACION
 

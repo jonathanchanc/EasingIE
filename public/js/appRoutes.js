@@ -44,6 +44,29 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
             controller: 'FichaController'
         })
 
+         //Factura
+        .when('/facturas', {
+            templateUrl: 'views/factura/list.html',
+            controller: 'FacturaController'
+        })
+
+        .when('/facturas/create', {
+            templateUrl: 'views/factura/form.html',
+            controller: 'FacturaController'
+        })
+
+        .when('/facturas/update/:instanceId', {
+            templateUrl: 'views/factura/form.html',
+            controller: 'FacturaController'
+        })
+
+        //REPORTES --------------------------
+        //Reporte
+        .when('/reportes', {
+            templateUrl: 'views/reporte/list.html',
+            controller: 'ReporteController'
+        })
+
         //ADMINISTRACION --------------------------
         //Oficina
         .when('/oficinas', {
@@ -94,6 +117,7 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
         })
 
          //Doctor
+         /*
         .when('/doctores', {
             templateUrl: 'views/doctor/list.html',
             controller: 'DoctorController'
@@ -108,6 +132,7 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
             templateUrl: 'views/doctor/form.html',
             controller: 'DoctorController'
         })
+        */
 
         //Proveedor
         .when('/proveedores', {

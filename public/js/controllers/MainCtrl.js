@@ -6,22 +6,51 @@ angular.module('MainCtrl', [])
 
 .controller('MainController', ['$rootScope', '$scope', '$location', '$localStorage', 'Main', 'Roles', 'Privilegios', function($rootScope, $scope, $location, $localStorage, Main, Roles, Privilegios) {
 	$scope.tagline = 'Sistema para administración de ingresos y egresos';
-    //$rootScope.baseUrl = "http://ades-suciqroo.rhcloud.com";
-    //$rootScope.baseUrl = "http://10.10.35.44:3000";
-    //$rootScope.baseUrl = "http://192.168.1.132:3000";
-    //$rootScope.baseUrl = "http://localhost:3000";
     $rootScope._ = _;
 	$scope.token = $localStorage.token;
-    $localStorage.privilegios = [];
+    //$localStorage.privilegios = [];
     
     $scope.getPrivilegios = function(){
+        if($scope.token){
+            Main.getPrivilegios().then(function(data){
+                $scope.privilegios = $rootScope.privilegios;
+                $scope.modulos = $rootScope.modulos;
+                console.log($scope.privilegios);
+                //console.log($scope.modulos);
+            });
+        }
+            
+        /*
+            Main.getPrivilegios()
+                .success(function(data) {
+                    console.log(data);
+                            //Copiamos el objeto data a ambos arrays - Data es una instancia del modelo Users
+                            var privilegios = angular.copy(data);
+                            var modulos = angular.copy(data);
+                            //Extraemos todos los datos a partir de una propiedad de Users
+                            privilegios = _.pluck(privilegios, 'nombre');
+                            modulos = _.pluck(modulos, 'modulo');
+                            //Asiganmos al $scope el array sin valores repetidos (unique)
+                            $scope.privilegios = _.uniq(privilegios);
+                            $scope.modulos = _.uniq(modulos);
+                            console.log($scope.privilegios);
+                            $localStorage.privilegios = $scope.privilegios;
+                })
+                .error(function(data, status) {
+                    console.log('Error: ' + status);
+                    console.log(data);
+                })
+            ;
+            */
+
+        /*
         if($scope.token)
         Main.me(function(res) {
             Roles.findById(res.data.rol)
                 .success(function(data) {
                     $scope.rol = angular.copy(data);
 
-                    Privilegios.query({ query: { _id: {$in: data.privilegios} } })
+                    Privilegios.query({ query: { _id: {$in: data.privilegios}, estado: 'Activo' } })
                         .success(function(data) {
                             //Copiamos el objeto data a ambos arrays - Data es una instancia del modelo Users
                             var privilegios = angular.copy(data.instanceList);
@@ -32,7 +61,7 @@ angular.module('MainCtrl', [])
                             //Asiganmos al $scope el array sin valores repetidos (unique)
                             $scope.privilegios = _.uniq(privilegios);
                             $scope.modulos = _.uniq(modulos);
-                            //console.log($scope.privilegios);
+                            console.log($scope.privilegios);
                             $localStorage.privilegios = $scope.privilegios
                         });
 
@@ -41,7 +70,8 @@ angular.module('MainCtrl', [])
 
         }, function() {
             $rootScope.error = 'Failed to fetch details';
-        })
+        });
+        */
                 
     }
     
@@ -82,11 +112,17 @@ angular.module('MainCtrl', [])
     // };
 
     $scope.me = function() {
-        Main.me(function(res) {
+        console.log($rootScope.privilegios);
+        Main.me(
+            //).success(
+            function(res) {
             $scope.myDetails = res;
-        }, function() {
+        },
+        //).error(
+            function() {
             $rootScope.error = 'Failed to fetch details';
-        })
+            console.log('Failed to fetch details');
+        });
     };
 
     $scope.logout = function() {

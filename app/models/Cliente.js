@@ -10,7 +10,7 @@ var ClienteSchema = new Schema({
 	email:								{ type: String },
 	fecha_alta: 						{ type: Date, default: Date.now },
 	afiliado: 							{ type: String },
-	credencial: 						{ type: Number },
+	credencial: 						{ type: Number, unique: true, sparse: true },
 	estado: 							{ type: String }
 }, {
 	toObject: {

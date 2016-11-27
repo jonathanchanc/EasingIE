@@ -1,6 +1,6 @@
 angular.module('PrivilegioCtrl',[])
 
-	.controller('PrivilegioController', ['$scope','$routeParams','$location','Privilegios', function($scope, $routeParams, $location, Privilegios) {
+	.controller('PrivilegioController', ['$rootScope','$scope','$routeParams','$location','Main','Privilegios', function($rootScope, $scope, $routeParams, $location, Main, Privilegios) {
 		$scope.controlNameSingular = 'Privilegio';
 		$scope.controlNamePlural = 'Privilegios';
 		$scope.controllerInstance = 'privilegios';
@@ -84,7 +84,7 @@ angular.module('PrivilegioCtrl',[])
 			
 			query.limit = $scope.itemsPerPage;
     		query.page = $scope.currentPage-1;
-    		query.sort = {};
+    		query.sort = { id: 1 };
 			$scope.query(query);
 		}
 

@@ -28,6 +28,13 @@
 	<script src="js/controllers/FichaCtrl.js"></script>
 	<script src="js/services/FichaService.js"></script>
 
+	<!-- Factura -->
+	<script src="js/controllers/FacturaCtrl.js"></script>
+	<script src="js/services/FacturaService.js"></script>
+
+	<!-- Reporte -->
+	<script src="js/controllers/ReporteCtrl.js"></script>
+	<script src="js/services/ReporteService.js"></script>
 	
 	<!-- Oficina -->
 	<script src="js/controllers/OficinaCtrl.js"></script>
@@ -38,9 +45,9 @@
 	<!-- Programa -->
 	<script src="js/controllers/ProgramaCtrl.js"></script>
 	<script src="js/services/ProgramaService.js"></script>
-	<!-- Doctor -->
+	<!-- Doctor >
 	<script src="js/controllers/DoctorCtrl.js"></script>
-	<script src="js/services/DoctorService.js"></script>
+	<script src="js/services/DoctorService.js"></script-->
 	<!-- Proveedor -->
 	<script src="js/controllers/ProveedorCtrl.js"></script>
 	<script src="js/services/ProveedorService.js"></script>
@@ -92,6 +99,10 @@
 	<!-- LOADING BAR -->
 	<link rel='stylesheet' href='libs/angular-loading-bar/build/loading-bar.min.css' type='text/css' media='all' />
 	<script type='text/javascript' src='libs/angular-loading-bar/build/loading-bar.min.js'></script>
+
+	<!-- PDF MAKE -->
+	<script type="text/javascript" src="libs/pdfmake/build/pdfmake.js"></script>
+	<script type="text/javascript" src="libs/pdfmake/build/vfs_fonts.js"></script>
 </head>
 
 <body ng-app="sampleApp">
@@ -121,6 +132,7 @@
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Operación<span class="caret"></span></a>
 								<ul class="dropdown-menu">
 									<li data-ng-show="token"><a ng-href="/fichas/create">Agregar Ficha</a></li>
+									<li data-ng-show="token"><a ng-href="/facturas/create">Pagar a proveedores</a></li>
 								</ul>
 							</li>
 
@@ -129,10 +141,10 @@
 								<ul class="dropdown-menu">
 									<li class="dropdown-header"><b>Ingresos</b></li>
 									<li data-ng-show="token"><a ng-href="/fichas">Fichas</a></li>
-									<li data-ng-show="token"><a ng-href="/afiliacion">--Afiliación</a></li>
+									<!--li data-ng-show="token"><a ng-href="/afiliacion">--Afiliación</a></li-->
 									<li role="separator" class="divider"></li>
 									<li class="dropdown-header"><b>Egresos</b></li>
-									<li data-ng-show="token"><a ng-href="/pagoDoctores">--Pago a doctores</a></li>
+									<li data-ng-show="token"><a ng-href="/facturas">Facturas</a></li>
 									<li data-ng-show="token"><a ng-href="/pagoServicios">--Pago de servicios</a></li>
 								</ul>
 							</li>
@@ -146,8 +158,9 @@
 							</li-->
 
 							<li data-ng-show="token" class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">--Reportes <span class="caret"></span></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reportes <span class="caret"></span></a>
 								<ul class="dropdown-menu">
+									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reportes">Reportes</a></li>
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteServicios">--Servicios Pagados</a></li>
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteDoctores">--Doctores Pagados</a></li>
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteBalance">--Balance General</a></li>
@@ -163,7 +176,7 @@
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Especialidades')"><a ng-href="/especialidades">Especialidades</a></li>
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Programas')"><a ng-href="/programas">Programas</a></li>
 									
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Doctores')"><a ng-href="/doctores">Doctores -- ¿¿ELIMINAR?? --</a></li>
+									<!--li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Doctores')"><a ng-href="/doctores">Doctores -- ¿¿ELIMINAR?? --</a></li-->
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Proveedores')"><a ng-href="/proveedores">Proveedores</a></li>
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Clientes')"><a ng-href="/clientes">Clientes</a></li>
 

@@ -59,6 +59,7 @@
 		instance.monto_apoyo_terceros = req.body.monto_apoyo_terceros;
 		//instance.monto_suciqroo = req.body.monto_suciqroo;
 		instance.especialidad = req.body.especialidad;
+		instance.usuario = req.body.usuario;
 		instance.estado = req.body.estado;
 
 		instance = new Instance(instance);
@@ -83,6 +84,7 @@
 			instance.monto_apoyo_terceros = req.body.monto_apoyo_terceros;
 			//instance.monto_suciqroo = req.body.monto_suciqroo;
 			instance.especialidad = req.body.especialidad;
+			instance.usuario = req.body.usuario;
 			instance.estado = req.body.estado;
 
 			instance.save(function(err) {

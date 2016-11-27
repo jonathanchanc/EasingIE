@@ -1,6 +1,6 @@
 angular.module('FichaCtrl',[])
 
-	.controller('FichaController', ['$scope','$routeParams','$location','Fichas','Users','Oficinas','Especialidades','Programas','Proveedores','Clientes','Main', function($scope, $routeParams, $location, Fichas, Users, Oficinas, Especialidades, Programas, Proveedores, Clientes, Main) {
+	.controller('FichaController', ['$rootScope','$scope','$routeParams','$location','Main','Fichas','Users','Oficinas','Especialidades','Programas','Proveedores','Clientes', function($rootScope, $scope, $routeParams, $location, Main, Fichas, Users, Oficinas, Especialidades, Programas, Proveedores, Clientes) {
 		$scope.controlNameSingular = 'Ficha';
 		$scope.controlNamePlural = 'Fichas';
 		$scope.controllerInstance = 'fichas';
@@ -34,6 +34,7 @@ angular.module('FichaCtrl',[])
 		$scope.label.no = 'No';
 		$scope.label.agregar = 'Agregar';
 		$scope.label.delete = 'Borrar';
+		$scope.label.other = '';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -44,8 +45,8 @@ angular.module('FichaCtrl',[])
 		$scope.messageAlertDanger = 'alert-danger';
 
 		$scope.searchData = {};
-		$scope.formTemp = {tiene_descuento: 'No', cortesia: 'No'};
-		$scope.formData = {estado:'Activo', afiliado:'No', pagado:'No', cliente:{afiliado:'No'}, usuario: { oficina: {} }, programas:[] };
+		$scope.formTemp = {tiene_descuento: 'No', cortesia: 'No', usuario_modifico: { oficina: {} } };
+		$scope.formData = {estado:'Activo', afiliado:'No', pagado:'No', pagado_parcialmente:'No', cliente:{afiliado:'No'}, usuario: { oficina: {} }, programas:[] };
 
 		$scope.instanceList = [];
 		//$scope.Usuarios = [];
@@ -66,7 +67,7 @@ angular.module('FichaCtrl',[])
 			nombre_programa: 'Programa',
 			concepto: 'Concepto',
 			precio: 'Precio',
-			total: 'PRecio',
+			total: 'Precio',
 			tiene_descuento: 'Descuento',
 			cortesia: 'Cortesia',
 		}
@@ -77,6 +78,8 @@ angular.module('FichaCtrl',[])
 						folio: 'Folio',
 						fecha_alta: 'Fecha de alta',
 						pagado: 'Pagado',
+						fecha_pago: 'Fecha pagado',
+						pagado_parcialmente: 'Pagado parcialmente',
 						estado: 'Estado',
 
 						//Usados
@@ -119,6 +122,7 @@ angular.module('FichaCtrl',[])
 					};
 
 		$scope.inicio = function(){
+			Main.getPrivilegios().then(function(){ $scope.privilegios = $rootScope.privilegios});
 			$scope.pagination();
 		}
 
@@ -135,7 +139,9 @@ angular.module('FichaCtrl',[])
 				var data = $scope.searchData.data;
 				data = data.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
 	  			query.query = 	{ $or: [
-					  				{nombre: { $regex : data, $options:"i" } },
+					  				{'cliente.nombre': { $regex : data, $options:"i" } },
+					  				{'cliente.apPaterno': { $regex : data, $options:"i" } },
+					  				{'cliente.apMaterno': { $regex : data, $options:"i" } },
 					  				]
 					  			};
 			} else {
@@ -158,11 +164,8 @@ angular.module('FichaCtrl',[])
 					$scope.totalItems = data.totalItems;
 					$scope.calculateTextPagination();
 					if($scope.searchData.active){
-						$scope.messageShow = true;
-						$scope.messageClass = $scope.messageAlertInfo;
-						$scope.messageText = $scope.label.searchResults+' "'+$scope.searchData.data+'"... ';
-					}
-					
+						$scope.showMessage(true, $scope.messageAlertInfo, $scope.messageText = $scope.label.searchResults+' "'+$scope.searchData.data+'"... ');
+					}					
 				})
 				.error(function(data, status) {
 					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
@@ -219,39 +222,61 @@ angular.module('FichaCtrl',[])
 					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
 	            });
 
-			$scope.label.createOrEdit = $scope.label.add;
-			if($routeParams.instanceId != undefined){
-				Fichas.findById($routeParams.instanceId)
-					.success(function(data) {
-						$scope._id = $routeParams.instanceId;
-						$scope.formData = angular.copy(data);
-						$scope.label.createOrEdit = $scope.label.edit;
-					})
-					.error(function(data, status) {
-						console.log($scope.label.noFindRow);
-						$location.path('/'+$scope.controllerInstance);
-		            })
-					;
-			} else {
-				Main.me(function(userData) {
+			Main.me(
+				//).success(
+				function(userData) {
 					Oficinas.query({ query: { _id: userData.data.oficina } })
-						.success(function(data) {
-							//$scope.Usuarios = angular.copy(userData); //Comentar esta linea tambien
-							data = data.instanceList[0];
-							$scope.formData.usuario._id = userData.data._id;
-							$scope.formData.usuario.nombre = userData.data.nombre_completo;
-							$scope.formData.usuario.oficina._id = data._id;
-							$scope.formData.usuario.oficina.nombre = data.nombre;
+						.success(function(dataOficina) {
+
+							$scope.label.createOrEdit = $scope.label.add;
+							if($routeParams.instanceId != undefined){
+
+								$scope.formTemp.statusEditable = true; //Campos de activo y usurio creo
+								$scope.formTemp.noEditable = true; //Evitar poder editar cliente y programas
+								if($scope.formTemp.noEditable){
+									$scope.formTemp.lockCliente = true;
+								}
+
+								Fichas.findById($routeParams.instanceId)
+									.success(function(dataFicha) {
+										$scope._id = $routeParams.instanceId;
+										$scope.formData = angular.copy(dataFicha);
+										$scope.label.createOrEdit = '';
+										$scope.label.other = dataFicha.folio_ficha;
+										//AGregamos usuario modifico
+										dataOficina = dataOficina.instanceList[0];
+										$scope.formTemp.usuario_modifico._id = userData.data._id;
+										$scope.formTemp.usuario_modifico.usuario = userData.data.usuario;
+										$scope.formTemp.usuario_modifico.nombre = userData.data.nombre_completo;
+										$scope.formTemp.usuario_modifico.oficina._id = dataOficina._id;
+										$scope.formTemp.usuario_modifico.oficina.nombre = dataOficina.nombre;
+										//$scope.formData.usuario_modifico = $scope.formTemp.usuario_modifico;
+									})
+									.error(function(dataFicha, status) {
+										console.log($scope.label.noFindRow);
+										$location.path('/'+$scope.controllerInstance);
+						            })
+									;
+							} else {
+								//$scope.Usuarios = angular.copy(userData); //Comentar esta linea tambien
+								dataOficina = dataOficina.instanceList[0];
+								$scope.formData.usuario._id = userData.data._id;
+								$scope.formData.usuario.usuario = userData.data.usuario;
+								$scope.formData.usuario.nombre = userData.data.nombre_completo;
+								$scope.formData.usuario.oficina._id = dataOficina._id;
+								$scope.formData.usuario.oficina.nombre = dataOficina.nombre;
+							}
+
 						})
-						.error(function(data, status) {
+						.error(
+							function(data, status) {
 							$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
 			            });
-		        }, function() {
-					console.log('Error: ');
-			        console.log(userData);
-		        })
-		        ;
-			}
+		        },
+		        //).error(
+					function(data, status) {
+					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
+	            });
 		}
 
 
@@ -264,6 +289,8 @@ angular.module('FichaCtrl',[])
 			if (isValid) {
 				
 				if(_id != undefined) {
+					$scope.formData.usuario_modifico = $scope.formTemp.usuario_modifico; //Asginamos nuevo usuario modifico
+					$scope.formData.usuario_modifico.fecha = new Date(); //Fecha modificacion
 					Fichas.update(_id,$scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
@@ -281,7 +308,21 @@ angular.module('FichaCtrl',[])
 				} else {
 					//CREAR
 					if($scope.validateCliente()){ //VALIDAMOS CLIENTE
-						if($scope.formData.cliente._id){ //Si existe cliente - solo agregamos ficha
+						$scope.formData.usuario.fecha = new Date(); //Fecha creacion
+						$scope.formData.anio = new Date().getFullYear(); //Fecha creacion
+						$scope.formData.cliente.estado = 'Activo';
+						if($scope.formData.cliente._id){ //Si existe cliente - 
+							//actualizamos datos cliente
+							//$scope.formData.cliente.estado = 'Activo';
+							Clientes.update($scope.formData.cliente._id,$scope.formData.cliente)
+								.success(function(data) {
+									$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.updateSuccess, status, data);
+								})
+								.error(function(data, status) {
+									$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.updateFailedFailed, status, data);
+					            })
+								;
+							//Creamos ficha
 							Fichas.create($scope.formData).success(function(data) {
 									$scope.formData = {};
 									console.log($scope.label.createSuccess);
@@ -292,31 +333,30 @@ angular.module('FichaCtrl',[])
 					            })
 					            ;
 						} else { //Si no existe cliente - se crea cliente y despues la ficha
+							//$scope.formData.cliente.estado = 'Activo';
 							Clientes.create($scope.formData.cliente)
-							.success(function(data) {
-								$scope.formData.cliente._id = data._id;
-								//Correcto - Crear Ficha
-								Fichas.create($scope.formData).success(function(data) {
-									$scope.formData = {};
-									console.log($scope.label.createSuccess);
-									$location.path('/'+$scope.controllerInstance);
+								.success(function(data) {
+									$scope.formData.cliente._id = data._id;
+									//Correcto - Crear Ficha
+									Fichas.create($scope.formData).success(function(data) {
+										$scope.formData = {};
+										console.log($scope.label.createSuccess);
+										$location.path('/'+$scope.controllerInstance);
+									})
+									.error(function(data, status) {
+										$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
+						            })
+						            ;
 								})
 								.error(function(data, status) {
 									$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
 					            })
-					            ;
-							})
-							.error(function(data, status) {
-								$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
-				            })
-							;
+								;
 						}
-					} else {
-						$scope.showMessage(true, $scope.messageAlertDanger, "No es un cliente valido");
 					}
 				}
 			} else {
-				
+				$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.invalidDataForm);
 			}
 		};
 
@@ -440,7 +480,7 @@ angular.module('FichaCtrl',[])
 
 		$scope.addPrograma = function(){
 
-			var isValidCliente = $scope.validateCliente();
+			var isValidCliente = $scope.validateCliente(true);
 			//console.log(isValidCliente);
 			if(isValidCliente){
 				if($scope.formTemp.programa){
@@ -512,7 +552,14 @@ angular.module('FichaCtrl',[])
 					total += programa.total;
 				});
 			}
-			$scope.formData.monto_total = total;
+			$scope.formData.monto_total = total;			
+			$scope.recalculateIndexProgramas();
+		}
+
+		$scope.recalculateIndexProgramas = function(){
+			angular.forEach($scope.formData.programas, function(programa, index) {
+		  		programa.index = index;
+			});
 		}
 
 		$scope.resetCliente = function(){
@@ -560,7 +607,7 @@ angular.module('FichaCtrl',[])
 	        $scope.formTemp.tiene_descuento = 'No';
 		};
 
-		$scope.validateCliente = function(){
+		$scope.validateCliente = function(addPrograma){
 			var isValid = false;
 			var mess = '';
 			if( $scope.formData.cliente.nombre &&
@@ -598,10 +645,21 @@ angular.module('FichaCtrl',[])
 						nombre_completo = angular.lowercase(nombre_completo);
 						var cliente = _.filter($scope.Clientes, function(cliente){ return angular.lowercase(cliente.nombre_completo) == nombre_completo; });
 						if(cliente.length == 0){ //Si no hay duplicado
-							isValid = true;
+							if($scope.formData.programas.length > 0 || addPrograma) {
+								isValid = true;
+							} else {
+								isValid = false;
+								$scope.showMessage(true, $scope.messageAlertInfo, 'Seleccione un programa');
+							}
+
 						} else if (cliente.length == 1 && $scope.formData.cliente._id && angular.lowercase(cliente[0].nombre_completo) == nombre_completo){
 							//Si el duplicado corresponde al nombre del cliente seleccionado en el combo
-							isValid = true;
+							if($scope.formData.programas.length > 0 || addPrograma){
+								isValid = true;
+							} else {
+								isValid = false;
+								$scope.showMessage(true, $scope.messageAlertInfo, 'Seleccione un programa');
+							}
 						} else {
 							isValid = false;
 							$scope.showMessage(true, $scope.messageAlertWarning, 'Nombre no valido, nombre duplicado');
@@ -616,6 +674,23 @@ angular.module('FichaCtrl',[])
 				$scope.showMessage(true, $scope.messageAlertWarning, 'Campos de cliente no llenados completamente');
 			}
 			return isValid;
+		}
+
+
+		$scope.cancelarFicha = function(){
+			$scope.showMessage(false, '', '');
+			if($scope.formData.pagado == 'Si' || $scope.formData.pagado_parcialmente == 'Si' ){
+				var mess = 'No se puede cancelar esta ficha debido a algunos programas '+
+				'ya estan facturados, primero cancele la(s) factura(s) de esta ficha'
+				$scope.showMessage(true, $scope.messageAlertWarning, mess);
+			} else {
+				if($scope.formData.comentario != undefined && $scope.formData.comentario != ''){
+					$scope.formData.estado = 'Inactivo';
+					$scope.createOrUpdate(true, $scope.formData._id);
+				} else {
+					$scope.showMessage(true, $scope.messageAlertWarning, 'Escriba el motivo de la cancelacion en el campo comentario');
+				}
+			}
 		}
 
 

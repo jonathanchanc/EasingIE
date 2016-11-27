@@ -1,10 +1,10 @@
-angular.module('ClienteService', [])
+angular.module('FacturaService', [])
 
 	// super simple service
 	// each function returns a promise object 
-	.factory('Clientes', ['$rootScope', '$http',function($rootScope, $http) {
+	.factory('Facturas', ['$rootScope', '$http',function($rootScope, $http) {
         var baseUrl = $rootScope.baseUrl;
-        var nameUrl = '/api/clientes';
+        var nameUrl = '/api/facturas'
 
 		return {
 			query : function(data) {
@@ -18,6 +18,9 @@ angular.module('ClienteService', [])
 			},
 			update : function(id,data) {
 				return $http.put(baseUrl + nameUrl + '/' + id, data);
+			},
+			updateFichasProgramas : function(data) {
+				return $http.post(baseUrl + nameUrl + '/updateficha', data);
 			},
 			delete : function(id) {
 				return $http.delete(baseUrl + nameUrl + '/' + id);

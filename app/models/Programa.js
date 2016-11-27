@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
-	Especialidad = mongoose.model('Especialidad');
+	Especialidad = mongoose.model('Especialidad'),
+	User = mongoose.model('User');
 
 var ProgramaSchema = new Schema({
 	nombre:								{ type: String, unique: true },
@@ -11,7 +12,8 @@ var ProgramaSchema = new Schema({
 	//monto_suciqroo:						{ type: Number }, //NUEVO SCHEMA - ESTE CAMPO DESAPARECE
 	estado: 							{ type: String },
 
-	especialidad: 						{ type: mongoose.Schema.Types.ObjectId, ref: 'Especialidad' }
+	especialidad: 						{ type: mongoose.Schema.Types.ObjectId, ref: 'Especialidad' },
+	usuario: 							{ type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 
 module.exports = mongoose.model('Programa', ProgramaSchema);

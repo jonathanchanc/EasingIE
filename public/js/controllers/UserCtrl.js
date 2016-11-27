@@ -1,6 +1,6 @@
 angular.module('UserCtrl',[])
 
-	.controller('UserController', ['$scope','$routeParams','$location','$localStorage','Users','Oficinas','Roles', function($scope, $routeParams, $location, $localStorage, Users, Oficinas, Roles) {
+	.controller('UserController', ['$rootScope','$scope','$routeParams','$location','$localStorage','Users','Oficinas','Roles', 'Main', function($rootScope, $scope, $routeParams, $location, $localStorage, Users, Oficinas, Roles, Main) {
 		$scope.controlNameSingular = 'Usuario';
 		$scope.controlNamePlural = 'Usuarios';
 		$scope.controllerInstance = 'users';
@@ -66,15 +66,18 @@ angular.module('UserCtrl',[])
 					    rol: 'Rol'
 					};
 
+		/*
 		$scope.token = $localStorage.token;
 		$scope.privilegios = angular.copy($localStorage.privilegios);
 		//console.log($localStorage.token);
 		console.log($localStorage.privilegios);
 		//console.log($scope.token);
 		console.log($scope.privilegios);
-
+		*/
+		
 
 		$scope.inicio = function(){
+			Main.getPrivilegios().then(function(){ $scope.privilegios = $rootScope.privilegios; console.log($scope.privilegios); });
 			$scope.pagination();
 		}
 
@@ -184,6 +187,7 @@ angular.module('UserCtrl',[])
 					.success(function(data) {
 						$scope._id = $routeParams.instanceId;
 						$scope.formData = angular.copy(data);
+						delete $scope.formData.token;
 						$scope.label.createOrEdit = $scope.label.edit;
 					})
 					.error(function(data, status) {

@@ -4,9 +4,10 @@ angular.module('MainService', [])
 	// each function returns a promise object 
 	.factory('Main', ['$rootScope', '$http', '$localStorage', function($rootScope, $http, $localStorage){
         //$rootScope.baseUrl = "http://ades-suciqroo.rhcloud.com";
-        $rootScope.baseUrl = "http://10.10.35.44:3000";
         //$rootScope.baseUrl = "http://192.168.1.132:3000";
-        //$rootScope.baseUrl = "http://localhost:3000";
+        //$rootScope.baseUrl = "http://10.10.35.44:3000";
+        $rootScope.baseUrl = "http://localhost:3000";
+        var nameUrl = '/api/main'
         var baseUrl = $rootScope.baseUrl;
 
         function changeUser(user) {
@@ -47,17 +48,39 @@ angular.module('MainService', [])
             //     $http.post(baseUrl + '/api/signin', data).success(success).error(error)
             // },
             signin: function(data, success, error) {
-                $http.post(baseUrl + '/api/authenticate', data).success(success).error(error)
+                $http.post(baseUrl + nameUrl + '/authenticate', data).success(success).error(error)
             },
             me: function(success, error) {
-                $http.get(baseUrl + '/api/me').success(success).error(error)
+                $http.get(baseUrl + nameUrl + '/me').success(success).error(error)
             },
             logout: function(success) {
                 changeUser({});
                 delete $localStorage.token;
                 //delete $localStorage.privilegios;
                 success();
-            }
+            },
+            getPrivilegios: function() { //Asigna los privilegios al rootScope cada vez que es llamada
+                return $http.post(baseUrl + nameUrl + '/privilegios')
+                    .then(function(data) {
+                        //Copiamos el objeto data a ambos arrays - Data es una instancia del modelo Users
+                        //console.log(data);
+                        var privilegios = angular.copy(data.data);
+                        var modulos = angular.copy(data.data);
+                        //Extraemos todos los datos a partir de una propiedad de Users
+                        privilegios = _.pluck(privilegios, 'nombre');
+                        modulos = _.pluck(modulos, 'modulo');
+                        //Asiganmos al $scope el array sin valores repetidos (unique)
+                        $rootScope.privilegios = _.uniq(privilegios);
+                        $rootScope.modulos = _.uniq(modulos);
+                    })
+                    .catch(function(response) {
+                        console.log('Error: P1RS');
+                        console.log(response);
+                        //console.log('Error: ' + response.status);
+                        //console.log(response.data);
+                        //return undefined;
+                    });
+                }
         };
     }
 

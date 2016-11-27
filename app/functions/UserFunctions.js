@@ -55,7 +55,7 @@
 		var instance = {};
 		instance.usuario = req.body.usuario;
 		instance.password = req.body.password;
-		instance.token = req.body.token;
+		//instance.token = req.body.token;
 		instance.titulo = req.body.titulo;
 		instance.siglas = req.body.siglas;
 		instance.apPaterno = req.body.apPaterno;
@@ -89,7 +89,7 @@
 		Instance.findById(req.params.id, function(err, instance) {
 			instance.usuario = req.body.usuario;
 			instance.password = req.body.password;
-			instance.token = req.body.token;
+			//instance.token = req.body.token;
 			instance.titulo = req.body.titulo;
 			instance.siglas = req.body.siglas;
 			instance.apPaterno = req.body.apPaterno;
