@@ -15,6 +15,7 @@ module.exports = function(app) {
 	require('./functions/ClienteFunctions.js');
 	require('./functions/FichaFunctions.js');
 	require('./functions/FacturaFunctions.js');
+	require('./functions/EgresoFunctions.js');
 	
 
 
@@ -55,7 +56,15 @@ module.exports = function(app) {
 	app.post('/api/facturas', ensureAuthorized, addFactura);
 	app.put('/api/facturas/:id', ensureAuthorized, updateFactura);
 	app.post('/api/facturas/updateficha', ensureAuthorized, updateFichasProgramas);
+	app.post('/api/facturas/updateegreso', ensureAuthorized, updateEgresoByFactura);
 	app.delete('/api/facturas/:id', ensureAuthorized, deleteFactura);
+
+	//Egresos Functions
+	app.post('/api/egresos/query/', ensureAuthorized, queryEgreso);
+	app.get('/api/egresos/:id', ensureAuthorized, findByIdEgreso);
+	app.post('/api/egresos', ensureAuthorized, addEgreso);
+	app.put('/api/egresos/:id', ensureAuthorized, updateEgreso);
+	app.delete('/api/egresos/:id', ensureAuthorized, deleteEgreso);
 
 	//ADMINISTRACION
 

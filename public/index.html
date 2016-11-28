@@ -32,6 +32,10 @@
 	<script src="js/controllers/FacturaCtrl.js"></script>
 	<script src="js/services/FacturaService.js"></script>
 
+	<!-- Egreso -->
+	<script src="js/controllers/EgresoCtrl.js"></script>
+	<script src="js/services/EgresoService.js"></script>
+
 	<!-- Reporte -->
 	<script src="js/controllers/ReporteCtrl.js"></script>
 	<script src="js/services/ReporteService.js"></script>
@@ -145,7 +149,7 @@
 									<li role="separator" class="divider"></li>
 									<li class="dropdown-header"><b>Egresos</b></li>
 									<li data-ng-show="token"><a ng-href="/facturas">Facturas</a></li>
-									<li data-ng-show="token"><a ng-href="/pagoServicios">--Pago de servicios</a></li>
+									<li data-ng-show="token"><a ng-href="/egresos">Gastos</a></li>
 								</ul>
 							</li>
 
@@ -166,6 +170,7 @@
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteBalance">--Balance General</a></li>
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteFichas">--Fichas por Usuario</a></li>
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteHistorico">--Histórico</a></li>
+									<li data-ng-show="token"><a ng-href="/pagoServicios">--Pago de servicios</a></li>
 								</ul>
 							</li>
 

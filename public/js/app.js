@@ -16,6 +16,8 @@ angular.module('sampleApp', [
 	'FichaService', 
 	'FacturaCtrl', 
 	'FacturaService', 
+	'EgresoCtrl', 
+	'EgresoService', 
 	//REPORTES
 	'ReporteCtrl', 
 	'ReporteService', 

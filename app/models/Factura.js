@@ -2,6 +2,7 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
 	autoIncrement  = require('mongoose-auto-increment'),
 	User = mongoose.model('User'),
+	Oficina = mongoose.model('Oficina'),
 	Programa = mongoose.model('Programa'),
 	Proveedor = mongoose.model('Proveedor'),
 	Ficha = mongoose.model('Ficha')
@@ -29,6 +30,10 @@ var FacturaSchema = new Schema({
 		usuario: 					{ type: String },
 		nombre: 					{ type: String },
 		fecha:						{ type: Date, default: Date.now },
+		oficina: {
+			_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Oficina' },
+			nombre: 				{ type: String },
+		},
 	},
 
 	usuario_modifico: {
@@ -36,6 +41,10 @@ var FacturaSchema = new Schema({
 		usuario: 					{ type: String },
 		nombre: 					{ type: String },
 		fecha:						{ type: Date },
+		oficina: {
+			_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Oficina' },
+			nombre: 				{ type: String },
+		},
 	},
 
 	proveedor: {

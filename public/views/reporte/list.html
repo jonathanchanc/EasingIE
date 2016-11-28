@@ -1,9 +1,78 @@
 
 <div class="text-center" ng-init="inicio()">
 	<h1>{{controlNamePlural}}</h1>
-    
-    <div>
-        <button ng-click="openPdf()">Open Pdf</button>
-        <button ng-click="downloadPdf()">Download Pdf</button>
+</div>
+
+<div class="row">
+	<div class="col-xs-12 col-md-4">
+	    <label for="reporte">{{model.reporte}}</label>
+	    <select style="width:100%;" chosen
+	    		options="Reportes"
+	            allow-single-deselect='true'
+	            data-placeholder-text-single="'{{model.reporte}}'"
+	            data-ng-model="formData.reporte._id"
+	            data-ng-options="reporte._id as reporte.nombre for reporte in Reportes"
+	            ng-change='getDataReporte()'>
+	            <option value=""></option>
+	    </select>
+	</div>
+</div>
+<br/>
+<!-- FILTROS -->
+<div class="row" ng-show="formData.reporte._id">
+    <div class="col-xs-12 col-md-3" data-ng-show"showThis1">
+        <label for="cliente">{{modelTemp.cliente}}</label>
+        <select style="width:100%;" chosen
+                options="Clientes"
+                allow-single-deselect='true'
+                data-placeholder-text-single="'{{modelTemp.cliente}}'"
+                data-ng-model="formTemp.cliente"
+                data-ng-options="cliente._id as cliente.nombre_completo + ((cliente.credencial)? ' - '+cliente.credencial : '') for cliente in Clientes"
+                ng-change="getDataCliente()">
+                <option value=""></option>
+        </select>
+    </div>
+    <div class="col-xs-12 col-md-3" ng-show"!showThis1">
+        <label for="especialidad">{{modelTemp.especialidad}}</label>
+        <select style="width:100%;" chosen
+                options="Especialidades"
+                allow-single-deselect='true'
+                data-placeholder-text-single="'{{modelTemp.especialidad}}'"
+                data-ng-model="formTemp.especialidad"
+                data-ng-options="especialidad._id as especialidad.nombre for especialidad in Especialidades"
+                ng-change="getProgramasByEspecialidad()">
+                <option value=""></option>
+        </select>
+    </div>
+    <div class="col-xs-12 col-md-3" ng-show"_.contains(formData.reporte.filtros,'programa')">
+        <label for="programa">{{modelTemp.programa}}</label>
+        <select style="width:100%;" chosen
+                options="Programas"
+                allow-single-deselect='true'
+                data-placeholder-text-single="'{{modelTemp.programa}}'"
+                data-ng-model="formTemp.programa"
+                data-ng-options="programa._id as programa.nombre for programa in Programas"
+                ng-change="getDataPrograma()">
+                <option value=""></option>
+        </select>
+    </div>
+    <div class="col-xs-12 col-md-3" ng-show"_.contains(formData.reporte.filtros,'proveedor')">
+        <label for="proveedor">{{modelTemp.proveedor}}</label>
+        <select style="width:100%;" chosen
+                options="Proveedores"
+                allow-single-deselect='true'
+                data-placeholder-text-single="'{{modelTemp.proveedor}}'"
+                data-ng-model="formTemp.proveedor"
+                data-ng-options="proveedor._id as proveedor.nombre_completo for proveedor in Proveedores">
+                <option value=""></option>
+        </select>
     </div>
 </div>
+<br/>
+<div>
+    <button ng-click="createPdf2()">{{model.consultar}}</button>
+    <!--button ng-click="createPdf()">{{model.consultar}}</button>
+    <button ng-click="openPdf()">{{model.consultar}} old</button>
+    <button ng-click="downloadPdf()">{{model.descargar}}</button-->
+</div>
+

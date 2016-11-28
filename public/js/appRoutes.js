@@ -60,6 +60,22 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
             controller: 'FacturaController'
         })
 
+        //Egreso
+        .when('/egresos', {
+            templateUrl: 'views/egreso/list.html',
+            controller: 'EgresoController'
+        })
+
+        .when('/egresos/create', {
+            templateUrl: 'views/egreso/form.html',
+            controller: 'EgresoController'
+        })
+
+        .when('/egresos/update/:instanceId', {
+            templateUrl: 'views/egreso/form.html',
+            controller: 'EgresoController'
+        })
+
         //REPORTES --------------------------
         //Reporte
         .when('/reportes', {

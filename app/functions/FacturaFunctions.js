@@ -1,5 +1,6 @@
 	var Instance = require('../models/Factura.js');
 	var Ficha = require('../models/Ficha.js');
+	var Egreso = require('../models/Egreso.js');
 	var _  = require('underscore');
 
   	//POST - Return all rows by query
@@ -55,7 +56,7 @@
 	addFactura = function(req, res) {
 		var instance = {};
 		//instance.folio = req.body.folio;
-		instance.anio = req.body.anio;
+		/*instance.anio = req.body.anio;
 		instance.monto_total = req.body.monto_total;				
 		instance.comentario = req.body.comentario;
 		instance.concepto = req.body.concepto;
@@ -66,17 +67,56 @@
 		instance.usuario = req.body.usuario;
 		instance.proveedor = req.body.proveedor;
 		instance.programas = req.body.programas;
+		*/
 		//No considerados al crear
 		//instance.usuario = req.body.usuario_modifico;
 		//instance.fecha_alta = req.body.fecha_alta; //Automatico
 		//instance.fecha_pago = req.body.fecha_pago; 
 		//instance.fecha_ultima_modificacion = req.body.fecha_ultima_modificacion;
+		instance = req.body;
 
 		instance = new Instance(instance);
 		instance.save(function(err) {
 			if(!err) {
-				//console.log('Created');
-				res.json(instance);
+				console.log('Created factura');
+				console.log(instance);
+				//res.json(instance);
+				//Una vez gauardado la factura, guardamos el egreso
+				var egreso = {
+								anio: new Date().getFullYear(),
+								monto_salida: instance.monto_total,
+								monto_total: instance.monto_total,
+								monto_cambio: 0,
+								concepto: 'Pago de Factura: '+instance.folio_factura,
+								comentario: 'Registro agregado automaticamente por el sistema',
+								estado: 'Activo',
+								factura: {
+									_id: instance._id,
+									folio_factura: instance.folio_factura,
+								},
+								oficina: {
+									_id: instance.usuario.oficina._id,
+									nombre: instance.usuario.oficina.nombre,
+								},
+								usuario: {
+									_id: instance.usuario._id,
+									usuario: instance.usuario.usuario,
+									nombre: instance.usuario.nombre,
+									fecha: instance.usuario.fecha,
+								},
+							};
+				egreso = new Egreso(egreso);
+				console.log(egreso);
+				egreso.save(function(err) {
+					if(!err) {
+						console.log('Created egreso');
+						console.log(egreso);
+						res.json(instance);
+					} else {
+						console.log('ERROR: ' + err);
+						res.status(500).send(err);
+					}
+				});
 			} else {
 				console.log('ERROR: ' + err);
 				res.status(500).send(err);
@@ -168,6 +208,20 @@
 
 		console.log('Updated Fichas Programas');
 		console.log('Updated Fichas Pago');
+		res.json({status: 'OK'});		
+	}
+
+	updateEgresoByFactura = function(req, res) {
+		//Cancelar Egreso al cancelar factura
+		//Este metodo tambien puede ser usado para actualizar otros campos del egreso
+		console.log(req.body);
+		Egreso.findOneAndUpdate(req.body.query, req.body.data, {new: true}, function(err, instance) {
+			if(err) {
+				console.log('ERROR: ' + err);
+				res.status(500).send(error);
+			}
+		});
+		console.log('Updated Egreso');
 		res.json({status: 'OK'});		
 	}
 

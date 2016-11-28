@@ -1,6 +1,6 @@
 angular.module('FacturaCtrl',[])
 
-	.controller('FacturaController', ['$rootScope','$scope','$routeParams','$location','Main','Facturas','Fichas','Users','Oficinas','Especialidades','Programas','Proveedores','Clientes', function($rootScope,$scope, $routeParams, $location, Main, Facturas, Fichas, Users, Oficinas, Especialidades, Programas, Proveedores, Clientes) {
+	.controller('FacturaController', ['$rootScope','$scope','$routeParams','$location','Main','Facturas','Fichas', 'Egresos','Users','Oficinas','Especialidades','Programas','Proveedores','Clientes', function($rootScope,$scope, $routeParams, $location, Main, Facturas, Fichas, Egresos, Users, Oficinas, Especialidades, Programas, Proveedores, Clientes) {
 		$scope.controlNameSingular = 'Factura';
 		$scope.controlNamePlural = 'Facturas';
 		$scope.controllerInstance = 'facturas';
@@ -45,7 +45,7 @@ angular.module('FacturaCtrl',[])
 		$scope.messageAlertDanger = 'alert-danger';
 
 		$scope.searchData = {};
-		$scope.formTemp = {tiene_descuento: 'No', cortesia: 'No', usuario_modifico: { oficina: {} }, programas: [], fichas: {}, allSelected: true };
+		$scope.formTemp = {tiene_descuento: 'No', cortesia: 'No', usuario: { oficina: {} }, usuario_modifico: { oficina: {} }, programas: [], fichas: {}, allSelected: true };
 		$scope.formData = {estado:'Activo', afiliado:'No', /*pagado:'No',*/ pagado_parcialmente:'No', cliente:{afiliado:'No'}, usuario: { oficina: {} }, programas:[] };
 
 		$scope.instanceList = [];
@@ -139,9 +139,7 @@ angular.module('FacturaCtrl',[])
 				var data = $scope.searchData.data;
 				data = data.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
 	  			query.query = 	{ $or: [
-					  				{'cliente.nombre': { $regex : data, $options:"i" } },
-					  				{'cliente.apPaterno': { $regex : data, $options:"i" } },
-					  				{'cliente.apMaterno': { $regex : data, $options:"i" } },
+					  				{'proveedor.nombre': { $regex : data, $options:"i" } },
 					  				]
 					  			};
 			} else {
@@ -402,9 +400,7 @@ angular.module('FacturaCtrl',[])
 			if($scope.formData.proveedor._id){
 				//Buscar el programa seleccionado dentro de la lista de programas para obtener datos
 		        var proveedor = _.find($scope.Proveedores, function(proveedor){ return proveedor._id ==$scope.formData.proveedor._id; });
-		        $scope.formData.proveedor.nombre = proveedor.nombre;
-		        $scope.formData.proveedor.apPaterno = proveedor.apPaterno;
-		        $scope.formData.proveedor.apMaterno = proveedor.apMaterno;
+		        $scope.formData.proveedor.nombre = proveedor.nombre_completo;
 		        $scope.formData.proveedor.direccion = proveedor.direccion;
 		        $scope.formData.proveedor.telefono = proveedor.telefono;
 		        $scope.formData.proveedor.email = proveedor.email;
@@ -609,9 +605,38 @@ angular.module('FacturaCtrl',[])
 				angular.forEach($scope.formData.programas, function(programa, key) {
 					programa.toPago = 'No';
 				});
-				$scope.createOrUpdate(true, $scope.formData._id);
+				//CANCELAMOS EGRESO Y DESPUES MANDAMOS A CANCELAR FACTURA
+				$scope.cancelarEgreso();
 			} else {
 				$scope.showMessage(true, $scope.messageAlertWarning, 'Escriba el motivo de la cancelacion en el campo comentario');
+			}
+		}
+
+		$scope.cancelarEgreso = function(){
+			if($scope.formData._id != undefined && $scope.formData.estado == 'Inactivo'){
+				//ACTUALIZAR FICHAS PROGRAMAS
+				$scope.formTemp.usuario_modifico.fecha = new Date(); //Fecha modificacion
+				var query = {};	
+				query.query = { 'factura._id': $scope.formData._id };
+				query.data = {
+								$set: {
+									estado: 'Inactivo',
+									usuario_modifico: $scope.formTemp.usuario_modifico, 
+								} 
+							};
+				Facturas.updateEgresoByFactura(query)
+					.success(function(data) {
+						console.log($scope.label.updateSuccess);
+						//MANDAMOS A CANCELAR FACTURA
+						$scope.createOrUpdate(true, $scope.formData._id);
+					})
+					.error(function(data, status) {
+						$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.updateFailed, status, data);
+		            })
+					;
+
+			} else {
+				$scope.showMessage(true, $scope.messageAlertDanger, 'Error al cancelar');
 			}
 		}
 
