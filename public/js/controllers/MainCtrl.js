@@ -9,6 +9,20 @@ angular.module('MainCtrl', [])
     $rootScope._ = _;
 	$scope.token = $localStorage.token;
     //$localStorage.privilegios = [];
+
+
+    $scope.getExpanded = function(){
+        //Al inicial el controlador obtenemos el boton (togle data)
+        $scope.buttonExpanded = angular.element( document.querySelector( '#btnExpanded' ) );
+        //Obtenemos sus atributos
+        $scope.classExpanded = $scope.buttonExpanded.attr('class');
+        //Si contiene el atributo collapsed, significa que esta contraido, no esta desplegado y actualizamos variable
+        if( _.contains($scope.classExpanded.split(' '),'collapsed') )
+            $scope.hideAfterClick = false
+        else
+            $scope.hideAfterClick = true
+    };
+
     
     $scope.getPrivilegios = function(){
         if($scope.token){
@@ -19,6 +33,8 @@ angular.module('MainCtrl', [])
                 //console.log($scope.modulos);
             });
         }
+        //Leemos el estado del nav al iniciar la vista y despues de obtener los privilegios
+        $scope.getExpanded();
             
         /*
             Main.getPrivilegios()
