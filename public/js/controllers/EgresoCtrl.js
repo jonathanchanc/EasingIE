@@ -91,6 +91,7 @@ angular.module('EgresoCtrl',[])
 		};
 
 		$scope.inicio = function(){
+			Main.getPrivilegios().then(function(){ $scope.privilegios = $rootScope.privilegios; });
 			$scope.pagination();
 		}
 
@@ -186,7 +187,7 @@ angular.module('EgresoCtrl',[])
 								$scope.formTemp.usuario_modifico.nombre = userData.data.nombre_completo;
 							})
 							.error(function(dataEgreso, status) {
-								console.log($scope.label.noFindRow);
+								$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.noFindRow, status, data);
 								$location.path('/'+$scope.controllerInstance);
 				            })
 							;
@@ -205,6 +206,7 @@ angular.module('EgresoCtrl',[])
 
 
 		$scope.createOrUpdate = function(isValid, _id) {
+			$scope.formTemp.lockButtonSave = true;
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
@@ -226,6 +228,7 @@ angular.module('EgresoCtrl',[])
 							//$scope.messageText = $scope.label.updateSuccess;
 						})
 						.error(function(data, status) {
+							$scope.formTemp.lockButtonSave = false;
 							$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.updateFailed, status, data);
 			            })
 						;
@@ -243,11 +246,13 @@ angular.module('EgresoCtrl',[])
 							//$scope.messageText = $scope.label.createSuccess;
 						})
 						.error(function(data, status) {
+							$scope.formTemp.lockButtonSave = false;
 							$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
 			            })
 						;
 				}
 			} else {
+				$scope.formTemp.lockButtonSave = false;
 				$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.invalidDataForm);
 			}
 		};

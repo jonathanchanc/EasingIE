@@ -1,6 +1,6 @@
 angular.module('ReporteCtrl',[])
 
-	.controller('ReporteController', ['$rootScope','$scope','$routeParams','$location','Reportes', 'Fichas', 'Especialidades', 'Programas', 'Proveedores', 'Clientes', 'Users', function($rootScope, $scope, $routeParams, $location, Reportes, Fichas, Especialidades, Programas, Proveedores, Clientes, Users) {
+	.controller('ReporteController', ['$rootScope','$scope','$routeParams','$location','Main','Reportes', 'Fichas', 'Especialidades', 'Programas', 'Proveedores', 'Clientes', 'Users', function($rootScope, $scope, $routeParams, $location, Main, Reportes, Fichas, Especialidades, Programas, Proveedores, Clientes, Users) {
 		$scope.controlNameSingular = 'Reporte';
 		$scope.controlNamePlural = 'Reportes';
 		$scope.controllerInstance = 'reportes';
@@ -41,7 +41,7 @@ angular.module('ReporteCtrl',[])
 
 		$scope.searchData = {};
 		$scope.filtros = {};
-		$scope.formTemp = { filtros: [], estado:'Activo', pagado:'Si' };
+		$scope.formTemp = { filtros: [], estado:'', pagado:'' };
 		$scope.formData = { reporte: { filtros:[] } };
 
 		$scope.instanceList = [];
@@ -60,13 +60,15 @@ angular.module('ReporteCtrl',[])
 		//USADOS POR DATEPICKER
 		$scope.popup1 = { opened: false };
 		$scope.popup2 = { opened: false };
-		$scope.dateOptions = {
+		$scope.dateOptionsIni = {};
+		$scope.dateOptionsFin = {};
+		//$scope.dateOptions = {
 	    	//dateDisabled: false,
 		    //formatYear: 'yyyy',
-		    //maxDate: new Date(2016, 5, 22),
-		    //minDate: new Date(),
+		    //minDate: $scope.formTemp.fecha_ini,
+		    //maxDate: $scope.formTemp.fecha_fin,
 		    //startingDay: 1
-	  	};
+	  	//};
 	  	
 	  	$scope.open = function(popup) {
 	  		switch(popup){
@@ -77,6 +79,12 @@ angular.module('ReporteCtrl',[])
   					$scope.popup2.opened = true;
 	  				break;
 	  		}
+
+	  		if($scope.formTemp.$gte!=undefined)
+	  			$scope.dateOptionsFin['minDate'] = $scope.formTemp.$gte;
+	  		
+	  		if($scope.formTemp.$lte!=undefined)
+	  			$scope.dateOptionsIni['maxDate'] = $scope.formTemp.$lte;
 		};
 
 		$scope.modelTemp = {
@@ -103,12 +111,14 @@ angular.module('ReporteCtrl',[])
 		$scope.Reportes = [
 			{ 
 				_id: 1, nombre: 'Servicios Pagados', table: 'Fichas', 
-				filtros: ["fecha_ini", "fecha_fin", "cliente", "estado", "pagado"],
+				//filtros: ["fecha_ini", "fecha_fin", "cliente", "estado", "pagado"],
+				filtros: {$gte: 'usuario.fecha', $lte: 'usuario.fecha', cliente: 'cliente._id', estado: 'estado', pagado: 'programas.pagado'},
 				query: {}, 
-				select:{'folio':1, 'anio':1, 'monto_total':1},
-				columns:['folio_ficha', 'anio', 'monto_total'],
-				head:['Folio', 'Año', 'Monto'],
-				widths: ['*','*','*']
+				//select:{'folio':1, 'anio':1, 'monto_total':1},
+				select:{},
+				columns:['fecha_corta','folio', 'usuario.usuario', 'nombre', 'cliente.credencial', 'total', 'monto_apoyo_terceros', 'pagado', 'monto_suciqroo', 'factura.folio_factura'],
+				head:['Fecha','Folio', 'Operador', 'Programa', 'Folio Credencial', 'Precio Total', 'Terceros', 'Pagado', 'Suciqroo', 'Factura' ],
+				widths: ['auto','auto','auto',100,'auto','auto','auto','auto','auto','auto']
 			},
 			{ _id: 2, nombre: 'Proveedores Pagados', table: 'Facturas',
 			 	filtros: ["fecha_ini", "fecha_fin", "proveedor", "estado", "pagado"], query: {}, columns:[] },
@@ -120,11 +130,31 @@ angular.module('ReporteCtrl',[])
 			//	filtros: ["estado", "fecha_ini", "fecha_fin", "programa" ], query: {}, columns:[] },
 			//{ _id: 6, nombre: 'Historico', table: 'Historico',
 			//	filtros: ["estado", "fecha_ini", "fecha_fin", "historico" ], query: {}, columns:[] },
-			{ _id: 7, nombre: 'Reimpresion de ficha', table: 'Fichas', 
-				filtros: ["fecha_ini", "fecha_fin", "estado", "pagado"], query: {}, columns:[] },
+			{ 
+				_id: 7, nombre: 'Servicios Pagados', table: 'Fichas', 
+				filtros: ["fecha_ini", "fecha_fin", "cliente", "estado", "pagado"],
+				query: {}, 
+				select:{'folio':1, 'anio':1, 'monto_total':1},
+				columns:['folio_ficha', 'anio', 'monto_total'],
+				head:['Folio', 'Año', 'Monto'],
+				widths: ['*','*','*']
+			},
+			{ 
+				_id: 8, nombre: 'Reporte de Gastos', table: 'Egresos', 
+				filtros: ["fecha_ini", "fecha_fin", "estado", "pagado"],
+				query: {}, 
+				select:{'folio_egreso':1, 'fecha':1, 'monto_salida':1, 'monto_total':1, 'monto_cambio':1, 'concepto':1, 'estado':1, 'factura.folio_factura':1, 'oficina.nombre':1},
+				columns:['folio_egreso', 'fecha', 'monto_salida', 'monto_total', 'monto_cambio', 'concepto', 'estado', 'factura.folio_factura', 'oficina.nombre'],
+				head:['Folio', 'Fecha', 'Salida', 'Total', 'Cambio', 'Concepto', 'Estado', 'Factura', 'Oficina'],
+				widths: ['*','*','*','*','*','*','*','*','*']
+			},
 		];
 
+
+	
+
 		$scope.inicio = function(){
+			Main.getPrivilegios().then(function(){ $scope.privilegios = $rootScope.privilegios});
 			console.log('Modulo de reportes');
 			Especialidades.query({ query: { estado: 'Activo' } })
 				.success(function(data) { $scope.Especialidades = angular.copy(data.instanceList); })
@@ -178,7 +208,7 @@ angular.module('ReporteCtrl',[])
 
 		$scope.showHideFiltros = function(){
 			$scope.filtros = {};
-			_.each($scope.formData.reporte.filtros, function(filtro){
+			_.each($scope.formData.reporte.filtros, function(value, filtro){
 				$scope.filtros[filtro] = true;
 			});
 			/*
@@ -195,22 +225,43 @@ angular.module('ReporteCtrl',[])
 		};
 
 		$scope.getPdf = function(descargar) {
+
+			console.log($scope.formData.reporte)
+			console.log($scope.formData.reporte.columns)
+			if($scope.formData.reporte._id)
+				Reportes.getReporteById($scope.formData.reporte, $scope.formTemp, descargar);
+			/*
+			var externalData = Reportes.getReporteById($scope.formData.reporte, $scope.formTemp);
+			$scope.name = $scope.formData.reporte.nombre;
+			$scope.head = $scope.formData.reporte.head;
+			$scope.widths = $scope.formData.reporte.widths;
+			$scope.columns =  $scope.formData.reporte.columns;
+			$scope.externalDataRetrievedFromServer = externalData;
+		    $scope.openPdf(descargar);
+		    */
+		}
+
+		$scope.getPdf1 = function(descargar) {
 			var arrQuery = {};
 			var and = [];
 			_.each($scope.formData.reporte.filtros, function(filtro){
-				if($scope.formTemp[filtro.toString()] != undefined){
+				if($scope.formTemp[filtro.toString()] != undefined && $scope.formTemp[filtro.toString()] != '' ){
 					var whereFiled = {};
 					whereFiled[filtro.toString()] = $scope.formTemp[filtro.toString()];
 					and.push(whereFiled);
 				}
 			});
-			arrQuery.query = { $and: and };
+			if(and.length > 0)
+				arrQuery.query = { $and: and };
+			else 
+				arrQuery.query = {};
 			arrQuery.select =  $scope.formData.reporte.select;
 			$scope.name = $scope.formData.reporte.nombre;
 			$scope.head = $scope.formData.reporte.head;
 			$scope.widths = $scope.formData.reporte.widths;
 			$scope.columns =  $scope.formData.reporte.columns;
 
+			console.log(arrQuery.query);
 			//Vendria siendo esto pero por cada filtro
 			//arrQuery.query = {
 			//				$and: [
@@ -249,46 +300,6 @@ angular.module('ReporteCtrl',[])
 	            });
 	  	};
 
-
-	  	$scope.createPdf2 = function() {
-			console.log($scope.formData.reporte);
-			switch($scope.formData.reporte._id){
-				case 1:
-					Fichas.query({ query: { estado: 'Activo' }, select: 'folio anio monto_total' })
-						.success(function(data) { 
-							$scope.dataReporte = angular.copy(data.instanceList);
-							$scope.columns = ['Folio', 'Año', 'Monto'];
-							var externalData = [];
-							_.each($scope.dataReporte, function(ficha){
-								externalData.push({ 
-													Folio: ficha.folio_ficha, 
-													Año: ficha.anio,
-													Monto: ficha.monto_total,
-												});
-							});
-							$scope.externalDataRetrievedFromServer = externalData;
-
-						    dd = {
-							    content: [
-							        { text: 'Dynamic parts', style: 'header' },
-							        table($scope.head, $scope.columns, $scope.externalDataRetrievedFromServer)
-							    ]
-							}
-
-						    $scope.openPdf();
-						})
-						.error(function(data, status) {
-							$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
-			            });
-			            break;
-				case 'Proveedores Pagados':
-				case 'Balance General':
-				case 'Fichas por Usuario':
-				case 'Pago de Servicios':
-				case 'Historico':
-			}
-	
-	  	};
 		
 		$scope.showMessage = function(show,type,message,status,data) {
 			$scope.messageShow = show;
@@ -337,7 +348,8 @@ angular.module('ReporteCtrl',[])
 
 		    body.push(head);
 
-		    data.forEach(function(row) {
+		    //data.forEach(function(row) {
+		    angular.forEach(data,function(row) {
 		        var dataRow = [];
 
 		        angular.forEach(columns,function(column) {
@@ -383,9 +395,45 @@ angular.module('ReporteCtrl',[])
 	  	//////////////////////////////////////////////////////////////////////77777
 	  	// TEMPORAL
 		$scope.openPdfOld = function() {
-		    pdfMake.createPdf($scope.docDefinition).open();
+		    pdfMake.createPdf(docDefinition).open();
+		    //pdfMake.createPdf($scope.docDefinition).open();
+		    //pdfMake.createPdf($scope.docDefinitionFicha).open();
 	  	};
-		 
+
+
+
+	  	var docDefinition = {
+	  		// a string or { width: number, height: number }
+  			pageSize: 'Letter',
+			// by default we use portrait, you can change it to landscape if you wish
+			pageOrientation: 'landscape',
+			// [left, top, right, bottom] or [horizontal, vertical] or just a number for equal margins
+			//pageMargins: [ 40, 60, 40, 60 ],
+			background: {
+					      // you'll most often use dataURI images on the browser side
+					      // if no width/height/fit is provided, the original size will be used
+					      image: 'data:image/jpeg;base64,img/suciqroo_logo_2.jpg'
+					    },
+			content: [
+				'paragraph 1',
+				'paragraph 2',
+				{
+				  columns: [
+				    'first column is a simple text',
+				    {
+				      stack: [
+				        // second column consists of paragraphs
+				        'paragraph A',
+				        'paragraph B',
+				        'these paragraphs will be rendered one below another inside the column'
+				      ],
+				      fontSize: 15
+				    }
+				  ]
+				}
+			]
+		};
+ 
 		$scope.downloadPdf = function() {
 			dd = {
 			    content: [
@@ -408,7 +456,7 @@ angular.module('ReporteCtrl',[])
 		};
 		
 
-		
+		/*
 		$scope.docDefinition = {
 		    content: [
 				{
@@ -427,6 +475,41 @@ angular.module('ReporteCtrl',[])
 							['Mangos', '100 grams', '60'],
 							['Orange', '100 grams', '47'],
 							['Strawberries', '100 grams', '33']
+						]
+					}
+				}
+		    ],
+			styles: {
+				header: {
+					bold: true,
+					color: '#000',
+					fontSize: 11
+				},
+				demoTable: {
+					color: '#666',
+					fontSize: 10
+				}
+		    }
+	  	};
+	  	*/
+
+	  	$scope.docDefinitionFicha = {
+		    content: [
+				{
+					text: 'Fruits and Calories'
+				},
+				{
+					style: 'demoTable',
+					table: {
+						widths: ['*', '*'],
+						body: [
+							['Fecha', '30 Nov 2016'],
+							['Programa', 'Consulta medica'],
+							['Nombre', 'Jonathan Chan'],
+							['Dirección', 'Reg. 99 Mz 36 Lote 23 Calle 8'],
+							['Telefono', '9981123456'],
+							['Email', 'mail@mail.com'],
+							['Folio', '2016-000000123'],
 						]
 					}
 				}

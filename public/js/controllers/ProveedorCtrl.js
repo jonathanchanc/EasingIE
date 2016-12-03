@@ -1,6 +1,6 @@
 angular.module('ProveedorCtrl',[])
 
-	.controller('ProveedorController', ['$scope','$routeParams','$location','Proveedores','Especialidades', function($scope, $routeParams, $location, Proveedores, Especialidades) {
+	.controller('ProveedorController', ['$rootScope','$scope','$routeParams','$location','Main','Proveedores','Especialidades', function($rootScope, $scope, $routeParams, $location, Main, Proveedores, Especialidades) {
 		$scope.controlNameSingular = 'Proveedor';
 		$scope.controlNamePlural = 'Proveedores';
 		$scope.controllerInstance = 'proveedores';
@@ -30,6 +30,7 @@ angular.module('ProveedorCtrl',[])
 		$scope.label.active = 'Activo';
 		$scope.label.inactive = 'Inactivo';
 		$scope.label.management = 'Administración';
+		$scope.label.back = 'Regresar';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -64,6 +65,7 @@ angular.module('ProveedorCtrl',[])
 					};
 
 		$scope.inicio = function(){
+			Main.getPrivilegios().then(function(){ $scope.privilegios = $rootScope.privilegios; });
 			$scope.pagination();
 		}
 
@@ -80,8 +82,14 @@ angular.module('ProveedorCtrl',[])
 				var data = $scope.searchData.data;
 				data = data.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
 	  			query.query = 	{ $or: [
-					  				{nombre: { $regex : data, $options:"i" } },
-					  				{descripcion: { $regex : data, $options:"i" } },
+					  				{apPaterno: { $regex : data, $options:"i" } },
+					  				{apMaterno: { $regex : data, $options:"i" } },
+					  				{nombre: 	{ $regex : data, $options:"i" } },
+					  				{telefono: 	{ $regex : data, $options:"i" } },
+					  				{email: 	{ $regex : data, $options:"i" } },
+					  				{rfc: 		{ $regex : data, $options:"i" } },
+					  				{cedula: 	{ $regex : data, $options:"i" } },
+					  				{curp: 		{ $regex : data, $options:"i" } },
 					  				]
 					  			};
 			} else {
@@ -104,18 +112,12 @@ angular.module('ProveedorCtrl',[])
 					$scope.totalItems = data.totalItems;
 					$scope.calculateTextPagination();
 					if($scope.searchData.active){
-						$scope.messageShow = true;
-						$scope.messageClass = $scope.messageAlertInfo;
-						$scope.messageText = $scope.label.searchResults+' "'+$scope.searchData.data+'"... ';
+						$scope.showMessage(true, $scope.messageAlertInfo, $scope.label.searchResults+' "'+$scope.searchData.data+'"... ');
 					}
 					
 				})
 				.error(function(data, status) {
-					$scope.messageShow = true;
-					$scope.messageClass = $scope.messageAlertDanger;
-					$scope.messageText = $scope.label.errorResults;
-			        console.log('Error: ' + status);
-			        console.log(data);
+					$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.errorResults,status,data);
 	            })
 			;
 		}
@@ -141,11 +143,7 @@ angular.module('ProveedorCtrl',[])
 					console.log(data);
 				})
 				.error(function(data, status) {
-					$scope.messageShow = true;
-					$scope.messageClass = $scope.messageAlertDanger;
-					$scope.messageText = $scope.label.errorResults;
-					console.log('Error: ' + status);
-			        console.log(data);
+					$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.errorResults,status,data);
 	            })
 			;
 
@@ -158,7 +156,7 @@ angular.module('ProveedorCtrl',[])
 						$scope.label.createOrEdit = $scope.label.edit;
 					})
 					.error(function(data, status) {
-						console.log($scope.label.noFindRow);
+						$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.noFindRow,status,data);
 						$location.path('/'+$scope.controllerInstance);
 		            })
 					;
@@ -182,17 +180,10 @@ angular.module('ProveedorCtrl',[])
 							$location.path('/'+$scope.controllerInstance);
 
 							//COMO ENVIAR ALERTA?							
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertSuccess;
-							$scope.messageText = $scope.label.updateSuccess;
-
+							$scope.showMessage(true,$scope.messageAlertSuccess,$scope.label.updateSuccess);
 						})
 						.error(function(data, status) {
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertDanger;
-							$scope.messageText = $scope.label.updateFailed;
-					        console.log('Error: ' + status);
-					        console.log(data);
+							$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.updateFailed,status,data);
 			            })
 						;
 				} else {
@@ -203,29 +194,31 @@ angular.module('ProveedorCtrl',[])
 							$location.path('/'+$scope.controllerInstance);
 
 							//COMO ENVIAR ALERTA?							
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertSuccess;
-							$scope.messageText = $scope.label.createSuccess;
-
+							$scope.showMessage(true,$scope.messageAlertSuccess,$scope.label.createSuccess);
 						})
 						.error(function(data, status) {
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertDanger;
-							$scope.messageText = $scope.label.createFailed;
-					        console.log('Error: ' + status);
-					        console.log(data);
+							$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.createFailed,status,data);
 			            })
 						;
 				}
 			} else {
-				$scope.messageShow = true;
-				$scope.messageClass = $scope.messageAlertDanger;
-		        $scope.messageText = $scope.label.invalidDataForm;
+				$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.invalidDataForm);
 			}
 		};
 
 		$scope.delete = function(_id) {
 			//Proveedores.delete(_id);
+		};
+
+		$scope.showMessage = function(show,type,message,status,data) {
+			$scope.messageShow = show;
+			$scope.messageClass = type;
+			$scope.messageText = message;
+			if(status){
+				console.log('Error: ' + status);
+	        	console.log(data);	
+			}
+			angular.element('#alertMessage').focus();
 		};
 
 	}]);

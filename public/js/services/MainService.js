@@ -64,12 +64,13 @@ angular.module('MainService', [])
                     .then(function(data) {
                         //Copiamos el objeto data a ambos arrays - Data es una instancia del modelo Users
                         //console.log(data);
-                        var privilegios = angular.copy(data.data);
-                        var modulos = angular.copy(data.data);
+                        var privilegios = angular.copy(data.data.privilegios);
+                        var modulos = angular.copy(data.data.privilegios);
                         //Extraemos todos los datos a partir de una propiedad de Users
                         privilegios = _.pluck(privilegios, 'nombre');
                         modulos = _.pluck(modulos, 'modulo');
                         //Asiganmos al $scope el array sin valores repetidos (unique)
+                        $rootScope.usuario = data.data.usuario;
                         $rootScope.privilegios = _.uniq(privilegios);
                         $rootScope.modulos = _.uniq(modulos);
                     })

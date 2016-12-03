@@ -7,7 +7,6 @@
     </div>
 </div>
 <div class="row">
-
     <div class="col-xs-12 col-md-3">
         <input type="data" class="form-control" placeholder="Buscar" ng-model="searchData.data" 
         key-bind="{ enter: 'pagination(1)', esc: 'pagination(0)' }" >
@@ -21,11 +20,10 @@
             <span class="glyphicon glyphicon-list-alt" aria-hidden="true"> {{label.list}}</button>
     </div>
 
-    <div class="col-xs-12 col-md-7 text-right" >
+    <div class="col-xs-12 col-md-7 text-right" ng-show="_.contains(privilegios,controllerInstance+'-crear')">
         <a class="button btn btn-primary" href="/{{controllerInstance}}/create">
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{label.add}} {{controlNameSingular}}</a>
     </div>
-    
 </div>
 
 <div class="row" >
@@ -37,7 +35,7 @@
                 <th>{{model.modulo}}</th>
                 <th>{{model.descripcion}}</th>
                 <th>{{model.estado}}</th>
-                <th>{{label.edit}}</th>
+                <th ng-show="_.contains(privilegios,controllerInstance+'-editar')">{{label.edit}}</th>
             </thead>
             <tbody>
                 <!--LOPP OVER INSTANCE -->
@@ -47,7 +45,7 @@
                     <td>{{instance.modulo}}</td>
                     <td>{{instance.descripcion}}</td>
                     <td>{{instance.estado}}</td>
-                    <td><a class="button btn btn-success" href="/{{controllerInstance}}/update/{{instance._id}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  {{label.edit}}</a></td>
+                    <td><a ng-show="_.contains(privilegios,controllerInstance+'-editar')" class="button btn btn-success" href="/{{controllerInstance}}/update/{{instance._id}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  {{label.edit}}</a></td>
                 </tr>
                 <!--END LOOP -->
                 <tr ng-if="instanceList.length <= 0">

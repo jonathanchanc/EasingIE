@@ -29,6 +29,7 @@ angular.module('PrivilegioCtrl',[])
 		$scope.label.paginationFrom = 'de';
 		$scope.label.active = 'Activo';
 		$scope.label.inactive = 'Inactivo';
+		$scope.label.back = 'Regresar';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -44,7 +45,7 @@ angular.module('PrivilegioCtrl',[])
 		
 		$scope.totalItems = 0;
 		$scope.currentPage = 1;
-		$scope.itemsPerPage = 5;
+		$scope.itemsPerPage = 20;
 		$scope.textPagination = '';
 
 		$scope.model = { 
@@ -56,6 +57,7 @@ angular.module('PrivilegioCtrl',[])
 					};
 
 		$scope.inicio = function(){
+			Main.getPrivilegios().then(function(){ $scope.privilegios = $rootScope.privilegios; });
 			$scope.pagination();
 		}
 
@@ -130,7 +132,7 @@ angular.module('PrivilegioCtrl',[])
 						$scope.label.createOrEdit = $scope.label.edit;
 					})
 					.error(function(data, status) {
-						console.log($scope.label.noFindRow);
+						$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.noFindRow,status,data);
 						$location.path('/'+$scope.controllerInstance);
 		            })
 					;

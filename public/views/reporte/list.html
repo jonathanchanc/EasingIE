@@ -20,27 +20,27 @@
 
 <!-- FILTROS -->
 <div class="row" >
-    <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.fecha_ini.$touched && form.fecha_ini.$invalid }" ng-show="filtros.fecha_ini">
-        <label ui-mask="99/99/9999" type="date" for="fecha_ini">{{modelTemp.fecha_ini}} (Dia/Mes/Año)</label>
+    <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.$gte.$touched && form.$gte.$invalid }" ng-show="filtros.$gte">
+        <label ui-mask="99/99/9999" type="date" for="$gte">{{modelTemp.$gte}} (Dia/Mes/Año)</label>
         <p class="input-group">
-            <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" name="fecha_ini" ng-model="formData.fecha_ini" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+            <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" name="$gte" ng-model="formTemp.$gte" max-date="formTemp.$lte" is-open="popup1.opened" datepicker-options="dateOptionsIni" ng-required="true" close-text="Close" />
             <span class="input-group-btn">
                 <button type="button" class="btn btn-default" ng-click="open(1)"><i class="glyphicon glyphicon-calendar"></i></button>
             </span>
         </p>
-        <div class="help-block" ng-messages="form.fecha_ini.$error" ng-if="form.fecha_ini.$touched">
+        <div class="help-block" ng-messages="form.$gte.$error" ng-if="form.$gte.$touched">
                 <div ng-messages-include="error-messages"></div>
         </div>
     </div>
-    <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.fecha_fin.$touched && form.fecha_fin.$invalid }" ng-show="filtros.fecha_fin">
-        <label ui-mask="99/99/9999" type="date" for="fecha_fin">{{modelTemp.fecha_fin}} (Dia/Mes/Año)</label>
+    <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.$lte.$touched && form.$lte.$invalid }" ng-show="filtros.$lte">
+        <label ui-mask="99/99/9999" type="date" for="$lte">{{modelTemp.$lte}} (Dia/Mes/Año)</label>
         <p class="input-group">
-            <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" name="fecha_fin" ng-model="formData.fecha_fin" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+            <input type="text" class="form-control" uib-datepicker-popup="dd/MM/yyyy" name="$lte" ng-model="formTemp.$lte" min-date="formTemp.$gte" is-open="popup2.opened" datepicker-options="dateOptionsFin" ng-required="true" close-text="Close" />
             <span class="input-group-btn">
                 <button type="button" class="btn btn-default" ng-click="open(2)"><i class="glyphicon glyphicon-calendar"></i></button>
             </span>
         </p>
-        <div class="help-block" ng-messages="form.fecha_fin.$error" ng-if="form.fecha_fin.$touched">
+        <div class="help-block" ng-messages="form.$lte.$error" ng-if="form.$lte.$touched">
                 <div ng-messages-include="error-messages"></div>
         </div>
     </div>
@@ -59,6 +59,26 @@
         </div>
     </div-->
     <div class="col-xs-12 col-md-3" ng-show="filtros.estado">
+        <label for="estado">{{modelTemp.estado}}</label>
+        <select style="width:100%;" chosen
+                data-placeholder-text-single="'{{modelTemp.estado}}'"
+                data-ng-model="formTemp.estado">
+                <option value="">Todos</option>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+        </select>
+    </div>
+    <div class="col-xs-12 col-md-3" ng-show="filtros.pagado">
+        <label for="pagado">{{modelTemp.pagado}}</label>
+        <select style="width:100%;" chosen
+                data-placeholder-text-single="'{{modelTemp.pagado}}'"
+                data-ng-model="formTemp.pagado">
+                <option value="">Todos</option>
+                <option value="Si">Si</option>
+                <option value="No">No</option>
+        </select>
+    </div>
+    <!--div class="col-xs-12 col-md-3" ng-show="filtros.estado">
         <label for="estado">{{model.estado}}</label>
         <div class="form-group">
             <div class="radio-inline">
@@ -79,7 +99,7 @@
                 <label><input type="radio" name="pagado" value="No" ng-model="formTemp.pagado">{{label.no}}</label>
             </div>
         </div>
-    </div>
+    </div-->
 </div>
 
 <div class="row" >

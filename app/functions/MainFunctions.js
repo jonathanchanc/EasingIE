@@ -106,10 +106,20 @@
 			if(!err) {
 				Rol.findById(userInstance.rol, function(err, rolInstance) {
 					if(!err) {
-						var arrQ = { _id: { $in: rolInstance.privilegios } }; ///Verificar que este activos los privilegios
+						var arrQ = { 
+								$and: [ 
+									{ estado: 'Activo' },
+									{ _id: { $in: rolInstance.privilegios } },
+								]
+							}; ///Verificar que este activos los privilegios
 						var query = Privilegio.find(arrQ);
 						query.exec(function(err, privilegioInstance) {
-					  		res.json(privilegioInstance);
+							var data = {
+								usuario: userInstance,
+								privilegios: privilegioInstance
+							}
+					  		//res.json(privilegioInstance);
+					  		res.json(data);
 				        });
 					} else {
 						console.log('ERROR: ' + err);

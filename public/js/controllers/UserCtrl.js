@@ -29,6 +29,7 @@ angular.module('UserCtrl',[])
 		$scope.label.paginationFrom = 'de';
 		$scope.label.active = 'Activo';
 		$scope.label.inactive = 'Inactivo';
+		$scope.label.back = 'Regresar';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -74,10 +75,9 @@ angular.module('UserCtrl',[])
 		//console.log($scope.token);
 		console.log($scope.privilegios);
 		*/
-		
-
+	
 		$scope.inicio = function(){
-			Main.getPrivilegios().then(function(){ $scope.privilegios = $rootScope.privilegios; console.log($scope.privilegios); });
+			Main.getPrivilegios().then(function(){ $scope.privilegios = $rootScope.privilegios; });
 			$scope.pagination();
 		}
 
@@ -121,18 +121,11 @@ angular.module('UserCtrl',[])
 					$scope.totalItems = data.totalItems;
 					$scope.calculateTextPagination();
 					if($scope.searchData.active){
-						$scope.messageShow = true;
-						$scope.messageClass = $scope.messageAlertInfo;
-						$scope.messageText = $scope.label.searchResults+' "'+$scope.searchData.data+'"... ';
+						$scope.showMessage(true, $scope.messageAlertInfo, $scope.label.searchResults+' "'+$scope.searchData.data+'"... ');
 					}
-					
 				})
 				.error(function(data, status) {
-					$scope.messageShow = true;
-					$scope.messageClass = $scope.messageAlertDanger;
-					$scope.messageText = $scope.label.errorResults;
-			        console.log('Error: ' + status);
-			        console.log(data);
+					$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.errorResults,status,data);
 	            })
 			;
 		}
@@ -155,14 +148,10 @@ angular.module('UserCtrl',[])
 			Oficinas.query({ query: { estado: 'Activo' } })
 				.success(function(data) {
 					$scope.Oficinas = angular.copy(data.instanceList);
-					console.log(data);
+					//console.log(data);
 				})
 				.error(function(data, status) {
-					$scope.messageShow = true;
-					$scope.messageClass = $scope.messageAlertDanger;
-					$scope.messageText = $scope.label.errorResults;
-					console.log('Error: ' + status);
-			        console.log(data);
+					$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.errorResults,status,data);
 	            })
 			;
 
@@ -172,11 +161,7 @@ angular.module('UserCtrl',[])
 					console.log(data);
 				})
 				.error(function(data, status) {
-					$scope.messageShow = true;
-					$scope.messageClass = $scope.messageAlertDanger;
-					$scope.messageText = $scope.label.errorResults;
-					console.log('Error: ' + status);
-			        console.log(data);
+					$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.errorResults,status,data);
 	            })
 			;
 
@@ -191,7 +176,7 @@ angular.module('UserCtrl',[])
 						$scope.label.createOrEdit = $scope.label.edit;
 					})
 					.error(function(data, status) {
-						console.log($scope.label.noFindRow);
+						$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.noFindRow,status,data);
 						$location.path('/'+$scope.controllerInstance);
 		            })
 					;
@@ -215,17 +200,10 @@ angular.module('UserCtrl',[])
 							$location.path('/'+$scope.controllerInstance);
 
 							//COMO ENVIAR ALERTA?							
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertSuccess;
-							$scope.messageText = $scope.label.updateSuccess;
-
+							$scope.showMessage(true,$scope.messageAlertSuccess,$scope.label.updateSuccess);
 						})
 						.error(function(data, status) {
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertDanger;
-							$scope.messageText = $scope.label.updateFailed;
-					        console.log('Error: ' + status);
-					        console.log(data);
+							$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.updateFailed,status,data);
 			            })
 						;
 				} else {
@@ -235,30 +213,32 @@ angular.module('UserCtrl',[])
 							console.log($scope.label.createSuccess);
 							$location.path('/'+$scope.controllerInstance);
 
-							//COMO ENVIAR ALERTA?							
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertSuccess;
-							$scope.messageText = $scope.label.createSuccess;
-
+							//COMO ENVIAR ALERTA?
+							$scope.showMessage(true,$scope.messageAlertSuccess,$scope.label.createSuccess);
 						})
 						.error(function(data, status) {
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertDanger;
-							$scope.messageText = $scope.label.createFailed;
-					        console.log('Error: ' + status);
-					        console.log(data);
+							$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.createFailed,status,data);
 			            })
 						;
 				}
 			} else {
-				$scope.messageShow = true;
-				$scope.messageClass = $scope.messageAlertDanger;
-		        $scope.messageText = $scope.label.invalidDataForm;
+				$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.invalidDataForm);
 			}
 		};
 
 		$scope.delete = function(_id) {
 			//Users.delete(_id);
+		};
+
+		$scope.showMessage = function(show,type,message,status,data) {
+			$scope.messageShow = show;
+			$scope.messageClass = type;
+			$scope.messageText = message;
+			if(status){
+				console.log('Error: ' + status);
+	        	console.log(data);	
+			}
+			angular.element('#alertMessage').focus();
 		};
 
 	}]);

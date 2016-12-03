@@ -6,7 +6,8 @@ var mongoose = require('mongoose'),
 	Cliente = mongoose.model('Cliente'),
 	Programa = mongoose.model('Programa'),
 	Proveedor = mongoose.model('Proveedor'),
-	Especialidad = mongoose.model('Especialidad')
+	Especialidad = mongoose.model('Especialidad'),
+	dateformat = require('dateformat');
 	//,Factura = mongoose.model('Factura')
 	;
 
@@ -80,7 +81,10 @@ var FichaSchema = new Schema({
 			},
 			tiene_descuento: 		{ type: String },
 			cortesia: 				{ type: String },
-			factura: { type: mongoose.Schema.Types.ObjectId, ref: 'Factura' },
+			factura: {
+				_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Factura' },
+				folio_factura: 		{ type: String },
+			},
 		}
 	],
 
@@ -110,6 +114,21 @@ FichaSchema.virtual('folio_ficha').get(function () {
 
 FichaSchema.virtual('cliente.nombre_completo').get(function () {
 	return this.cliente.nombre + ' ' + this.cliente.apPaterno + ' ' + this.cliente.apMaterno;
+});
+
+FichaSchema.virtual('programas_nombres').get(function () {
+	var strProgramas = '';
+	if(this.programas != undefined){
+		for(i = 0; i < this.programas.length; ++i){
+			strProgramas += this.programas[i].nombre;
+			strProgramas += (i != (this.programas.length - 1) ) ? ', ' : '';
+		}
+	}
+	return strProgramas;
+});
+
+FichaSchema.virtual('fecha_corta').get(function () {
+	return dateformat(this.usuario.fecha, 'dd/mm/yyyy');
 });
 
 FichaSchema.plugin(autoIncrement.plugin, { model: 'Ficha', field: 'folio' });

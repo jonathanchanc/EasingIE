@@ -59,7 +59,8 @@ app.listen(port);
 console.log('EASING IE running on port: ' + port); 			// shoutout to the user
 exports = module.exports = app; 						// expose app
 
-
+//Importar desde archivo csv
+//mongoimport --db expedientes --collection privilegios --type csv --headerline --file priv.csv
 
 
 // Socket.io connection handler

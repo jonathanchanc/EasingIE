@@ -1,6 +1,6 @@
 angular.module('FichaCtrl',[])
 
-	.controller('FichaController', ['$rootScope','$scope','$routeParams','$location','Main','Fichas','Users','Oficinas','Especialidades','Programas','Proveedores','Clientes', function($rootScope, $scope, $routeParams, $location, Main, Fichas, Users, Oficinas, Especialidades, Programas, Proveedores, Clientes) {
+	.controller('FichaController', ['$rootScope','$scope','$routeParams','$location','Main','Fichas','Users','Oficinas','Especialidades','Programas','Proveedores','Clientes','Reportes', function($rootScope, $scope, $routeParams, $location, Main, Fichas, Users, Oficinas, Especialidades, Programas, Proveedores, Clientes, Reportes) {
 		$scope.controlNameSingular = 'Ficha';
 		$scope.controlNamePlural = 'Fichas';
 		$scope.controllerInstance = 'fichas';
@@ -35,6 +35,7 @@ angular.module('FichaCtrl',[])
 		$scope.label.agregar = 'Agregar';
 		$scope.label.delete = 'Borrar';
 		$scope.label.other = '';
+		$scope.label.print = 'Imprimir';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -138,17 +139,38 @@ angular.module('FichaCtrl',[])
 				$scope.searchData.active = true;
 				var data = $scope.searchData.data;
 				data = data.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
-	  			query.query = 	{ $or: [
-					  				{'cliente.nombre': { $regex : data, $options:"i" } },
-					  				{'cliente.apPaterno': { $regex : data, $options:"i" } },
-					  				{'cliente.apMaterno': { $regex : data, $options:"i" } },
-					  				]
+	  			query.query = 	{ 
+	  								$and: [
+	  									{ $or: [
+								  				{'cliente.nombre': { $regex : data, $options:"i" } },
+								  				{'cliente.apPaterno': { $regex : data, $options:"i" } },
+								  				{'cliente.apMaterno': { $regex : data, $options:"i" } },
+								  				] 
+								  		}
+	  								]
+
+	  							
 					  			};
 			} else {
 				$scope.searchData.active = false;
 				$scope.messageShow = false;
-	  			query.query = {};
+	  			query.query = { 
+			  					$and:[ 
+				  						{ 
+				  							$or: [ 
+				  								{estado: 'Activo'}, 
+				  								{estado: 'Inactivo'} 
+				  								] 
+				  						} 
+			  						]
+  								};
 			}
+			//Si en los privilegios no se encuentra fichas-todos se añade una condicion en el query $and
+			if( !( _.contains($scope.privilegios,$scope.controllerInstance+'-todos') ) ){
+				query.query['$and'].push({ 'usuario._id' : $rootScope.usuario._id })
+				//console.log("No tiene el permiso")
+			} //else
+				//console.log("Si tiene el permiso")
 			
 			query.limit = $scope.itemsPerPage;
     		query.page = $scope.currentPage-1;
@@ -164,7 +186,7 @@ angular.module('FichaCtrl',[])
 					$scope.totalItems = data.totalItems;
 					$scope.calculateTextPagination();
 					if($scope.searchData.active){
-						$scope.showMessage(true, $scope.messageAlertInfo, $scope.messageText = $scope.label.searchResults+' "'+$scope.searchData.data+'"... ');
+						$scope.showMessage(true, $scope.messageAlertInfo, $scope.label.searchResults+' "'+$scope.searchData.data+'"... ');
 					}					
 				})
 				.error(function(data, status) {
@@ -281,6 +303,7 @@ angular.module('FichaCtrl',[])
 
 
 		$scope.createOrUpdate = function(isValid, _id) {
+			$scope.formTemp.lockButtonSave = true;
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
@@ -302,6 +325,7 @@ angular.module('FichaCtrl',[])
 							//$scope.messageText = $scope.label.updateSuccess;
 						})
 						.error(function(data, status) {
+							$scope.formTemp.lockButtonSave = false;
 							$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.updateFailed, status, data);
 			            })
 						;
@@ -319,6 +343,7 @@ angular.module('FichaCtrl',[])
 									$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.updateSuccess, status, data);
 								})
 								.error(function(data, status) {
+									$scope.formTemp.lockButtonSave = false;
 									$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.updateFailedFailed, status, data);
 					            })
 								;
@@ -329,6 +354,7 @@ angular.module('FichaCtrl',[])
 									$location.path('/'+$scope.controllerInstance);
 								})
 								.error(function(data, status) {
+									$scope.formTemp.lockButtonSave = false;
 									$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
 					            })
 					            ;
@@ -344,11 +370,13 @@ angular.module('FichaCtrl',[])
 										$location.path('/'+$scope.controllerInstance);
 									})
 									.error(function(data, status) {
+										$scope.formTemp.lockButtonSave = false;
 										$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
 						            })
 						            ;
 								})
 								.error(function(data, status) {
+									$scope.formTemp.lockButtonSave = false;
 									$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
 					            })
 								;
@@ -356,6 +384,7 @@ angular.module('FichaCtrl',[])
 					}
 				}
 			} else {
+				$scope.formTemp.lockButtonSave = false;
 				$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.invalidDataForm);
 			}
 		};
@@ -469,7 +498,7 @@ angular.module('FichaCtrl',[])
 		        //Agregamos monto terceros
 		        $scope.formTemp.monto_apoyo_terceros = programa.monto_apoyo_terceros;
 		        //Agregamos monto suciqroo
-		        $scope.formTemp.monto_suciqroo = $scope.formTemp.total - programa.monto_suciqroo;
+		        $scope.formTemp.monto_suciqroo = $scope.formTemp.total - programa.monto_apoyo_terceros;
 
 		        /*$scope.formTemp.precio = ($scope.formData.cliente.afiliado=='No' && $scope.formTemp.descuento=='No' )? programa.precio_publico : programa.precio_suciqroo;
 				//SI EXISTE CORTESIA - Se aplica el monto_apoyo_terceros, para el pago del doctor pero no se cobra al cliente
@@ -676,7 +705,6 @@ angular.module('FichaCtrl',[])
 			return isValid;
 		}
 
-
 		$scope.cancelarFicha = function(){
 			$scope.showMessage(false, '', '');
 			if($scope.formData.pagado == 'Si' || $scope.formData.pagado_parcialmente == 'Si' ){
@@ -693,5 +721,11 @@ angular.module('FichaCtrl',[])
 			}
 		}
 
+		$scope.imprimirFicha = function(_id){
+			var data = { id: 1, data: { _id: _id} };
+			if(_id){
+				Reportes.printReport(data);
+			}
+		}
 
 	}]);

@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 	Rol = mongoose.model('Rol');
 	
 var UserSchema = new Schema({
-	usuario: 							{ type: String, unique: true },
+	usuario: 							{ type: String, unique: true, lowercase: true },
 	password: 							{ type: String },
 	token: 								{ type: String },
 	titulo: 							{ type: String },

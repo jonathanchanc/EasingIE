@@ -1,6 +1,6 @@
 angular.module('ProgramaCtrl',[])
 
-	.controller('ProgramaController', ['$scope','$routeParams','$location','Programas', 'Especialidades', function($scope, $routeParams, $location, Programas, Especialidades) {
+	.controller('ProgramaController', ['$rootScope','$scope','$routeParams','$location','Main','Programas', 'Especialidades', function($rootScope, $scope, $routeParams, $location, Main, Programas, Especialidades) {
 		$scope.controlNameSingular = 'Programa';
 		$scope.controlNamePlural = 'Programas';
 		$scope.controllerInstance = 'programas';
@@ -30,6 +30,7 @@ angular.module('ProgramaCtrl',[])
 		$scope.label.active = 'Activo';
 		$scope.label.inactive = 'Inactivo';
 		$scope.label.management = 'Administración';
+		$scope.label.back = 'Regresar';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -61,6 +62,7 @@ angular.module('ProgramaCtrl',[])
 					};
 
 		$scope.inicio = function(){
+			Main.getPrivilegios().then(function(){ $scope.privilegios = $rootScope.privilegios; });
 			$scope.pagination();
 		}
 
@@ -101,18 +103,12 @@ angular.module('ProgramaCtrl',[])
 					$scope.totalItems = data.totalItems;
 					$scope.calculateTextPagination();
 					if($scope.searchData.active){
-						$scope.messageShow = true;
-						$scope.messageClass = $scope.messageAlertInfo;
-						$scope.messageText = $scope.label.searchResults+' "'+$scope.searchData.data+'"... ';
+						$scope.showMessage(true, $scope.messageAlertInfo, $scope.label.searchResults+' "'+$scope.searchData.data+'"... ');
 					}
 					
 				})
 				.error(function(data, status) {
-					$scope.messageShow = true;
-					$scope.messageClass = $scope.messageAlertDanger;
-					$scope.messageText = $scope.label.errorResults;
-			        console.log('Error: ' + status);
-			        console.log(data);
+					$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.errorResults,status,data);
 	            })
 			;
 		}
@@ -138,11 +134,7 @@ angular.module('ProgramaCtrl',[])
 					console.log(data);
 				})
 				.error(function(data, status) {
-					$scope.messageShow = true;
-					$scope.messageClass = $scope.messageAlertDanger;
-					$scope.messageText = $scope.label.errorResults;
-					console.log('Error: ' + status);
-			        console.log(data);
+					$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.errorResults,status,data);
 	            })
 			;
 
@@ -158,7 +150,7 @@ angular.module('ProgramaCtrl',[])
 								$scope.label.createOrEdit = $scope.label.edit;
 							})
 							.error(function(data, status) {
-								console.log($scope.label.noFindRow);
+								$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.noFindRow,status,data);
 								$location.path('/'+$scope.controllerInstance);
 				            })
 							;
@@ -186,17 +178,10 @@ angular.module('ProgramaCtrl',[])
 							$location.path('/'+$scope.controllerInstance);
 
 							//COMO ENVIAR ALERTA?							
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertSuccess;
-							$scope.messageText = $scope.label.updateSuccess;
-
+							$scope.showMessage(true,$scope.messageAlertSuccess,$scope.label.updateSuccess);
 						})
 						.error(function(data, status) {
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertDanger;
-							$scope.messageText = $scope.label.updateFailed;
-					        console.log('Error: ' + status);
-					        console.log(data);
+							$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.updateFailed,status,data);
 			            })
 						;
 				} else {
@@ -207,29 +192,31 @@ angular.module('ProgramaCtrl',[])
 							$location.path('/'+$scope.controllerInstance);
 
 							//COMO ENVIAR ALERTA?							
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertSuccess;
-							$scope.messageText = $scope.label.createSuccess;
-
+							$scope.showMessage(true,$scope.messageAlertSuccess,$scope.label.createSuccess);
 						})
 						.error(function(data, status) {
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertDanger;
-							$scope.messageText = $scope.label.createFailed;
-					        console.log('Error: ' + status);
-					        console.log(data);
+							$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.createFailed,status,data);
 			            })
 						;
 				}
 			} else {
-				$scope.messageShow = true;
-				$scope.messageClass = $scope.messageAlertDanger;
-		        $scope.messageText = $scope.label.invalidDataForm;
+				$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.invalidDataForm);
 			}
 		};
 
 		$scope.delete = function(_id) {
 			//Programas.delete(_id);
+		};
+
+		$scope.showMessage = function(show,type,message,status,data) {
+			$scope.messageShow = show;
+			$scope.messageClass = type;
+			$scope.messageText = message;
+			if(status){
+				console.log('Error: ' + status);
+	        	console.log(data);	
+			}
+			angular.element('#alertMessage').focus();
 		};
 
 	}]);

@@ -280,6 +280,7 @@ angular.module('FacturaCtrl',[])
 
 
 		$scope.createOrUpdate = function(isValid, _id) {
+			$scope.formTemp.lockButtonSave = true;
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
@@ -292,7 +293,7 @@ angular.module('FacturaCtrl',[])
 						$scope.formData.usuario_modifico.fecha = new Date(); //Fecha modificacion
 						Facturas.update(_id,$scope.formData)
 							.success(function(data) {
-								$scope.updateFichas(data._id);
+								$scope.updateFichas(data);
 								//$scope.formData = {};
 								//console.log($scope.label.updateSuccess);
 								//$location.path('/'+$scope.controllerInstance);
@@ -302,6 +303,7 @@ angular.module('FacturaCtrl',[])
 								//$scope.messageText = $scope.label.updateSuccess;
 							})
 							.error(function(data, status) {
+								$scope.formTemp.lockButtonSave = false;
 								$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.updateFailed, status, data);
 				            })
 							;
@@ -311,23 +313,29 @@ angular.module('FacturaCtrl',[])
 						$scope.formData.anio = new Date().getFullYear(); //Fecha creacion
 						//Creamos factura
 						Facturas.create($scope.formData).success(function(data) {
-								$scope.updateFichas(data._id);
+							console.log('-- DAta factgura');
+							console.log(data);
+								$scope.updateFichas(data);
 								//$scope.formData = {};
 								//console.log($scope.label.createSuccess);
 								//$location.path('/'+$scope.controllerInstance);
 							})
 							.error(function(data, status) {
+								$scope.formTemp.lockButtonSave = false;
 								$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.createFailed, status, data);
 				            })
 				            ;
 					}
 				}
 			} else {
+				$scope.formTemp.lockButtonSave = false;
 				$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.invalidDataForm);
 			}
 		};
 
-		$scope.updateFichas = function(FacturaId) {
+		$scope.updateFichas = function(factura) {
+			console.log('-- Fctura');
+			console.log(factura);
 			var arrQuery = [];
 			angular.forEach($scope.formData.programas, function(programa, key) {
 				var query = {};	
@@ -343,8 +351,9 @@ angular.module('FacturaCtrl',[])
 									//Si esta considerado para pago se agregan los valores, en caso contrario se ponen los defualt
 								    'programas.$.pagado': (programa.toPago=='Si') ? 'Si' : 'No',
 								    'programas.$.fecha_pago': (programa.toPago=='Si') ? new Date() : undefined,
-								    //'programas.$.factura': (programa.toPago=='Si') ? FacturaId : undefined
-								    'programas.$.factura': FacturaId
+								    //'programas.$.factura': (programa.toPago=='Si') ? FacturaId : undefined,
+								    'programas.$.factura._id': factura._id,
+								    'programas.$.factura.folio_factura': factura.folio_factura,
 								} 
 							};
 				arrQuery.push(query);
@@ -475,7 +484,7 @@ angular.module('FacturaCtrl',[])
 			if($scope.formData.proveedor._id){
 				//Buscar las fichas que hayan endido programas por el proveedor
 				//var query = { 'programas' $in: [] };
-				var query = { query: { 'programas.factura': $scope.formData._id } };
+				var query = { query: { 'programas.factura._id': $scope.formData._id } };
 				//var query = {'programas': { $elemMatch: {'proveedor._id': $scope.formData.proveedor._id } } };
 				Fichas.query(query)
 					.success(function(data) { 
@@ -491,6 +500,7 @@ angular.module('FacturaCtrl',[])
 							angular.forEach(ficha.programas, function(programa, key) {
 								//var prog = { ficha: fichaId, programa: programa._id, index: programa.index};
 								//var prog = { ficha: fichaId };
+
 								console.log(programa.proveedor);
 								if( ( programa.pagado=='Si' && programa.proveedor != undefined) || $scope.formData.estado=='Inactivo' ){
 									if(programa.proveedor._id == $scope.formData.proveedor._id){

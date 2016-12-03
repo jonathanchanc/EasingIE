@@ -137,24 +137,24 @@
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" ng-init="getPrivilegios()">
 						<ul class="nav navbar-nav">
 							
-							<li data-ng-show="token" class="dropdown">
+							<li data-ng-show="token && _.contains(modulos,'Operacion')" class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Operación<span class="caret"></span></a>
 								<ul class="dropdown-menu">
-									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token" ><a ng-href="/fichas/create">Agregar Ficha</a></li>
-									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token" ><a ng-href="/facturas/create">Pagar a proveedores</a></li>
+									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'fichas-crear')"><a ng-href="/fichas/create">Agregar Ficha</a></li>
+									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'facturas-crear')"><a ng-href="/facturas/create">Pagar a proveedores</a></li>
 								</ul>
 							</li>
 
-							<li data-ng-show="token" class="dropdown">
+							<li data-ng-show="token && _.contains(modulos,'Contabilidad')" class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Contabilidad<span class="caret"></span></a>
 								<ul class="dropdown-menu">
 									<li class="dropdown-header"><b>Ingresos</b></li>
-									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token" ><a ng-href="/fichas">Fichas</a></li>
+									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'Fichas')"><a ng-href="/fichas">Fichas</a></li>
 									<!--li data-ng-show="token"><a ng-href="/afiliacion">--Afiliación</a></li-->
 									<li role="separator" class="divider"></li>
 									<li class="dropdown-header"><b>Egresos</b></li>
-									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token" ><a ng-href="/facturas">Facturas</a></li>
-									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token" ><a ng-href="/egresos">Gastos</a></li>
+									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'Facturas')"><a ng-href="/facturas">Facturas</a></li>
+									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'Egresos')"><a ng-href="/egresos">Egresos</a></li>
 								</ul>
 							</li>
 
@@ -166,10 +166,10 @@
 								</ul>
 							</li-->
 
-							<li data-ng-show="token" class="dropdown">
+							<li data-ng-show="token && _.contains(modulos,'Reportes')" class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reportes <span class="caret"></span></a>
 								<ul class="dropdown-menu">
-									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token" ><a ng-href="/reportes">Reportes</a></li>
+									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'Reportes')"><a ng-href="/reportes">Reportes</a></li>
 									<!--li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteServicios">--Servicios Pagados</a></li>
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteDoctores">--Doctores Pagados</a></li>
 									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a ng-href="/reporteBalance">--Balance General</a></li>
@@ -185,12 +185,9 @@
 									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'Oficinas')"><a ng-href="/oficinas">Oficinas</a></li>
 									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'Especialidades')"><a ng-href="/especialidades">Especialidades</a></li>
 									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'Programas')"><a ng-href="/programas">Programas</a></li>
-									
-									<!--li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Doctores')"><a ng-href="/doctores">Doctores -- ¿¿ELIMINAR?? --</a></li-->
 									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'Proveedores')"><a ng-href="/proveedores">Proveedores</a></li>
 									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'Clientes')"><a ng-href="/clientes">Clientes</a></li>
-
-
+									<!--li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token && _.contains(privilegios,'Doctores')"><a ng-href="/doctores">Doctores -- ¿¿ELIMINAR?? --</a></li-->
 								</ul>
 							</li>
 
@@ -212,7 +209,7 @@
 							<button type="submit" class="btn btn-default">Submit</button>
 						</form-->
 						<ul class="nav navbar-nav navbar-right">
-							<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token"><a ng-href="/me">Me</a></li>
+							<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token"><a ng-href="/me">Usuario</a></li>
 		                    <li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-hide="token"><a ng-href="/signin">Iniciar Sesion</a></li>
 		                    <!--li data-ng-hide="token"><a ng-href="/signup">Signup</a></li-->
 							<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token"><a ng-click="logout()">Salir</a></li>

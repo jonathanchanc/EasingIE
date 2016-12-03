@@ -1,6 +1,6 @@
 angular.module('RolCtrl',[])
 
-	.controller('RolController', ['$scope','$routeParams','$location','Roles','Privilegios', function($scope, $routeParams, $location, Roles, Privilegios) {
+	.controller('RolController', ['$rootScope','$scope','$routeParams','$location','Main','Roles','Privilegios', function($rootScope, $scope, $routeParams, $location, Main, Roles, Privilegios) {
 		$scope.controlNameSingular = 'Rol';
 		$scope.controlNamePlural = 'Roles';
 		$scope.controllerInstance = 'roles';
@@ -32,6 +32,7 @@ angular.module('RolCtrl',[])
 		$scope.label.management = 'Administración';
 		$scope.label.yes = 'Si';
 		$scope.label.no = 'No';
+		$scope.label.back = 'Regresar';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -61,6 +62,7 @@ angular.module('RolCtrl',[])
 					};
 
 		$scope.inicio = function(){
+			Main.getPrivilegios().then(function(){ $scope.privilegios = $rootScope.privilegios; });
 			$scope.pagination();
 		}
 
@@ -102,18 +104,12 @@ angular.module('RolCtrl',[])
 					$scope.totalItems = data.totalItems;
 					$scope.calculateTextPagination();
 					if($scope.searchData.active){
-						$scope.messageShow = true;
-						$scope.messageClass = $scope.messageAlertInfo;
-						$scope.messageText = $scope.label.searchResults+' "'+$scope.searchData.data+'"... ';
+						$scope.showMessage(true, $scope.messageAlertInfo, $scope.label.searchResults+' "'+$scope.searchData.data+'"... ');
 					}
 					
 				})
 				.error(function(data, status) {
-					$scope.messageShow = true;
-					$scope.messageClass = $scope.messageAlertDanger;
-					$scope.messageText = $scope.label.errorResults;
-			        console.log('Error: ' + status);
-			        console.log(data);
+					$scope.showMessage(true,$scope.messageAlertSuccess,$scope.label.errorResults,status,data);
 	            })
 			;
 		}
@@ -139,11 +135,7 @@ angular.module('RolCtrl',[])
 					console.log(data);
 				})
 				.error(function(data, status) {
-					$scope.messageShow = true;
-					$scope.messageClass = $scope.messageAlertDanger;
-					$scope.messageText = $scope.label.errorResults;
-					console.log('Error: ' + status);
-			        console.log(data);
+					$scope.showMessage(true,$scope.messageAlertSuccess,$scope.label.errorResults,status,data);
 	            })
 			;
 
@@ -156,7 +148,7 @@ angular.module('RolCtrl',[])
 						$scope.label.createOrEdit = $scope.label.edit;
 					})
 					.error(function(data, status) {
-						console.log($scope.label.noFindRow);
+						$scope.showMessage(true,$scope.messageAlertSuccess,$scope.label.noFindRow,status,data);
 						$location.path('/'+$scope.controllerInstance);
 		            })
 					;
@@ -180,17 +172,10 @@ angular.module('RolCtrl',[])
 							$location.path('/'+$scope.controllerInstance);
 
 							//COMO ENVIAR ALERTA?							
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertSuccess;
-							$scope.messageText = $scope.label.updateSuccess;
-
+							$scope.showMessage(true, $scope.messageAlertSuccess, $scope.label.updateSuccess);
 						})
 						.error(function(data, status) {
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertDanger;
-							$scope.messageText = $scope.label.updateFailed;
-					        console.log('Error: ' + status);
-					        console.log(data);
+							$scope.showMessage(true,$scope.label.messageAlertDanger,$scope.label.updateFailed,status,data);
 			            })
 						;
 				} else {
@@ -200,30 +185,45 @@ angular.module('RolCtrl',[])
 							console.log($scope.label.createSuccess);
 							$location.path('/'+$scope.controllerInstance);
 
-							//COMO ENVIAR ALERTA?							
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertSuccess;
-							$scope.messageText = $scope.label.createSuccess;
-
+							//COMO ENVIAR ALERTA?
+							$scope.showMessage(true, $scope.messageAlertSuccess, $scope.label.createSuccess);
 						})
 						.error(function(data, status) {
-							$scope.messageShow = true;
-							$scope.messageClass = $scope.messageAlertDanger;
-							$scope.messageText = $scope.label.createFailed;
-					        console.log('Error: ' + status);
-					        console.log(data);
+							$scope.showMessage(true,$scope.label.messageAlertDanger,$scope.label.createFailed,status,data);
 			            })
 						;
 				}
 			} else {
-				$scope.messageShow = true;
-				$scope.messageClass = $scope.messageAlertDanger;
-		        $scope.messageText = $scope.label.invalidDataForm;
+				$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.invalidDataForm);
 			}
 		};
 
 		$scope.delete = function(_id) {
 			//Roles.delete(_id);
+		};
+
+		$scope.selectAll = function(){
+			console.log($scope.formData.privilegios.length);
+			console.log($scope.Privilegios.length);
+			if($scope.formData.privilegios.length == $scope.Privilegios.length )
+				$scope.formData.privilegios = [];
+			else {
+				$scope.formData.privilegios = [];
+				angular.forEach($scope.Privilegios, function(privilegio){
+					$scope.formData.privilegios.push(privilegio._id);	
+				});
+			}
+		}
+
+		$scope.showMessage = function(show,type,message,status,data) {
+			$scope.messageShow = show;
+			$scope.messageClass = type;
+			$scope.messageText = message;
+			if(status){
+				console.log('Error: ' + status);
+	        	console.log(data);	
+			}
+			angular.element('#alertMessage').focus();
 		};
 
 	}]);
