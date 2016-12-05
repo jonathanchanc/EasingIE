@@ -138,8 +138,9 @@ angular.module('ProgramaCtrl',[])
 	            })
 			;
 
-			Main.me()
-				.success(function(userData) {
+			Main.me(
+				//).success(
+				function(userData) {
 					$scope.formData.usuario = userData.data._id; //Agregamos usuario a temForm
 					$scope.label.createOrEdit = $scope.label.add;
 					if($routeParams.instanceId != undefined){
@@ -155,8 +156,9 @@ angular.module('ProgramaCtrl',[])
 				            })
 							;
 					}
-		        })
-				.error(function(data, status) {
+		        },
+		        //).error(
+		        function(data, status) {
 					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
 	            });
 		}

@@ -40,7 +40,8 @@ angular.module('sampleApp', [
 	'RolCtrl', 
 	'RolService', 
 	'UserCtrl', 
-	'UserService'
+	'UserService',
+	'ImagenService',
 ])
 
 .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {

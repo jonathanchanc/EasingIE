@@ -162,13 +162,35 @@
                 <option value=""></option>
         </select>
     </div>
+    <div class="col-xs-12 col-md-3" ng-show="filtros.ficha">
+        <label for="ficha">{{modelTemp.ficha}}</label>
+        <select style="width:100%;" chosen 
+                options="Fichas"
+                allow-single-deselect='true'
+                data-placeholder-text-single="'{{modelTemp.ficha}}'"
+                data-ng-model="formTemp.ficha"
+                data-ng-options="ficha._id as ficha.folio_ficha for ficha in Fichas">
+                <option value=""></option>
+        </select>
+    </div>
+    <div class="col-xs-12 col-md-3" ng-show="filtros.factura">
+        <label for="factura">{{modelTemp.factura}}</label>
+        <select style="width:100%;" chosen 
+                options="Facturas"
+                allow-single-deselect='true'
+                data-placeholder-text-single="'{{modelTemp.factura}}'"
+                data-ng-model="formTemp.factura"
+                data-ng-options="factura._id as factura.folio_factura for factura in Facturas">
+                <option value=""></option>
+        </select>
+    </div>
 </div>
 
 <div>
     <br>
     <button ng-click="getPdf(false)">consultar</button>
     <button ng-click="getPdf(true)">descargar</button>
-    <button ng-click="openPdfOld()">{{model.consultar}} old</button>
+    <!--button ng-click="openPdfOld()">{{model.consultar}} old</button-->
     <!--button ng-click="createPdf()">{{model.consultar}} New</button>
     <button ng-click="createPdf2()">{{model.consultar}} 2</button>
     <button ng-click="downloadPdf()">{{model.descargar}}</button-->

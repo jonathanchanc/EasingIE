@@ -722,10 +722,10 @@ angular.module('FichaCtrl',[])
 		}
 
 		$scope.imprimirFicha = function(_id){
-			var data = { id: 1, data: { _id: _id} };
-			if(_id){
-				Reportes.printReport(data);
-			}
+			var listReportes = Reportes.getReportes();
+			console.log(listReportes);
+			var reporte = _.find(listReportes, function(reporte){ return reporte.nombre == 'Ficha'; });
+			Reportes.getReporteById(angular.copy(reporte), { ficha: _id}, false);
 		}
 
 	}]);

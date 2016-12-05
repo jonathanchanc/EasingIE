@@ -1,6 +1,6 @@
 angular.module('FacturaCtrl',[])
 
-	.controller('FacturaController', ['$rootScope','$scope','$routeParams','$location','Main','Facturas','Fichas', 'Egresos','Users','Oficinas','Especialidades','Programas','Proveedores','Clientes', function($rootScope,$scope, $routeParams, $location, Main, Facturas, Fichas, Egresos, Users, Oficinas, Especialidades, Programas, Proveedores, Clientes) {
+	.controller('FacturaController', ['$rootScope','$scope','$routeParams','$location','Main','Facturas','Fichas', 'Egresos','Users','Oficinas','Especialidades','Programas','Proveedores','Clientes', 'Reportes', function($rootScope,$scope, $routeParams, $location, Main, Facturas, Fichas, Egresos, Users, Oficinas, Especialidades, Programas, Proveedores, Clientes, Reportes) {
 		$scope.controlNameSingular = 'Factura';
 		$scope.controlNamePlural = 'Facturas';
 		$scope.controllerInstance = 'facturas';
@@ -35,6 +35,7 @@ angular.module('FacturaCtrl',[])
 		$scope.label.agregar = 'Agregar';
 		$scope.label.delete = 'Borrar';
 		$scope.label.other = '';
+		$scope.label.print = 'Imprimir';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -145,8 +146,23 @@ angular.module('FacturaCtrl',[])
 			} else {
 				$scope.searchData.active = false;
 				$scope.messageShow = false;
-	  			query.query = {};
+	  			query.query = { 
+			  					$and:[ 
+				  						{ 
+				  							$or: [ 
+				  								{estado: 'Activo'}, 
+				  								{estado: 'Inactivo'} 
+				  								] 
+				  						} 
+			  						]
+  								};
 			}
+			//Si en los privilegios no se encuentra fichas-todos se añade una condicion en el query $and
+			if( !( _.contains($scope.privilegios,$scope.controllerInstance+'-todos') ) ){
+				query.query['$and'].push({ 'usuario._id' : $rootScope.usuario._id })
+				//console.log("No tiene el permiso")
+			} //else
+				//console.log("Si tiene el permiso")
 			
 			query.limit = $scope.itemsPerPage;
     		query.page = $scope.currentPage-1;
@@ -540,7 +556,8 @@ angular.module('FacturaCtrl',[])
 			if($scope.formData.programas){
 				angular.forEach($scope.formData.programas, function(programa) {
 					if(programa.toPago=='Si')
-						total += programa.total;
+						//total += programa.total;
+						total += programa.monto_apoyo_terceros; //Se toma en cuenta la cantidad de terceros
 				});
 			}
 			$scope.formData.monto_total = total;			
@@ -648,6 +665,13 @@ angular.module('FacturaCtrl',[])
 			} else {
 				$scope.showMessage(true, $scope.messageAlertDanger, 'Error al cancelar');
 			}
+		}
+
+		$scope.imprimirFactura = function(_id){
+			var listReportes = Reportes.getReportes();
+			console.log(listReportes);
+			var reporte = _.find(listReportes, function(reporte){ return reporte.nombre == 'Factura'; });
+			Reportes.getReporteById(angular.copy(reporte), { factura: _id}, false);
 		}
 
 

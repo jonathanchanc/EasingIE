@@ -114,11 +114,13 @@
                 <table class="table">
                     <thead>
                         <th>ficha</th>
-                        <th>zIndex</th>
+                        <!--th>zIndex</th-->
                         <th>{{model.programas.nombre}}</th>
                         <th>{{model.programas.precio}}</th>
                         <th>{{model.programas.descuento}}</th>
                         <th>{{model.programas.total}}</th>
+                        <th>{{model.programas.monto_apoyo_terceros}}</th>
+                        <th>{{model.programas.monto_suciqroo}}</th>
                         <th>{{model.programas.tiene_descuento}}</th>
                         <th>{{model.programas.cortesia}}</th>
                         <th ng-hide="formTemp.noEditable">{{label.delete}} PAGAR</th>
@@ -127,11 +129,13 @@
                         <!--LOPP OVER INSTANCE -->
                         <tr ng-repeat="instance in formData.programas" ng-show="formData.programas.length > 0">
                             <td>{{instance.folio_ficha}}</td>
-                            <td>{{instance.index}}</td>
+                            <!--td>{{instance.index}}</td-->
                             <td>{{instance.nombre}}</td>
                             <td>{{instance.precio}}</td>
                             <td>{{instance.descuento}}</td>
                             <td>{{instance.total}}</td>
+                            <td>{{instance.monto_apoyo_terceros}}</td>
+                            <td>{{instance.monto_suciqroo}}</td>
                             <td>{{instance.tiene_descuento}}</td>
                             <td>{{instance.cortesia}}</td>
                             <td ng-hide="formTemp.noEditable">
