@@ -17,15 +17,35 @@ app.set('server', server);
 
 // configuration ===========================================
 	
-// config files
-var db = require('./config/db');
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000
+var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
 
+// default to a 'localhost' configuration:
+var mongodb_connection_string = '127.0.0.1:27017/expedientes';
+// if OPENSHIFT env variables are present, use the available connection info:
+if(process.env.OPENSHIFT_MONGODB_DB_PASSWORD){
+    mongodb_connection_string = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
+    process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
+    process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
+    process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
+    process.env.OPENSHIFT_APP_NAME;
+}
+
+var connection = mongoose.createConnection(mongodb_connection_string);
+autoIncrement.initialize(connection);
+mongoose.connect(mongodb_connection_string);
+
+
+/*
+// config files
+
+var db = require('./config/db');
 var port = process.env.PORT || 3000; // set our port
 
 var connection = mongoose.createConnection(db.url);
 autoIncrement.initialize(connection);
 mongoose.connect(db.url); // connect to our mongoDB database (commented out after you enter in your own credentials)
-
+*/
 
 
 // get all data/stuff of the body (POST) parameters
@@ -55,8 +75,13 @@ process.on('uncaughtException', function(err) {
 require('./app/routes')(app); // pass our application into our routes
 
 // start app ===============================================
-app.listen(port);	
-console.log('EASING IE running on port: ' + port); 			// shoutout to the user
+//app.listen(port);	
+//console.log('EASING IE running on port: ' + port); 			// shoutout to the user
+
+server.listen(server_port, server_ip_address, function () {
+  console.log( "Listening on " + server_ip_address + ", server_port " + server_port )
+});
+
 exports = module.exports = app; 						// expose app
 
 //Importar desde archivo csv
