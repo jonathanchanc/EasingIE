@@ -29,7 +29,7 @@ angular.module('MainCtrl', [])
             Main.getPrivilegios().then(function(data){
                 $scope.privilegios = $rootScope.privilegios;
                 $scope.modulos = $rootScope.modulos;
-                console.log($scope.privilegios);
+                //console.log($scope.privilegios);
                 //console.log($scope.modulos);
             });
         }

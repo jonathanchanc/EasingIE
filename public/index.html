@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<base href="/">
 
-	<title>EIE</title>
+	<title>Easing IE</title>
 
 	<!-- CSS -->
 	<link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
@@ -142,8 +142,14 @@
 							<li data-ng-show="token && _.contains(modulos,'Operacion')" class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Operación<span class="caret"></span></a>
 								<ul class="dropdown-menu">
+									<li class="dropdown-header"><b>Fichas</b></li>
 									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'fichas-crear')"><a ng-href="/fichas/create">Agregar Ficha</a></li>
-									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'facturas-crear')"><a ng-href="/facturas/create">Pagar a proveedores</a></li>
+									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'fichas-lista')"><a ng-href="/fichas">Fichas</a></li>
+									<!--li data-ng-show="token"><a ng-href="/afiliacion">--Afiliación</a></li-->
+									<li role="separator" class="divider"></li>
+									<li class="dropdown-header"><b>Facturas</b></li>
+									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'facturas-crear')"><a ng-href="/facturas/create">Facturar a proveedor</a></li>
+									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'facturas-lista')"><a ng-href="/facturas">Facturas</a></li>
 								</ul>
 							</li>
 
@@ -226,7 +232,7 @@
 
 		</div>
 		<div id="footer">
-			<p class="text-center" style="padding-top: 15px">Footer - JRC</p>
+			<p class="text-center" style="padding-top: 15px">Superación Cuidadana Quintanarroense A. C.</p>
 		</div>
 	</div>
 
