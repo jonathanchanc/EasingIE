@@ -4,11 +4,19 @@ angular.module('MainCtrl', [])
             return $window._;
         }])
 
-.controller('MainController', ['$rootScope', '$scope', '$location', '$localStorage', 'Main', 'Roles', 'Privilegios', function($rootScope, $scope, $location, $localStorage, Main, Roles, Privilegios) {
+.controller('MainController', ['$rootScope', '$scope', '$location', '$localStorage', 'Main', 'Roles', 'Privilegios', 'Users', function($rootScope, $scope, $location, $localStorage, Main, Roles, Privilegios, Users) {
 	$scope.tagline = 'Sistema para administración de ingresos y egresos';
     $rootScope._ = _;
 	$scope.token = $localStorage.token;
     //$localStorage.privilegios = [];
+
+    $scope.messageShow = false;
+    $scope.messageClass = "";
+    $scope.messageText = '';
+    $scope.messageAlertSuccess = 'alert-success';
+    $scope.messageAlertInfo = 'alert-info';
+    $scope.messageAlertDanger = 'alert-danger';
+    $scope.formData = {};
 
 
     $scope.getExpanded = function(){
@@ -29,6 +37,7 @@ angular.module('MainCtrl', [])
             Main.getPrivilegios().then(function(data){
                 $scope.privilegios = $rootScope.privilegios;
                 $scope.modulos = $rootScope.modulos;
+                $scope.usuario = $rootScope.usuario;
                 //console.log($scope.privilegios);
                 //console.log($scope.modulos);
             });
@@ -127,6 +136,7 @@ angular.module('MainCtrl', [])
     //     })
     // };
 
+    /*
     $scope.me = function() {
         console.log($rootScope.privilegios);
         Main.me(
@@ -140,6 +150,7 @@ angular.module('MainCtrl', [])
             console.log('Failed to fetch details');
         });
     };
+    */
 
     $scope.logout = function() {
         Main.logout(function() {
@@ -147,6 +158,89 @@ angular.module('MainCtrl', [])
         }, function() {
             alert("Failed to logout!");
         });
+    };
+
+    $scope.changePassword = function(isValid, _id) {
+        $scope.formData.lockButtonSave = true;
+        $scope.messageShow = false;
+        $scope.messageClass = "";
+        $scope.messageText = '';
+
+        //console.log(/^[a-z0-9]*$/i.test($scope.formData.old_password));
+        //console.log(/^[a-z0-9]*$/i.test($scope.formData.password));
+        //console.log(/^[a-z0-9]*$/i.test($scope.formData.confirm_password));
+
+        //Valida formData
+        if (isValid) {
+            //Solo acepta letras y numeros
+            // /^[a-z0-9]+$/i
+            // ^         start of string
+            // [a-z0-9]  a or b or c or ... z or 0 or 1 or ... 9
+            // *         zero or more times
+            // $         end of string
+            // /i        case-insensitive
+            if ( ( /^[a-z0-9]*$/i.test($scope.formData.old_password) ) == true &&
+                ( /^[a-z0-9]*$/i.test($scope.formData.password) ) == true &&
+                ( /^[a-z0-9]*$/i.test($scope.formData.confirm_password) ) == true ){
+
+                if($scope.formData.password == $scope.formData.confirm_password){
+                    if($scope.formData.old_password == $scope.usuario.password){
+                        $scope.usuario.password = $scope.formData.password;
+                        Users.update(_id,$scope.usuario)
+                            .success(function(data) {
+                                //$scope.formData = {};
+                                $localStorage.token = data.token;
+                                window.location = "/me";
+                                //$location.path('/me');
+                                //console.log($scope.label.updateSuccess);
+                                /*Main.signin({usuario: data.usuario, password: data.password }, function(res) {
+                                    if (res.type == false) {
+                                        //alert(res.data)
+                                        console.log('Failed to signin');
+                                    } else {
+                                        $localStorage.token = res.data.token;
+                                        window.location = "/";
+                                    }
+                                }, function() {
+                                    $rootScope.error = 'Failed to signin';
+                                })*/
+
+
+                                //COMO ENVIAR ALERTA?                           
+                                $scope.showMessage(true,$scope.messageAlertSuccess,'Registro actuaizado');
+                                $scope.formData.lockButtonSave = false;
+                            })
+                            .error(function(data, status) {
+                                $scope.formData.lockButtonSave = false;
+                                $scope.showMessage(true,$scope.messageAlertDanger,'Error al actualizar',status,data);
+                            });
+                    } else {
+                        $scope.formData.lockButtonSave = false;
+                        $scope.showMessage(true,$scope.messageAlertDanger,'La contraseña es incorrecta');    
+                    }
+                } else {
+                    $scope.formData.lockButtonSave = false;
+                    $scope.showMessage(true,$scope.messageAlertDanger,'La nueva contraseña no es igual a la confirmación');    
+                }
+            } else {
+                $scope.formData.lockButtonSave = false;
+                $scope.showMessage(true,$scope.messageAlertDanger,'Solo se aceptan letras y números');       
+            }
+        } else {
+            $scope.formData.lockButtonSave = false;
+            $scope.showMessage(true,$scope.messageAlertDanger,'Rellene los datos correctamente');
+        }
+    };
+
+    $scope.showMessage = function(show,type,message,status,data) {
+        $scope.messageShow = show;
+        $scope.messageClass = type;
+        $scope.messageText = message;
+        if(status){
+            console.log('Error: ' + status);
+            console.log(data);  
+        }
+        angular.element('#alertMessage').focus();
     };
         
 

@@ -51,7 +51,7 @@
             </div>
             <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.password.$touched && form.password.$invalid }">
                 <label for="password">{{model.password}}</label>
-                <input type="text" name="password" class="form-control" placeholder="{{model.password}}" ng-model="formData.password" required>
+                <input type="text" name="password" class="form-control" placeholder="{{model.password}}" ng-model="formData.password" required  minlength="6" maxlength="25">
                 <div class="help-block" ng-messages="form.password.$error" ng-if="form.password.$touched">
                         <div ng-messages-include="error-messages"></div>
                 </div>
