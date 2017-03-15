@@ -19,6 +19,9 @@ angular.module('UserService', [])
 			update : function(id,data) {
 				return $http.put(baseUrl + nameUrl + '/' + id, data);
 			},
+			changePassword : function(id,data) {
+				return $http.put(baseUrl + nameUrl + '/changepassword/' + id, data);
+			},
 			delete : function(id) {
 				return $http.delete(baseUrl + nameUrl + '/' + id);
 			}

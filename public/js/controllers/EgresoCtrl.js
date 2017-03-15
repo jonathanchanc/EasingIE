@@ -29,6 +29,8 @@ angular.module('EgresoCtrl',[])
 		$scope.label.paginationFrom = 'de';
 		$scope.label.active = 'Activo';
 		$scope.label.inactive = 'Inactivo';
+		$scope.label.back = 'Regresar';
+		$scope.label.egreso = 'Egreso';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -86,7 +88,7 @@ angular.module('EgresoCtrl',[])
 	  		switch(popup){
 	  			case 1:
 	  				$scope.popup1.opened = true;
-	  				break; z
+	  				break;
 	  		}
 		};
 
@@ -192,7 +194,7 @@ angular.module('EgresoCtrl',[])
 				            })
 							;
 					} else {
-						console.log($scope.Oficinas);
+						//console.log($scope.Oficinas);
 						$scope.formData.usuario._id = userData.data._id;
 						$scope.formData.usuario.usuario = userData.data.usuario;
 						$scope.formData.usuario.nombre = userData.data.nombre_completo;

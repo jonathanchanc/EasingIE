@@ -41,6 +41,7 @@ angular.module('ProveedorCtrl',[])
 
 		$scope.searchData = {};
 		$scope.formData = {estado:'Activo'};
+		$scope.formTemp = {};
 
 		$scope.instanceList = [];
 		$scope.Especialidades = [];
@@ -165,6 +166,7 @@ angular.module('ProveedorCtrl',[])
 
 
 		$scope.createOrUpdate = function(isValid, _id) {
+			$scope.formTemp.lockButtonSave = true;
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
@@ -211,6 +213,7 @@ angular.module('ProveedorCtrl',[])
 		};
 
 		$scope.showMessage = function(show,type,message,status,data) {
+			$scope.formTemp.lockButtonSave = false;
 			$scope.messageShow = show;
 			$scope.messageClass = type;
 			$scope.messageText = message;

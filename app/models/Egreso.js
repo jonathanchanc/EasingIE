@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
-	autoIncrement  = require('mongoose-auto-increment'),
+	//autoIncrement  = require('mongoose-auto-increment'),
+	AutoIncrement = require('mongoose-sequence'),
 	User = mongoose.model('User'),
 	Oficina = mongoose.model('Oficina')
 	;
@@ -67,6 +68,7 @@ EgresoSchema.virtual('folio_egreso').get(function () {
 })
 ;
 
-EgresoSchema.plugin(autoIncrement.plugin, { model: 'Egreso', field: 'folio' });
+//EgresoSchema.plugin(autoIncrement.plugin, { model: 'Egreso', field: 'folio', startAt: 1 });
+EgresoSchema.plugin(AutoIncrement, {id: 'folio_egreso', inc_field: 'folio', reference_fields: 'anio' });
 
 module.exports = mongoose.model('Egreso', EgresoSchema);

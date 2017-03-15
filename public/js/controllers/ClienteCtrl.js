@@ -43,6 +43,7 @@ angular.module('ClienteCtrl',[])
 
 		$scope.searchData = {};
 		$scope.formData = {estado:'Activo', afiliado:'No'};
+		$scope.formTemp = {};
 
 		$scope.instanceList = [];
 		
@@ -152,6 +153,7 @@ angular.module('ClienteCtrl',[])
 
 
 		$scope.createOrUpdate = function(isValid, _id) {
+			$scope.formTemp.lockButtonSave = true;
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
@@ -198,6 +200,7 @@ angular.module('ClienteCtrl',[])
 		};
 
 		$scope.showMessage = function(show,type,message,status,data) {
+			$scope.formTemp.lockButtonSave = false;
 			$scope.messageShow = show;
 			$scope.messageClass = type;
 			$scope.messageText = message;

@@ -32,7 +32,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.old_password.$touched && form.old_password.$invalid }">
                             <label for="old_password">Contraseña</label>
-                            <input type="text" name="old_password" class="form-control" placeholder="Contraseña" ng-model="formData.old_password" required minlength="6" maxlength="25">
+                            <input type="password" name="old_password" class="form-control" placeholder="Contraseña" ng-model="formData.old_password" required minlength="6" maxlength="25">
                             <div class="help-block" ng-messages="form.old_password.$error" ng-if="form.old_password.$touched">
                                     <div ng-messages-include="error-messages"></div>
                             </div>
@@ -42,7 +42,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.password.$touched && form.password.$invalid }">
                             <label for="password">Nueva Contraseña</label>
-                            <input type="text" name="password" class="form-control" placeholder="Nueva contraseña" ng-model="formData.password" required minlength="6" maxlength="25">
+                            <input type="password" name="password" class="form-control" placeholder="Nueva contraseña" ng-model="formData.password" required minlength="6" maxlength="25">
                             <div class="help-block" ng-messages="form.password.$error" ng-if="form.password.$touched">
                                     <div ng-messages-include="error-messages"></div>
                             </div>
@@ -52,7 +52,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-md-3" ng-class="{ 'has-error': form.confirm_password.$touched && form.confirm_password.$invalid }">
                             <label for="confirm_password">Confirmar Contraseña</label>
-                            <input type="text" name="confirm_password" class="form-control" placeholder="Confirmar contraseña" ng-model="formData.confirm_password" required minlength="6" maxlength="25">
+                            <input type="password" name="confirm_password" class="form-control" placeholder="Confirmar contraseña" ng-model="formData.confirm_password" required minlength="6" maxlength="25">
                             <div class="help-block" ng-messages="form.confirm_password.$error" ng-if="form.confirm_password.$touched">
                                     <div ng-messages-include="error-messages"></div>
                             </div>
@@ -64,7 +64,7 @@
 
                     <div class="row">
                         <div class="col-xs-12 col-md-3">
-                            <button type="submit" class="btn btn-primary" ><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true" ng-disabled="formData.lockButtonSave"></span> Cambiar contraseña</button>
+                            <button type="submit" class="btn btn-primary" ng-disabled="formData.lockButtonSave"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Cambiar contraseña</button>
                         </div>
                     </div>
                 </form>

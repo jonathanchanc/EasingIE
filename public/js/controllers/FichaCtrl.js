@@ -36,6 +36,10 @@ angular.module('FichaCtrl',[])
 		$scope.label.delete = 'Borrar';
 		$scope.label.other = '';
 		$scope.label.print = 'Imprimir';
+		$scope.label.back = 'Regresar';
+		$scope.label.cliente = 'Cliente';
+		$scope.label.busqueda = 'Busqueda';
+		$scope.label.programas = 'Programas';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -80,6 +84,7 @@ angular.module('FichaCtrl',[])
 						fecha_alta: 'Fecha de alta',
 						pagado: 'Pagado',
 						fecha_pago: 'Fecha pagado',
+						parcial: 'Parcial',
 						pagado_parcialmente: 'Pagado parcialmente',
 						estado: 'Estado',
 
@@ -381,6 +386,8 @@ angular.module('FichaCtrl',[])
 					            })
 								;
 						}
+					} else {
+						$scope.formTemp.lockButtonSave = false;
 					}
 				}
 			} else {

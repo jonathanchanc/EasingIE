@@ -11,11 +11,11 @@
     <div class="panel-heading">
         <div class="row">
             <div class="col-xs-6 col-md-10">
-                {{label.data}} CLIENTE
+                {{label.data}} {{label.cliente}}
             </div>
             <div class="col-xs-6 col-md-2  text-right">
                 <button type="button" class="btn btn-warning btn-sm" ng-click="resetCliente()" ng-hide="formTemp.noEditable">
-                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> {{label.delete}} CLIENTE</button>
+                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> {{label.delete}} {{label.cliente}}</button>
             </div>
         </div>
     </div>
@@ -114,11 +114,11 @@
     <div class="panel-heading">
         <div class="row">
             <div class="col-xs-6 col-md-10">
-                {{label.data}} BUSQUEDA
+                {{label.data}} {{label.busqueda}}
             </div>
             <div class="col-xs-6 col-md-2  text-right">
                 <button type="button" class="btn btn-warning btn-sm" ng-click="resetProgramasSearch()">
-                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> {{label.delete}} BUSQUEDA</button>
+                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> {{label.delete}} {{label.busqueda}}</button>
             </div>
         </div>
     </div>
@@ -203,11 +203,11 @@
     <div class="panel-heading">
         <div class="row">
             <div class="col-xs-6 col-md-10">
-                {{label.data}} PROGRAMAS
+                {{label.data}} {{label.programas}}
             </div>
             <div class="col-xs-6 col-md-2  text-right">
                 <button type="button" class="btn btn-warning btn-sm" ng-click="resetProgramasTable()" ng-hide="formTemp.noEditable">
-                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> {{label.delete}} PROGRAMAS</button>
+                    <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> {{label.delete}} {{label.programas}}</button>
             </div>
         </div>
     </div>
@@ -217,8 +217,7 @@
             <div class="col-xs-12 col-md-12">
                 <table class="table">
                     <thead>
-                        <th>zIndex</th>
-                        <th>{{model.programas.pagado}}</th>
+                        <th ng-show="formTemp.statusEditable">{{model.programas.pagado}}</th>
                         <th>{{model.programas.nombre}}</th>
                         <th>{{model.programas.precio}}</th>
                         <th>{{model.programas.descuento}}</th>
@@ -232,8 +231,7 @@
                     <tbody>
                         <!--LOPP OVER INSTANCE -->
                         <tr ng-repeat="instance in formData.programas" ng-show="formData.programas.length > 0">
-                            <td>{{instance.index}}</td>
-                            <td>{{instance.pagado}}</td>
+                            <td ng-show="formTemp.statusEditable">{{instance.pagado}}</td>
                             <td>{{instance.nombre}}</td>
                             <td>{{instance.precio}}</td>
                             <td>{{instance.descuento}}</td>
@@ -276,31 +274,19 @@
     
         <div class="row">
             <div class="col-xs-12 col-md-12" ng-class="{ 'has-error': form.comentario.$touched && form.comentario.$invalid }">
-                <!--label for="comentario">{{model.comentario}}</label-->
                 <textarea type="text" name="comentario" class="form-control" placeholder="{{model.comentario}}" ng-model="formData.comentario" ng-required="formTemp.cortesia == 'Si' || formTemp.tiene_descuento == 'Si'">
                 </textarea>
                 <div class="help-block" ng-messages="form.comentario.$error" ng-if="form.comentario.$touched">
                         <div ng-messages-include="error-messages"></div>
                 </div>
             </div>
-            <!--div class="col-xs-12 col-md-3" ng-show="formTemp.statusEditable">
-                <label for="estado">{{model.estado}}</label>
-                <div class="form-group">
-                    <div class="radio-inline">
-                        <label><input type="radio" name="estado" value="Activo" ng-model="formData.estado">{{label.active}}</label>
-                    </div>
-                    <div class="radio-inline">
-                        <label><input type="radio" name="estado" value="Inactivo" ng-model="formData.estado">{{label.inactive}}</label>
-                    </div>
-                </div>
-            </div-->
         </div>
         
     </div>
 </div>
 
 <div class="panel panel-default" ng-show="formTemp.statusEditable">
-    <div class="panel-heading">{{label.data}} AUTOMATICOS / NO APARECEN EN CREACION / QUITAR TEXTO</div>
+    <div class="panel-heading">{{label.data}}</div>
     <div class="panel-body">
 
         <div class="row">
@@ -330,7 +316,7 @@
 
 <div class="row">
     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 text-left" >
-        <br><a class="button btn btn-danger" href="/{{controllerInstance}}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>  {{label.cancel}}</a>
+        <br><a class="button btn btn-default" href="/{{controllerInstance}}"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>  {{label.back}}</a>
     </div>
     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 text-right" >
         <br><button name="submit" class="btn btn-primary" ng-disabled="formTemp.lockButtonSave"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> {{label.save}}</button>

@@ -36,6 +36,11 @@ angular.module('FacturaCtrl',[])
 		$scope.label.delete = 'Borrar';
 		$scope.label.other = '';
 		$scope.label.print = 'Imprimir';
+		$scope.label.back = 'Regresar';
+		$scope.label.proveedor = 'Proveedor';
+		$scope.label.programas = 'Programas';
+		$scope.label.seleccionar = 'Seleecionar / Deseleccionar Todos';
+		$scope.label.pagar = 'Pagar';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -107,6 +112,7 @@ angular.module('FacturaCtrl',[])
 						},
 						programas: {
 							_id: 'Programa',
+							ficha: 'Ficha',
 							nombre: 'Nombre programa',
 							precio: 'Precio',
 							descuento: 'Descuento',
@@ -342,6 +348,8 @@ angular.module('FacturaCtrl',[])
 				            })
 				            ;
 					}
+				} else {
+					$scope.formTemp.lockButtonSave = false;
 				}
 			} else {
 				$scope.formTemp.lockButtonSave = false;

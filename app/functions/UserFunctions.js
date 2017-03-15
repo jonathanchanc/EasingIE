@@ -68,7 +68,7 @@
 
 		instance.oficina = req.body.oficina;
 		instance.rol = req.body.rol;
-
+		instance.token = undefined;
 		instance = new Instance(instance);
 		instance.save(function(err,user) {
 			user.token = jwt.sign(user, /*process.env.JWT_SECRET ||*/ 'randomkey');
@@ -102,7 +102,27 @@
 
 			instance.oficina = req.body.oficina;
 			instance.rol = req.body.rol;
+			instance.token = undefined;
+			instance.save(function(err, user) {
+				user.token = jwt.sign(user, /*process.env.JWT_SECRET ||*/ 'randomkey');
+	            user.save(function(err, user1) {
+	            	if(!err) {
+						//console.log('Updated');
+						res.json(user1);
+					} else {
+						console.log('ERROR: ' + err);
+						res.status(500).send(err);
+					}
+	            });
+			});
+		});
+	}
 
+	//PUT - Update password
+	changePassword = function(req, res) {
+		Instance.findById(req.params.id, function(err, instance) {
+			instance.password = req.body.password;
+			instance.token = undefined;
 			instance.save(function(err, user) {
 				user.token = jwt.sign(user, /*process.env.JWT_SECRET ||*/ 'randomkey');
 	            user.save(function(err, user1) {

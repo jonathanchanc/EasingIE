@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
-	autoIncrement  = require('mongoose-auto-increment'),
+	//autoIncrement = require('mongoose-auto-increment'),
+	AutoIncrement = require('mongoose-sequence'),
 	User = mongoose.model('User'),
 	Oficina = mongoose.model('Oficina'),
 	Cliente = mongoose.model('Cliente'),
@@ -131,27 +132,7 @@ FichaSchema.virtual('fecha_corta').get(function () {
 	return dateformat(this.usuario.fecha, 'dd/mm/yyyy');
 });
 
-FichaSchema.plugin(autoIncrement.plugin, { model: 'Ficha', field: 'folio' });
-
-/* SCHEMA OLD  */
-/*
-var FichaSchema = new Schema({
-	id:									{ type: Number, unique: true },
-	folio:								{ type: Number, unique: true },
-	fecha_alta:							{ type: Date, default: Date.now },
-	concepto:							{ type: String },
-	comentario:							{ type: String },
-	monto_total:						{ type: Number },
-	monto_apoyo_terceros:				{ type: Number },
-	monto_suciqroo:						{ type: Number },
-	afiliado:							{ type: String },
-	pagado:								{ type: String },
-	estado: 							{ type: String },
-
-	usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-	programa: { type: mongoose.Schema.Types.ObjectId, ref: 'Programa' },
-	cliente: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente' }
-});
-*/
+//FichaSchema.plugin(autoIncrement.plugin, { model: 'Ficha', field: 'folio', startAt: 1 }); 
+FichaSchema.plugin(AutoIncrement, {id: 'folio_ficha', inc_field: 'folio', reference_fields: 'anio' });
 
 module.exports = mongoose.model('Ficha', FichaSchema);

@@ -131,6 +131,7 @@ module.exports = function(app) {
 	app.get('/api/users/:id', ensureAuthorized, findByIdUser);
 	app.post('/api/users', ensureAuthorized, addUser);
 	app.put('/api/users/:id', ensureAuthorized, updateUser);
+	app.put('/api/users/changepassword/:id', ensureAuthorized, changePassword);
 	app.delete('/api/users/:id', ensureAuthorized, deleteUser);
 
 

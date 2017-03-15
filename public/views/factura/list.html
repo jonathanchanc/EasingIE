@@ -43,9 +43,9 @@
             <tbody>
                 <!--LOPP OVER INSTANCE -->
                 <tr ng-repeat="instance in instanceList" ng-show="instanceList.length > 0">
-                    <td>{{instance.folio}}</td>
+                    <td>{{instance.folio_factura}}</td>
                     <td>{{instance.proveedor.nombre}}</td>
-                    <td>{{instance.programas[0].nombre + ( (instance.programas.length > 1 )? ' y  '+(instance.programas.length-1)+' más...':'' )}}</td>
+                    <td>{{instance.programas[0].nombre + ( (instance.programas.length > 1 )? ' y '+(instance.programas.length-1)+' más...':'' )}}</td>
                     <td>{{instance.monto_total}}</td>
                     <td>{{instance.estado}}</td>
                     <td ng-show="_.contains(privilegios,controllerInstance+'-imprimir')"><button type="button" class="btn btn-info" ng-click="imprimirFactura(instance._id)"><span class="glyphicon glyphicon-print" aria-hidden="true"></span> {{label.print}}</button></td>

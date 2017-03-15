@@ -185,8 +185,9 @@ angular.module('MainCtrl', [])
 
                 if($scope.formData.password == $scope.formData.confirm_password){
                     if($scope.formData.old_password == $scope.usuario.password){
-                        $scope.usuario.password = $scope.formData.password;
-                        Users.update(_id,$scope.usuario)
+                        //$scope.usuario.password = $scope.formData.password;
+                        var data = { password: $scope.formData.password };
+                        Users.changePassword(_id,data)
                             .success(function(data) {
                                 //$scope.formData = {};
                                 $localStorage.token = data.token;
@@ -207,32 +208,27 @@ angular.module('MainCtrl', [])
 
 
                                 //COMO ENVIAR ALERTA?                           
-                                $scope.showMessage(true,$scope.messageAlertSuccess,'Registro actuaizado');
-                                $scope.formData.lockButtonSave = false;
+                                $scope.showMessage(true,$scope.messageAlertSuccess,'Password actuaizado');
                             })
                             .error(function(data, status) {
-                                $scope.formData.lockButtonSave = false;
                                 $scope.showMessage(true,$scope.messageAlertDanger,'Error al actualizar',status,data);
                             });
                     } else {
-                        $scope.formData.lockButtonSave = false;
                         $scope.showMessage(true,$scope.messageAlertDanger,'La contraseña es incorrecta');    
                     }
                 } else {
-                    $scope.formData.lockButtonSave = false;
                     $scope.showMessage(true,$scope.messageAlertDanger,'La nueva contraseña no es igual a la confirmación');    
                 }
             } else {
-                $scope.formData.lockButtonSave = false;
                 $scope.showMessage(true,$scope.messageAlertDanger,'Solo se aceptan letras y números');       
             }
         } else {
-            $scope.formData.lockButtonSave = false;
             $scope.showMessage(true,$scope.messageAlertDanger,'Rellene los datos correctamente');
         }
     };
 
     $scope.showMessage = function(show,type,message,status,data) {
+        $scope.formData.lockButtonSave = false;
         $scope.messageShow = show;
         $scope.messageClass = type;
         $scope.messageText = message;

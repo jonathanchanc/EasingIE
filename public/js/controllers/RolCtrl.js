@@ -44,6 +44,7 @@ angular.module('RolCtrl',[])
 		$scope.searchData = {};
 		$scope.formData = {estado:'Activo'};
 		$scope.formData.privilegios = [];
+		$scope.formTemp = {};
 
 		$scope.instanceList = [];
 		$scope.Privilegios = [];
@@ -157,6 +158,7 @@ angular.module('RolCtrl',[])
 
 
 		$scope.createOrUpdate = function(isValid, _id) {
+			$scope.formTemp.lockButtonSave = true;
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
@@ -216,6 +218,7 @@ angular.module('RolCtrl',[])
 		}
 
 		$scope.showMessage = function(show,type,message,status,data) {
+			$scope.formTemp.lockButtonSave = false;
 			$scope.messageShow = show;
 			$scope.messageClass = type;
 			$scope.messageText = message;

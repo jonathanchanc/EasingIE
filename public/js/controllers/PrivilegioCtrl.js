@@ -141,6 +141,7 @@ angular.module('PrivilegioCtrl',[])
 
 
 		$scope.createOrUpdate = function(isValid, _id) {
+			$scope.formTemp.lockButtonSave = true;
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
@@ -189,6 +190,7 @@ angular.module('PrivilegioCtrl',[])
 		};
 
 		$scope.showMessage = function(show,type,message,status,data) {
+			$scope.formTemp.lockButtonSave = false;
 			$scope.messageShow = show;
 			$scope.messageClass = type;
 			$scope.messageText = message;

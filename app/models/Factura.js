@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
-	autoIncrement  = require('mongoose-auto-increment'),
+	//autoIncrement  = require('mongoose-auto-increment'),
+	AutoIncrement = require('mongoose-sequence'),
 	User = mongoose.model('User'),
 	Oficina = mongoose.model('Oficina'),
 	Programa = mongoose.model('Programa'),
@@ -94,6 +95,7 @@ FacturaSchema.virtual('folio_factura').get(function () {
 })
 ;
 
-FacturaSchema.plugin(autoIncrement.plugin, { model: 'Factura', field: 'folio' });
+//FacturaSchema.plugin(autoIncrement.plugin, { model: 'Factura', field: 'folio', startAt: 1 });
+FacturaSchema.plugin(AutoIncrement, {id: 'folio_factura', inc_field: 'folio', reference_fields: 'anio' });
 
 module.exports = mongoose.model('Factura', FacturaSchema);

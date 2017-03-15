@@ -30,6 +30,8 @@ angular.module('UserCtrl',[])
 		$scope.label.active = 'Activo';
 		$scope.label.inactive = 'Inactivo';
 		$scope.label.back = 'Regresar';
+		$scope.label.management = 'Administración';
+		$scope.label.resetPassword = 'Reiniciar Constraseña';
 
 		$scope.messageShow = false;
 		$scope.messageClass = "";
@@ -40,6 +42,7 @@ angular.module('UserCtrl',[])
 
 		$scope.searchData = {};
 		$scope.formData = {estado:'Activo'};
+		$scope.formTemp = {};
 
 		$scope.instanceList = [];
 		$scope.Oficinas = [];
@@ -109,7 +112,7 @@ angular.module('UserCtrl',[])
 			
 			query.limit = $scope.itemsPerPage;
     		query.page = $scope.currentPage-1;
-    		query.sort = {};
+    		query.sort = { usuario: 1 };
 			$scope.query(query);
 		}
 
@@ -158,7 +161,7 @@ angular.module('UserCtrl',[])
 			Roles.query({ query: { estado: 'Activo' } })
 				.success(function(data) {
 					$scope.Roles = angular.copy(data.instanceList);
-					console.log(data);
+					//console.log(data);
 				})
 				.error(function(data, status) {
 					$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.errorResults,status,data);
@@ -170,6 +173,7 @@ angular.module('UserCtrl',[])
 			if($routeParams.instanceId != undefined){
 				Users.findById($routeParams.instanceId)
 					.success(function(data) {
+						$scope.formTemp.statusEditable = true; //Campos de activo y usurio creo
 						$scope._id = $routeParams.instanceId;
 						$scope.formData = angular.copy(data);
 						delete $scope.formData.token;
@@ -185,6 +189,7 @@ angular.module('UserCtrl',[])
 
 
 		$scope.createOrUpdate = function(isValid, _id) {
+			$scope.formTemp.lockButtonSave = true;
 			$scope.messageShow = false;
 			$scope.messageClass = "";
 			$scope.messageText = '';
@@ -199,7 +204,7 @@ angular.module('UserCtrl',[])
 							console.log($scope.label.updateSuccess);
 							$location.path('/'+$scope.controllerInstance);
 
-							//COMO ENVIAR ALERTA?							
+							//COMO ENVIAR ALERTA?
 							$scope.showMessage(true,$scope.messageAlertSuccess,$scope.label.updateSuccess);
 						})
 						.error(function(data, status) {
@@ -226,11 +231,50 @@ angular.module('UserCtrl',[])
 			}
 		};
 
+		$scope.changePassword = function() {
+	        $scope.formTemp.lockButtonSave = true;
+	        $scope.messageShow = false;
+	        $scope.messageClass = "";
+	        $scope.messageText = '';
+
+	        //Valida formData
+	        if ($scope.formData.password != undefined && 
+	        	$scope.formData.password.length >= 6 && $scope.formData.password.length <= 25) {
+	            //Solo acepta letras y numeros
+	            // /^[a-z0-9]+$/i
+	            // ^         start of string
+	            // [a-z0-9]  a or b or c or ... z or 0 or 1 or ... 9
+	            // *         zero or more times
+	            // $         end of string
+	            // /i        case-insensitive
+	            if ( ( /^[a-z0-9]*$/i.test($scope.formData.password) ) == true ){
+                	var data = { password: $scope.formData.password };
+                    Users.changePassword($scope._id,data)
+                        .success(function(data) {
+                            $scope.formData = {};
+							console.log('Password actuaizado');
+							$location.path('/'+$scope.controllerInstance);
+                            
+                            //COMO ENVIAR ALERTA?                           
+                            $scope.showMessage(true,$scope.messageAlertSuccess,'Password actuaizado');
+                        })
+                        .error(function(data, status) {
+                            $scope.showMessage(true,$scope.messageAlertDanger,'Error al actualizar',status,data);
+                        });
+	            } else {
+	                $scope.showMessage(true,$scope.messageAlertDanger,'Solo se aceptan letras y números');       
+	            }
+	        } else {
+	            $scope.showMessage(true,$scope.messageAlertDanger,'Rellene los datos correctamente');
+	        }
+	    };
+
 		$scope.delete = function(_id) {
 			//Users.delete(_id);
 		};
 
 		$scope.showMessage = function(show,type,message,status,data) {
+			$scope.formTemp.lockButtonSave = false;
 			$scope.messageShow = show;
 			$scope.messageClass = type;
 			$scope.messageText = message;
