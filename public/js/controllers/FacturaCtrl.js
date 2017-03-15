@@ -313,7 +313,8 @@ angular.module('FacturaCtrl',[])
 					if(_id != undefined) {
 						$scope.formData.usuario_modifico = $scope.formTemp.usuario_modifico; //Asginamos nuevo usuario modifico
 						$scope.formData.usuario_modifico.fecha = new Date(); //Fecha modificacion
-						Facturas.update(_id,$scope.formData)
+						var update = _.omit($scope.formData,'_id');
+						Facturas.update(_id,update)
 							.success(function(data) {
 								$scope.updateFichas(data);
 								//$scope.formData = {};
