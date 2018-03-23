@@ -39,6 +39,7 @@ angular.module('PrivilegioCtrl',[])
 		$scope.messageAlertDanger = 'alert-danger';
 
 		$scope.searchData = {};
+		$scope.formTemp = {};
 		$scope.formData = {estado:'Activo'};
 
 		$scope.instanceList = [];

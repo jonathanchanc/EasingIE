@@ -1,9 +1,9 @@
-angular.module('ExpedienteCtrl', [])
+angular.module('RevisionCtrl', [])
 	
-	.controller('ExpedienteController', ['$rootScope','$scope','$routeParams','$location','Main','Expedientes', function($rootScope, $scope, $routeParams, $location, Main, Expedientes) {
-		$scope.controlNameSingular = 'Expediente';
-		$scope.controlNamePlural = 'Expedientes';
-		$scope.controllerInstance = 'expedientes';
+	.controller('RevisionController', ['$rootScope','$scope','$routeParams','$location','Main','Revisiones','Expedientes','Oficinas', function($rootScope, $scope, $routeParams, $location, Main, Revisiones, Expedientes, Oficinas) {
+		$scope.controlNameSingular = 'Revision';
+		$scope.controlNamePlural = 'Revisiones';
+		$scope.controllerInstance = 'revisiones';
 
 		$scope.label = {};
 		$scope.label.search = 'Buscar';
@@ -38,9 +38,6 @@ angular.module('ExpedienteCtrl', [])
 		$scope.messageAlertSuccess = 'alert-success';
 		$scope.messageAlertInfo = 'alert-info';
 		$scope.messageAlertDanger = 'alert-danger';
-
-		$scope.searchData = {};
-		$scope.formTemp = {};
 		
 		$scope.searchData = {};
 		$scope.estado_civiles = ['Casado(a)','Divorciado(a)','Soltero(a)','Union Libre','Viudo(a)'];
@@ -48,9 +45,13 @@ angular.module('ExpedienteCtrl', [])
 		$scope.tipo_relaciones_sexuales = ['Heterosexual','Homosexual','Bisexual'];
 		$scope.buena_regular_mala = ['Buena','Regular','Mala'];
 		$scope.si_no = ['Si','No'];
-		$scope.formData = {sexo:'Hombre', estado:'Activo'};
+
+		$scope.formTemp = { usuario_modifico: { oficina: {} } };
+		$scope.formDataExpediente = { };
+		$scope.formData = { estado:'Activo', expediente:{}, usuario: { oficina: {} }, };
 		
 		$scope.instanceList = [];
+		$scope.Revisiones = []
 
 		$scope.totalItems = 0;
 		$scope.currentPage = 1;
@@ -107,7 +108,8 @@ angular.module('ExpedienteCtrl', [])
 						lactancia: 							'Lactancia',
 						fue: 								'F.U.E',
 						numero_hijos: 						'Numero de hijos',
-						estado: 							'Estado'
+						estado: 							'Estado',
+						revision: 							'Revision'
 					};
 
 
@@ -137,6 +139,29 @@ angular.module('ExpedienteCtrl', [])
 	  		}
 		};
 
+		//USADO POR ACORDEON  PANEL
+		$scope.panels = {
+			open1: true,
+			open2: false,
+			open3: false,
+			open4: false,
+			open5: true,
+			open6: false,
+		}
+		$scope.oneAtATime = false;
+
+		$scope.groups = [
+			{
+			  title: 'Dynamic Group Header - 1',
+			  content: 'Dynamic Group Body - 1'
+			},
+			{
+			  title: 'Dynamic Group Header - 2',
+			  content: 'Dynamic Group Body - 2'
+			}
+		];
+		//USADO POR ACORDEON  PANEL
+
 		$scope.inicio = function(){
 			Main.getPrivilegios().then(function(){ $scope.privilegios = $rootScope.privilegios});
 			$scope.pagination();
@@ -155,10 +180,9 @@ angular.module('ExpedienteCtrl', [])
 				var data = $scope.searchData.data;
 				data = data.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
 	  			query.query = 	{ $or: [
-					  				{nombre: { $regex : data, $options:"i" } },
-					  				{apPaterno: { $regex : data, $options:"i" } },
-					  				{apMaterno: { $regex : data, $options:"i" } },
-					  				//{numero_expediente: data },
+					  				{ nombre: { $regex : data, $options:"i" } },
+					  				{ apPaterno: { $regex : data, $options:"i" } },
+					  				{ apMaterno: { $regex : data, $options:"i" } },
 					  				//{descripcion: { $regex : data, $options:"i" } },
 					  				]
 					  			};
@@ -214,8 +238,35 @@ angular.module('ExpedienteCtrl', [])
 
 		$scope.get = function(){
 			$scope.label.createOrEdit = $scope.label.add;
+			//Revisamos parametro 'expedienteID'
+			if($routeParams.expedienteId != undefined){
+				Expedientes.findById($routeParams.expedienteId)
+					.success(function(data) {
+						//$scope._id = $routeParams.instanceId;
+						$scope.formDataExpediente = angular.copy(data);
+						$scope.formDataExpediente.fecha_nacimiento = new Date($scope.formDataExpediente.fecha_nacimiento);
+						$scope.formData.expediente = $scope.formDataExpediente._id;
+					})
+					.error(function(data, status) {
+						$scope.showMessage(true,$scope.messageAlertDanger,$scope.label.noFindRow,status,data);
+						$location.path('/'+$scope.controllerInstance);
+		            })
+					;
+
+				Revisiones.query({ query: { expediente: $scope.formDataExpediente._id, estado: 'Activo' } })
+				.success(function(data) { 
+					$scope.Revisiones = angular.copy(data.instanceList); 
+				})
+				.error(function(data, status) {
+					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
+	            });
+
+			}			
+
+			//Rervision normal de parametro instanceId
+			/*
 			if($routeParams.instanceId != undefined){
-				Expedientes.findById($routeParams.instanceId)
+				Revisiones.findById($routeParams.instanceId)
 					.success(function(data) {
 						$scope._id = $routeParams.instanceId;
 						$scope.formData = angular.copy(data);
@@ -228,6 +279,62 @@ angular.module('ExpedienteCtrl', [])
 		            })
 					;
 			}
+			*/
+
+			Main.me(
+				function(userData) {
+					Oficinas.query({ query: { _id: userData.data.oficina } })
+						.success(function(dataOficina) {
+
+							$scope.label.createOrEdit = $scope.label.add;
+							if($routeParams.instanceId != undefined){
+
+								$scope.formTemp.statusEditable = true; //Campos de activo y usurio creo
+								$scope.formTemp.noEditable = true; //Evitar poder editar cliente y programas
+								if($scope.formTemp.noEditable){
+									$scope.formTemp.lockCliente = true;
+								}
+
+								Revisiones.findById($routeParams.instanceId)
+									.success(function(dataRevision) {
+										$scope._id = $routeParams.instanceId;
+										$scope.formData = angular.copy(dataRevision);
+										$scope.label.createOrEdit = '';
+										$scope.label.other = dataRevision.folio_ficha;
+										//AGregamos usuario modifico
+										dataOficina = dataOficina.instanceList[0];
+										$scope.formTemp.usuario_modifico._id = userData.data._id;
+										$scope.formTemp.usuario_modifico.usuario = userData.data.usuario;
+										$scope.formTemp.usuario_modifico.nombre = userData.data.nombre_completo;
+										$scope.formTemp.usuario_modifico.oficina._id = dataOficina._id;
+										$scope.formTemp.usuario_modifico.oficina.nombre = dataOficina.nombre;
+										//$scope.formData.usuario_modifico = $scope.formTemp.usuario_modifico;
+									})
+									.error(function(dataRevision, status) {
+										console.log($scope.label.noFindRow);
+										$location.path('/'+$scope.controllerInstance);
+						            })
+									;
+							} else {
+								//$scope.Usuarios = angular.copy(userData); //Comentar esta linea tambien
+								dataOficina = dataOficina.instanceList[0];
+								$scope.formData.usuario._id = userData.data._id;
+								$scope.formData.usuario.usuario = userData.data.usuario;
+								$scope.formData.usuario.nombre = userData.data.nombre_completo;
+								$scope.formData.usuario.oficina._id = dataOficina._id;
+								$scope.formData.usuario.oficina.nombre = dataOficina.nombre;
+							}
+
+						})
+						.error(
+							function(data, status) {
+							$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
+			            });
+		        },
+		        //).error(
+					function(data, status) {
+					$scope.showMessage(true, $scope.messageAlertDanger, $scope.label.errorResults, status, data);
+	            });
 		}
 
 
@@ -241,7 +348,7 @@ angular.module('ExpedienteCtrl', [])
 			if (isValid) {
 				
 				if(_id != undefined) {
-					Expedientes.update(_id,$scope.formData)
+					Revisiones.update(_id,$scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
 							console.log($scope.label.updateSuccess);
@@ -256,11 +363,19 @@ angular.module('ExpedienteCtrl', [])
 			            })
 						;
 				} else {
-					Expedientes.create($scope.formData)
+					$scope.formData.usuario.fecha = new Date(); //Fecha creacion
+					Revisiones.create($scope.formData)
 						.success(function(data) {
 							$scope.formData = {};
 							console.log($scope.label.createSuccess);
 							$location.path('/'+$scope.controllerInstance);
+							
+							//Opcional en lugar de $location.path('/'+$scope.controllerInstance);
+							//$scope.get();
+							//$scope.showMessage(true, $scope.messageAlertSuccess, $scope.label.createSuccess, status, data);
+							//No funcona correctamente, boton se bloquea REVISAR
+
+
 							//COMO ENVIAR ALERTA?							
 							//$scope.messageShow = true;
 							//$scope.messageClass = $scope.messageAlertSuccess;
@@ -277,7 +392,7 @@ angular.module('ExpedienteCtrl', [])
 		};
 
 		$scope.delete = function(_id) {
-			//Expedientes.delete(_id);
+			//Revisiones.delete(_id);
 		};
 
 		$scope.showMessage = function(show,type,message,status,data) {

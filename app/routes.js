@@ -16,6 +16,8 @@ module.exports = function(app) {
 	require('./functions/FichaFunctions.js');
 	require('./functions/FacturaFunctions.js');
 	require('./functions/EgresoFunctions.js');
+	require('./functions/RevisionFunctions.js');
+	
 	
 
 
@@ -25,13 +27,13 @@ module.exports = function(app) {
 	// handle things like api calls
 	// authentication routes
 
-	//Expedientes Functions
-	app.get('/api/expedientes', ensureAuthorized, findAllExpedientes);
-	app.post('/api/expedientesSearch/', ensureAuthorized, searchExpedientes);
-	app.get('/api/expedientes/:id', ensureAuthorized, findByIdExpediente);
-	app.post('/api/expedientes', ensureAuthorized, addExpediente);
-	app.put('/api/expedientes/:id', ensureAuthorized, updateExpediente);
-	app.delete('/api/expedientes/:id', ensureAuthorized, deleteExpediente);
+	//Expedientes Functions OLD
+	//app.get('/api/expedientes', ensureAuthorized, findAllExpedientes);
+	//app.post('/api/expedientesSearch/', ensureAuthorized, searchExpedientes);
+	//app.get('/api/expedientes/:id', ensureAuthorized, findByIdExpediente);
+	//app.post('/api/expedientes', ensureAuthorized, addExpediente);
+	//app.put('/api/expedientes/:id', ensureAuthorized, updateExpediente);
+	//app.delete('/api/expedientes/:id', ensureAuthorized, deleteExpediente);
 
 	//User Functions
 	app.post('/api/main/authenticate', authenticate);
@@ -65,6 +67,24 @@ module.exports = function(app) {
 	app.post('/api/egresos', ensureAuthorized, addEgreso);
 	app.put('/api/egresos/:id', ensureAuthorized, updateEgreso);
 	app.delete('/api/egresos/:id', ensureAuthorized, deleteEgreso);
+
+	//CONSULTAS
+	
+	//Expedientes Functions
+	app.post('/api/expedientes/query/', ensureAuthorized, queryExpediente);
+	app.get('/api/expedientes/:id', ensureAuthorized, findByIdExpediente);
+	app.post('/api/expedientes', ensureAuthorized, addExpediente);
+	app.put('/api/expedientes/:id', ensureAuthorized, updateExpediente);
+	app.delete('/api/expedientes/:id', ensureAuthorized, deleteExpediente);
+
+	//Revision Functions
+	app.post('/api/revisiones/query/', ensureAuthorized, queryRevision);
+	app.get('/api/revisiones/:id', ensureAuthorized, findByIdRevision);
+	app.post('/api/revisiones', ensureAuthorized, addRevision);
+	app.put('/api/revisiones/:id', ensureAuthorized, updateRevision);
+	app.delete('/api/revisiones/:id', ensureAuthorized, deleteRevision);
+
+
 
 	//ADMINISTRACION
 

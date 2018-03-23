@@ -9,8 +9,11 @@ angular.module('sampleApp', [
 	'ui.bootstrap',
 	'MainCtrl', 
 	'MainService', 
+	//CONSULTAS
 	'ExpedienteCtrl', 
 	'ExpedienteService',
+	'RevisionCtrl', 
+	'RevisionService',
 	//CONTABILIDAD
 	'FichaCtrl', 
 	'FichaService', 

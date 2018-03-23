@@ -1,5 +1,8 @@
 var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
+	Schema = mongoose.Schema,
+
+	AutoIncrement = require('mongoose-sequence'),
+	dateformat = require('dateformat');
 
 var ExpedienteSchema = new Schema({
 	apPaterno:							{ type: String },
@@ -52,7 +55,26 @@ var ExpedienteSchema = new Schema({
 	numero_hijos: 						{ type: Number },
 	estado: 							{ type: String }
 
+}, {
+	toObject: {
+		virtuals: true
+	},
+	toJSON: {
+		virtuals: true 
+	}
 });
 
+ExpedienteSchema.virtual('nombre_completo').get(function () {
+	return this.nombre + ' ' + this.apPaterno + ' ' + this.apMaterno;
+});
+
+ExpedienteSchema.virtual('fecha_nacimiento_corta').get(function () {
+	return dateformat(this.fecha_nacimiento, 'dd/mm/yyyy');
+});
+
+ExpedienteSchema.index({ nombre: 1, apPaterno: 1, apMaterno: 1}, { unique: true });
+
+
+ExpedienteSchema.plugin(AutoIncrement, {id: 'folio_expediente',inc_field: 'numero_expediente'}); //Automaticamente añade el campo "numero_expediente" al esquema
 
 module.exports = mongoose.model('Expediente', ExpedienteSchema);

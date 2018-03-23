@@ -9,23 +9,44 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '
 		})
 
 
-        // ---------------------------------REVISAR
+        //CONSULTAS --------------------------
         //Expedientes
 		.when('/expedientes', {
-			templateUrl: 'views/expediente.html',
+			templateUrl: 'views/expediente/list.html',
 			controller: 'ExpedienteController'
 		})
 
 		.when('/expedientes/create', {
-			templateUrl: 'views/expediente.create.html',
+			templateUrl: 'views/expediente/form.html',
 			controller: 'ExpedienteController'
 		})
 
-		.when('/expedientes/update/:expedienteId', {
-			templateUrl: 'views/expediente.create.html',
+		.when('/expedientes/update/:instanceId', {
+			templateUrl: 'views/expediente/form.html',
 			controller: 'ExpedienteController'
 		})
-        // -----------------------------------
+
+        //REvisiones
+        .when('/revisiones', {
+            templateUrl: 'views/revision/list.html',
+            controller: 'RevisionController'
+        })
+
+        .when('/revisiones/create', {
+            templateUrl: 'views/revision/form.html',
+            controller: 'RevisionController'
+        })
+
+        .when('/revisiones/create/:expedienteId', {
+            templateUrl: 'views/revision/form.html',
+            controller: 'RevisionController'
+        })
+
+        .when('/revisiones/update/:instanceId', {
+            templateUrl: 'views/revision/form.html',
+            controller: 'RevisionController'
+        })
+       
 
         //CONTABILIDAD --------------------------
         //Ficha

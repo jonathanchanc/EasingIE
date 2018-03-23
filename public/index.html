@@ -24,6 +24,10 @@
 	<script src="js/controllers/ExpedienteCtrl.js"></script>
 	<script src="js/services/ExpedienteService.js"></script>
 
+	<!-- Revisiones -->
+	<script src="js/controllers/RevisionCtrl.js"></script>
+	<script src="js/services/RevisionService.js"></script>
+
 	<!-- Ficha -->
 	<script src="js/controllers/FichaCtrl.js"></script>
 	<script src="js/services/FichaService.js"></script>
@@ -166,13 +170,13 @@
 								</ul>
 							</li>
 
-							<!--li data-ng-show="token" class="dropdown">
+							<li data-ng-show="token && _.contains(modulos,'Consultas')" class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Consultas <span class="caret"></span></a>
 								<ul class="dropdown-menu">
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a href="/expedientes">Expedientes</a></li>
-									<li data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" data-ng-show="token"><a href="/revisiones">Revisiones</a></li>
+									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'Expedientes')"><a ng-href="/expedientes">Expedientes</a></li>
+									<li ng-attr-data-toggle="{{ hideAfterClick && 'collapse' || undefined }}" data-target="#bs-example-navbar-collapse-1" ng-click="getExpanded()" data-ng-show="token && _.contains(privilegios,'Revisiones')"><a ng-href="/revisiones">Revisiones</a></li>
 								</ul>
-							</li-->
+							</li>
 
 							<li data-ng-show="token && _.contains(modulos,'Reportes')" class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reportes <span class="caret"></span></a>

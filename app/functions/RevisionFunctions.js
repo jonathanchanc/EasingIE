@@ -1,7 +1,7 @@
-	var Instance = require('../models/Expediente.js');
+	var Instance = require('../models/Revision.js');
 
   	//POST - Return all rows by query
-  	queryExpediente = function(req, res) {
+  	queryRevision = function(req, res) {
   		var query = Instance.find(req.body.query); 					//Array
 
   		if(req.body.select)
@@ -37,7 +37,7 @@
   	
 
 	//GET - Return a instance with specified ID
-	findByIdExpediente = function(req, res) {
+	findByIdRevision = function(req, res) {
 		Instance.findById(req.params.id, function(err, instance) {
 			if(!err) {
 	    		//console.log('GET /' + req.params.id);
@@ -50,7 +50,7 @@
 	};
 
 	//POST - Insert a new row in the DB
-	addExpediente = function(req, res) {
+	addRevision = function(req, res) {
 		var instance = {};
 		instance = req.body;
 
@@ -67,7 +67,7 @@
 	};
 
 	//PUT - Update a register already exists
-	updateExpediente = function(req, res) {
+	updateRevision = function(req, res) {
 		Instance.findByIdAndUpdate(req.params.id, { $set: req.body }, {new: true}, function(err, instance) {
 			if(!err) {
 				console.log('Updated');
@@ -80,7 +80,7 @@
 	}
 
 	//DELETE - Delete a instance with specified ID
-	deleteExpediente = function(req, res) {
+	deleteRevision = function(req, res) {
 		Instance.findById(req.params.id, function(err, instance) {
 			instance.remove(function(err) {
 				if(!err) {
